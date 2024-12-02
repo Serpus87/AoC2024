@@ -15,7 +15,7 @@ internal static class InputReader
 
         foreach (var line in lines)
         {
-            var locationIds = line.Split(' ');
+            var locationIds = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             input.FirstLocationIds.Add(int.Parse(locationIds.First()));
             input.SecondLocationIds.Add(int.Parse(locationIds.Last()));
         }

@@ -16,11 +16,6 @@ internal static class InputExtensions
         return input;
     }
 
-    public static List<int> Sort(this List<int> locationIds)
-    {
-        return locationIds.Order().ToList();
-    }
-
     public static List<int> SubstractLocationIds(this Input input)
     {
         var subtractedInput = new List<int>();

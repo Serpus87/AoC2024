@@ -1,6 +1,6 @@
 ﻿using AdventOfCode.Day1;
 
-internal class Program
+public class Program
 {
     private static void Main(string[] args)
     {

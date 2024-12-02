@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Day1;
 
-internal static class InputReader
+public static class InputReader
 {
-    internal static Input Read()
+    public static Input Read(string fileName)
     {
         var input = new Input();
-        string[] lines = File.ReadAllLines("Day1\\PuzzleInput.txt");
+        string[] lines = File.ReadAllLines($"Day1\\{fileName}");
 
         foreach (var line in lines)
         {

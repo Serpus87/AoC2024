@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AdventOfCode.Day2;
 
-namespace AdventOfCode.Day2;
+namespace AdventOfCode.Day3;
 
-public static class Day2
+public static class Day3
 {
     public static void Solve()
     {
@@ -16,9 +15,9 @@ public static class Day2
         var input = InputReader.Read(fileName);
 
         var solution = Part1.Solve(input);
-        Console.WriteLine($"Day2 Part1 Solution: {solution}");
+        Console.WriteLine($"Day3 Part1 Solution: {solution}");
 
-        solution = Part2.Solve(input);
-        Console.WriteLine($"Day2 Part2 Solution: {solution}");
+        //solution = Part2.Solve(input);
+        //Console.WriteLine($"Day2 Part2 Solution: {solution}");
     }
 }

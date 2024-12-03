@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Day1;
 
-public class Day1
+public static class Day1
 {
     public static void Solve()
     {

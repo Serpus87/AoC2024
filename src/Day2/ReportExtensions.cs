@@ -9,6 +9,18 @@ namespace AdventOfCode.Day2;
 
 public static class ReportExtensions
 {
+    public static List<bool> GetSafeList(this List<Report> reports)
+    {
+        var safeList = new List<bool>();
+
+        foreach (var report in reports)
+        {
+            safeList.Add(report.IsSafe());
+        }
+
+        return safeList;
+    }
+
     public static bool IsSafe(this Report report)
     {
         var isIncreasing = true;
@@ -23,7 +35,7 @@ public static class ReportExtensions
 
             isIncreasing = isIncreasing && level > previousLevel;
             isDecreasing = isDecreasing && level < previousLevel;
-            isWithinRange = Math.Abs(level - previousLevel) is >= 1 and <=3;
+            isWithinRange = Math.Abs(level - previousLevel) is >= 1 and <= 3;
 
             isSafe = (isIncreasing || isDecreasing) && isWithinRange;
             if (!isSafe)
@@ -35,15 +47,52 @@ public static class ReportExtensions
         return isSafe;
     }
 
-    public static List<bool> GetSafeList(this List<Report> reports)
+    public static List<bool> GetSafeListWithDampner(this List<Report> reports)
     {
         var safeList = new List<bool>();
 
         foreach (var report in reports)
         {
-            safeList.Add(report.IsSafe());
+            safeList.Add(report.IsSafeWithDampner());
         }
 
         return safeList;
+    }
+
+    public static bool IsSafeWithDampner(this Report report)
+    {
+        var isSafe = report.IsSafe();
+
+        if (isSafe)
+        {
+            return isSafe;
+        }
+
+        for (var i = 0; i < report.Levels.Count; i++)
+        {
+            var dampenedReport = report.Copy();
+            dampenedReport.Levels.RemoveAt(i);
+
+            isSafe = dampenedReport.IsSafe();
+
+            if (isSafe)
+            {
+                return isSafe;
+            }
+        }
+
+        return isSafe;
+    }
+
+    private static Report Copy(this Report originalReport)
+    {
+        var copyLevels = new List<int>();
+
+        foreach (var level in originalReport.Levels)
+        {
+            copyLevels.Add(level);
+        }
+
+        return new Report(copyLevels);
     }
 }

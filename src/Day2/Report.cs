@@ -14,5 +14,4 @@ public class Report
     {
         Levels = levels;
     }
-
 }

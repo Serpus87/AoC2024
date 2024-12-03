@@ -5,6 +5,7 @@ using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day2;
+using AdventOfCode.Shared;
 
 namespace AdventOfCode.Tests;
 
@@ -16,7 +17,7 @@ public class Day2Tests
     {
         // Arrange
         var expectedSolution = 2;
-        var input = InputReader.Read("Example.txt");
+        var input = InputReader.ReadDay2File("Example.txt");
 
         // Act
         var actualSolution = Part1.Solve(input);
@@ -30,7 +31,7 @@ public class Day2Tests
     {
         // Arrange
         var expectedSolution = 4;
-        var input = InputReader.Read("Example.txt");
+        var input = InputReader.ReadDay2File("Example.txt");
 
         // Act
         var actualSolution = Part2.Solve(input);

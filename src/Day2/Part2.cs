@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AdventOfCode.Shared;
 
 namespace AdventOfCode.Day2;
 
-public class Part2
+public class Part2 : IPart
 {
     /// <summary>
     /// Your puzzle answer was .
@@ -41,7 +42,7 @@ public class Part2
     /// </summary>
 
 
-    public static int Solve(Input input)
+    public int Solve(Input input)
     {
         // get safeList
         var safeList = input.Reports.GetSafeListWithDampner();

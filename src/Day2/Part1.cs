@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AdventOfCode.Shared;
 
 namespace AdventOfCode.Day2;
 
-public class Part1
+public class Part1 : IPart
 {
     /// <summary>
     /// --- Day 2: Red-Nosed Reports ---
@@ -59,7 +60,7 @@ public class Part1
     /// </summary>
 
 
-    public static int Solve(Input input)
+    public int Solve(Input input)
     {
         // get safeList
         var safeList = input.Reports.GetSafeList();

@@ -5,6 +5,7 @@ public class Program
 {
     private static void Main(string[] args)
     {
-        Day2.Solve();
+        var day = new Day2();
+        day.Solve();
     }
 }

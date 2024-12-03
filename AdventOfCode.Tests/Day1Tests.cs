@@ -1,4 +1,5 @@
 ﻿using AdventOfCode.Day1;
+using AdventOfCode.Shared;
 
 namespace AdventOfCode.Tests;
 
@@ -10,7 +11,7 @@ public sealed class Day1Tests
     {
         // Arrange
         var expectedSolution = 11;
-        var input = InputReader.Read("Example.txt");
+        var input = InputReader.ReadDay1File("Example.txt");
 
         // Act
         var actualSolution = Part1.Solve(input);
@@ -24,7 +25,7 @@ public sealed class Day1Tests
     {
         // Arrange
         var expectedSolution = 31;
-        var input = InputReader.Read("Example.txt");
+        var input = InputReader.ReadDay1File("Example.txt");
 
         // Act
         var actualSolution = Part2.Solve(input);

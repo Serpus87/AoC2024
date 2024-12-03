@@ -8,13 +8,13 @@ namespace AdventOfCode.Day3;
 
 public static class MulService
 {
-    private const int MinMulNumberLength = 1;
-    private const int MaxMulNumberLength = 3;
     private const string MulStart = "mul(";
     private const int MulStartLength = 4;
     private const string MulEnd = ")";
     private const string MulSeparator = ",";
     private const int MulMaxLengthInCludingStartAndEnd = 12;
+    private const string DoInstruction = "do()";
+    private const string DoNotInstruction = "don't()";
 
     public static List<Mul> ExtractMuls(string input)
     {
@@ -43,6 +43,32 @@ public static class MulService
         }
 
         return muls;
+    }
+
+    public static List<Mul> ExtractMulsWithInstructions(string input)
+    {
+        var muls = new List<Mul>();
+
+        // remove disabled parts 
+        while (true)
+        {
+            // find DoNotInstruction
+            var indexDoNotInstruction = input.IndexOf(DoNotInstruction);
+
+            if (indexDoNotInstruction < 0)
+            {
+                break;
+            }
+
+            // find DoInstruction after DoNotInstruction
+            var indexDoInstruction = input.IndexOf(DoInstruction, indexDoNotInstruction);
+
+            var lengthStringToRemove = indexDoInstruction >= 1 ? indexDoInstruction - indexDoNotInstruction : input.Length - indexDoNotInstruction;
+
+            input = input.Remove(indexDoNotInstruction, lengthStringToRemove);
+        }
+
+        return ExtractMuls(input);
     }
 
     public static List<int> Multiply(this List<Mul> muls)

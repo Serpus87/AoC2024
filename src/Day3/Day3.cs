@@ -17,7 +17,7 @@ public static class Day3
         var solution = Part1.Solve(input);
         Console.WriteLine($"Day3 Part1 Solution: {solution}");
 
-        //solution = Part2.Solve(input);
-        //Console.WriteLine($"Day2 Part2 Solution: {solution}");
+        solution = Part2.Solve(input);
+        Console.WriteLine($"Day3 Part2 Solution: {solution}");
     }
 }

@@ -69,14 +69,17 @@ public class Part1
         // read file
         var input = File.ReadAllLines($"Day4\\{fileName}");
 
+        // declare wordOfInterest
+        var wordOfInterest = "XMAS";
+
         // get x-coordinates
-        var xCoordinates = XmasService.GetXCoordinates(input);
+        var xCoordinates = XmasService.GetCoordinates(input, wordOfInterest[0]);
 
         // get streaks
-        var streaks = XmasService.GetStreaks(xCoordinates, input);
+        var streaks = XmasService.GetStreaks(xCoordinates, input, wordOfInterest);
 
         // get solution
-        var solution = XmasService.ProcessStreaks(streaks, input);
+        var solution = XmasService.ProcessStreaks(streaks, input, wordOfInterest);
 
         // return
         return solution;

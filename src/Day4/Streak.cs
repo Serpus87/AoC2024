@@ -19,7 +19,9 @@ public class Streak
     {
         var streakChars = Coordinates.Select(x => x.Mark).ToArray();
         var streakWord = new string(streakChars);
+        Array.Reverse(streakChars);
+        var reverseStreakWord = new string(streakChars);
 
-        return streakWord == wordOfInterest;
+        return streakWord == wordOfInterest || reverseStreakWord == wordOfInterest;
     }
 }

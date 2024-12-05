@@ -16,7 +16,7 @@ public class Day4
         var solution = Part1.Solve(fileName);
         Console.WriteLine($"Day4 Part1 Solution: {solution}");
 
-        //solution = Part2.Solve(fileName);
-        //Console.WriteLine($"Day4 Part2 Solution: {solution}");
+        solution = Part2.Solve(fileName);
+        Console.WriteLine($"Day4 Part2 Solution: {solution}");
     }
 }

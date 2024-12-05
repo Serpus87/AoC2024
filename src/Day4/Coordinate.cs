@@ -18,4 +18,10 @@ public class Coordinate
         CharIndex = charIndex;
         Mark = mark;
     }
+
+    public Coordinate(int lineIndex, int charIndex)
+    {
+        LineIndex = lineIndex;
+        CharIndex = charIndex;
+    }
 }

@@ -15,11 +15,11 @@ public class Streak
         Coordinates = coordinates;
     }
 
-    public bool StreakSpellsWordOfInterest(string word)
+    public bool HasWordOfInterest(string wordOfInterest)
     {
         var streakChars = Coordinates.Select(x => x.Mark).ToArray();
         var streakWord = new string(streakChars);
 
-        return streakWord == word;
+        return streakWord == wordOfInterest;
     }
 }

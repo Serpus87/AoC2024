@@ -25,17 +25,17 @@ public class Day4Tests
         Assert.AreEqual(expectedSolution, actualSolution);
     }
 
-    //[TestMethod]
-    //public void Part2Solve_Example_ReturnsExpectedSolution()
-    //{
-    //    // Arrange
-    //    var expectedSolution = 48;
-    //    var input = InputReader.Read("ExamplePart2.txt");
+    [TestMethod]
+    public void Part2Solve_Example_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 9;
+        var fileName = "Example.txt";
 
-    //    // Act
-    //    var actualSolution = Part2.Solve(input);
+        // Act
+        var actualSolution = Part2.Solve(fileName);
 
-    //    // Assert
-    //    Assert.AreEqual(expectedSolution, actualSolution);
-    //}
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 }

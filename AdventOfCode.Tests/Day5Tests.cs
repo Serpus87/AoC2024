@@ -29,21 +29,21 @@ public class Day5Tests
         Assert.AreEqual(expectedSolution, actualSolution);
     }
 
-    //[TestMethod]
-    //public void Part2Solve_Example_ReturnsExpectedSolution()
-    //{
-    //    // Arrange
-    //    var expectedSolution = 9;
-    //    var fileName = "Example.txt";
+    [TestMethod]
+    public void Part2Solve_Example_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 123;
+        var fileName = "Example.txt";
 
-    //    var input = File.ReadAllLines($"Day5\\{fileName}.txt");
-    //    var orderingRules = InputReader.GetOrderingRules(input);
-    //    var pagesToUpdate = InputReader.GetPagesToUpdates(input);
+        var input = File.ReadAllLines($"Day5\\{fileName}");
+        var orderingRules = InputReader.GetOrderingRules(input);
+        var updates = InputReader.GetUpdates(input);
 
-    //    // Act
-    //    var actualSolution = Part2.Solve(orderingRules, pagesToUpdate);
+        // Act
+        var actualSolution = Part2.Solve(orderingRules, updates);
 
-    //    // Assert
-    //    Assert.AreEqual(expectedSolution, actualSolution);
-    //}
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 }

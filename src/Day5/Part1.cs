@@ -111,7 +111,7 @@ public class Part1
 
     public static int Solve(List<OrderingRule> orderingRules, List<Update> updates)
     {
-        // get pagesToUpdate in correct order
+        // get Updates that are in correct order
         var correctlyOrderedUpdates = UpdateService.GetCorrectlyOrderedUpdates(updates, orderingRules);
 
         // get middleNumbers

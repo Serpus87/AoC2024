@@ -8,24 +8,57 @@ namespace AdventOfCode.Day5;
 
 public static class UpdateService
 {
-    public static List<Update> GetCorrectlyOrderedUpdates(List<Update> updates, List<OrderingRule> orderingsRules)
+    public static List<Update> GetCorrectlyOrderedUpdates(List<Update> updates, List<OrderingRule> orderingRules)
     {
-        var correctlyOrderedUpdates = new List<Update>();
-
-        foreach (var update in updates)
-        {
-            bool isCorrectlyOrdered = IsCorrectlyOrdered(update, orderingsRules);
-
-            if (isCorrectlyOrdered)
-            {
-                correctlyOrderedUpdates.Add(update);
-            }
-        }
-
-        return correctlyOrderedUpdates;
+        return updates.Where(x => IsCorrectlyOrdered(x, orderingRules)).ToList();
     }
 
-    internal static List<int> GetMiddlePageNumbers(List<Update> correctlyOrderedUpdates)
+    public static List<Update> GetInCorrectlyOrderedUpdates(List<Update> updates, List<OrderingRule> orderingRules)
+    {
+        return updates.Where(x => !IsCorrectlyOrdered(x, orderingRules)).ToList();
+    }
+
+    public static List<Update> OrderUpdates(List<Update> incorrectlyOrderedUpdates, List<OrderingRule> orderingRules)
+    {
+        return incorrectlyOrderedUpdates.Select(x => OrderUpdate(x, orderingRules)).ToList();
+    }
+
+    private static Update OrderUpdate(Update update, List<OrderingRule> orderingRules)
+    {
+        bool incorrectlyOrdered = false;
+
+        while (!incorrectlyOrdered)
+        {
+            for (int i = 0; i < update.PageNumbers.Count; i++)
+            {
+                var pageNumber = update.PageNumbers[i];
+                var nextNumbers = update.PageNumbers.Skip(i + 1).Take(update.PageNumbers.Count - i);
+                var pageNumbersThatShouldBePrintedBeforePageNumber = orderingRules.Where(x => x.SecondPageNumber.Equals(pageNumber)).Select(x => x.FirstPageNumber).ToList();
+
+                if (nextNumbers.Any(x => pageNumbersThatShouldBePrintedBeforePageNumber.Any(y => y == x)))
+                {
+                    var nextNumbersThatShouldBePrintedBeforePageNumber = nextNumbers.Where(x => pageNumbersThatShouldBePrintedBeforePageNumber.Any(y => y == x));
+                    var numbersUntilPageNumber = update.PageNumbers.Take(i + 1);
+
+                    var orderedPageNumbers = new List<int>();
+                    orderedPageNumbers.AddRange(nextNumbersThatShouldBePrintedBeforePageNumber);
+                    orderedPageNumbers.AddRange(numbersUntilPageNumber);
+
+                    var remainingNumbers = update.PageNumbers.Where(x => !orderedPageNumbers.Any(y => y == x));
+                    orderedPageNumbers.AddRange(remainingNumbers);
+                    update = new Update(orderedPageNumbers);
+
+                    break;
+                }
+            }
+
+            incorrectlyOrdered = IsCorrectlyOrdered(update, orderingRules);
+        }
+
+        return update;
+    }
+
+    public static List<int> GetMiddlePageNumbers(List<Update> correctlyOrderedUpdates)
     {
         var middlePageNumbers = new List<int>();
 
@@ -38,13 +71,13 @@ public static class UpdateService
         return middlePageNumbers;
     }
 
-    private static bool IsCorrectlyOrdered(Update update, List<OrderingRule> orderingsRules)
+    private static bool IsCorrectlyOrdered(Update update, List<OrderingRule> orderingRules)
     {
         for (int i = 0; i < update.PageNumbers.Count; i++)
         {
             var pageNumber = update.PageNumbers[i];
             var nextNumbers = update.PageNumbers.Skip(i + 1).Take(update.PageNumbers.Count - i);
-            var pageNumbersThatShouldBePrintedBeforePageNumber = orderingsRules.Where(x => x.SecondPageNumber.Equals(pageNumber)).Select(x => x.FirstPageNumber).ToList();
+            var pageNumbersThatShouldBePrintedBeforePageNumber = orderingRules.Where(x => x.SecondPageNumber.Equals(pageNumber)).Select(x => x.FirstPageNumber).ToList();
 
             if (nextNumbers.Any(x => pageNumbersThatShouldBePrintedBeforePageNumber.Any(y => y == x)))
             {

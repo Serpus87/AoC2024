@@ -20,7 +20,7 @@ public static class XmasService
         return coordinates;
     }
 
-    public static List<Streak> GetStreaks(List<Coordinate> coordinates, string[] input, string wordOfInterest)
+    public static List<Streak> GetStreaks(List<Coordinate> coordinates, string[] input, string wordOfInterest, List<Direction> directions)
     {
         var streaks = new List<Streak>();
         var numberOfLines = input.Length;
@@ -28,13 +28,13 @@ public static class XmasService
         foreach (Coordinate coordinate in coordinates)
         {
             var lineLength = input[coordinate.LineIndex].Length;
-            streaks.AddRange(GetCoordinateStreaks(coordinate, input, wordOfInterest));
+            streaks.AddRange(GetCoordinateStreaks(coordinate, input, wordOfInterest, directions));
         }
 
         return streaks;
     }
 
-    public static List<Cross> GetCrosses(List<Coordinate> coordinates, string[] input, string wordOfInterest)
+    public static List<Cross> GetCrosses(List<Coordinate> coordinates, string[] input, string wordOfInterest, List<List<Direction>> listOfDirections)
     {
         var crosses = new List<Cross>();
         var numberOfLines = input.Length;
@@ -42,7 +42,7 @@ public static class XmasService
         foreach (Coordinate coordinate in coordinates)
         {
             var lineLength = input[coordinate.LineIndex].Length;
-            var cross = GetCoordinateCross(coordinate, input, wordOfInterest);
+            var cross = GetCoordinateCross(coordinate, input, wordOfInterest, listOfDirections);
 
             if (cross != null)
             {
@@ -63,162 +63,47 @@ public static class XmasService
         return crosses.Count(x => x.HasOnlyWordOfInterest(wordOfInterest)); ;
     }
 
-    // todo simplify and generalize this
-    private static List<Streak> GetCoordinateStreaks(Coordinate coordinate, string[] input, string wordOfInterest)
+    private static List<Streak> GetCoordinateStreaks(Coordinate coordinate, string[] input, string wordOfInterest, List<Direction> directions)
     {
         var streaks = new List<Streak>();
+        var lengthToCheck = wordOfInterest.Length - 1;
 
-        var streakLengthWithOutCharOfInterest = wordOfInterest.Length - 1;
-        var lineLength = input[coordinate.LineIndex].Length;
-        var numberOfLines = input.Length;
-
-        bool hasLeftHorizontalStreak = coordinate.CharIndex - streakLengthWithOutCharOfInterest >= 0;
-        bool hasRightHorizontalStreak = coordinate.CharIndex + streakLengthWithOutCharOfInterest < lineLength;
-        bool hasUpperVerticalStreak = coordinate.LineIndex - streakLengthWithOutCharOfInterest >= 0;
-        bool hasLowerVerticalStreak = coordinate.LineIndex + streakLengthWithOutCharOfInterest < numberOfLines;
-
-        bool hasLeftUpperDiagonalStreak = hasLeftHorizontalStreak && hasUpperVerticalStreak;
-        bool hasRightUpperDiagonalStreak = hasRightHorizontalStreak && hasUpperVerticalStreak;
-        bool hasLeftLowerDiagonalStreak = hasLeftHorizontalStreak && hasLowerVerticalStreak;
-        bool hasRightLowerDiagonalStreak = hasRightHorizontalStreak && hasLowerVerticalStreak;
-
-        if (hasLeftHorizontalStreak)
+        foreach (var direction in directions)
         {
-            var coordinates = new List<Coordinate> { coordinate };
+            bool existsStreak = ExistsStreak(coordinate, lengthToCheck, direction, input);
 
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
+            if (!existsStreak)
             {
-                var lineIndex = coordinate.LineIndex;
-                var charIndex = coordinate.CharIndex - (i + 1);
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
+                continue;
             }
 
-            streaks.Add(new Streak(coordinates));
-        }
-
-        if (hasRightHorizontalStreak)
-        {
-            var coordinates = new List<Coordinate> { coordinate };
-
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
-            {
-                var lineIndex = coordinate.LineIndex;
-                var charIndex = coordinate.CharIndex + i + 1;
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
-            }
-
-            streaks.Add(new Streak(coordinates));
-        }
-
-        if (hasUpperVerticalStreak)
-        {
-            var coordinates = new List<Coordinate> { coordinate };
-
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
-            {
-                var lineIndex = coordinate.LineIndex - (i + 1);
-                var charIndex = coordinate.CharIndex;
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
-            }
-
-            streaks.Add(new Streak(coordinates));
-        }
-
-        if (hasLowerVerticalStreak)
-        {
-            var coordinates = new List<Coordinate> { coordinate };
-
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
-            {
-                var lineIndex = coordinate.LineIndex + i + 1;
-                var charIndex = coordinate.CharIndex;
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
-            }
-
-            streaks.Add(new Streak(coordinates));
-        }
-
-        if (hasLeftUpperDiagonalStreak)
-        {
-            var coordinates = new List<Coordinate> { coordinate };
-
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
-            {
-                var lineIndex = coordinate.LineIndex - (i + 1);
-                var charIndex = coordinate.CharIndex - (i + 1);
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
-            }
-
-            streaks.Add(new Streak(coordinates));
-        }
-
-        if (hasRightUpperDiagonalStreak)
-        {
-            var coordinates = new List<Coordinate> { coordinate };
-
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
-            {
-                var lineIndex = coordinate.LineIndex - (i + 1);
-                var charIndex = coordinate.CharIndex + i + 1;
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
-            }
-
-            streaks.Add(new Streak(coordinates));
-        }
-
-        if (hasLeftLowerDiagonalStreak)
-        {
-            var coordinates = new List<Coordinate> { coordinate };
-
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
-            {
-                var lineIndex = coordinate.LineIndex + i + 1;
-                var charIndex = coordinate.CharIndex - (i + 1);
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
-            }
-
-            streaks.Add(new Streak(coordinates));
-        }
-
-        if (hasRightLowerDiagonalStreak)
-        {
-            var coordinates = new List<Coordinate> { coordinate };
-
-            for (var i = 0; i < streakLengthWithOutCharOfInterest; i++)
-            {
-                var lineIndex = coordinate.LineIndex + i + 1;
-                var charIndex = coordinate.CharIndex + i + 1;
-                coordinates.Add(new Coordinate(lineIndex, charIndex, input[lineIndex][charIndex]));
-            }
-
-            streaks.Add(new Streak(coordinates));
+            streaks.Add(GetCoordinateStreak(coordinate, direction, wordOfInterest, input));
         }
 
         return streaks;
     }
 
-    private static Cross? GetCoordinateCross(Coordinate coordinate, string[] input, string wordOfInterest)
+    private static Cross? GetCoordinateCross(Coordinate coordinate, string[] input, string wordOfInterest, List<List<Direction>> listsOfDirections)
     {
         var crossArmLength = (wordOfInterest.Length - 1) / 2;
 
-        var streak1Directions = new List<Direction> { new Direction(-1, -1), new Direction(1, 1) };
-        var streak2Directions = new List<Direction> { new Direction(-1, 1), new Direction(1, -1) };
+        var streaks = new List<Streak>();
 
-        bool streak1Exist = ExistsStreak(coordinate, crossArmLength, streak1Directions, input);
-        bool streak2Exist = ExistsStreak(coordinate, crossArmLength, streak2Directions, input);
-
-        if (!(streak1Exist && streak2Exist))
+        foreach (var directions in listsOfDirections)
         {
-            return null;
+            bool streakExist = ExistsStreak(coordinate, crossArmLength, directions, input);
+
+            if (!streakExist)
+            {
+                return null;
+            }
+
+            var streakStartingCoordinate = GetStreakStartingCoordinate(coordinate, directions[0], crossArmLength);
+
+            streaks.Add(GetCoordinateStreak(streakStartingCoordinate, directions[1], wordOfInterest, input));
         }
 
-        var streak1StartingCoordinate = GetStreakStartingCoordinate(coordinate, streak1Directions[0], crossArmLength);
-        var streak2StartingCoordinate = GetStreakStartingCoordinate(coordinate, streak2Directions[0], crossArmLength);
-
-        var streak1 = GetCoordinateStreak(streak1StartingCoordinate, streak1Directions[1], wordOfInterest, input);
-        var streak2 = GetCoordinateStreak(streak2StartingCoordinate, streak2Directions[1], wordOfInterest, input);
-
-        return new Cross(streak1, streak2);
+        return new Cross(streaks);
     }
 
     private static Streak GetCoordinateStreak(Coordinate coordinate, Direction direction, string wordOfInterest, string[] input)
@@ -240,18 +125,32 @@ public static class XmasService
         return new Coordinate(coordinate.LineIndex + (direction.VerticalDirection * crossArmLength), coordinate.CharIndex + (direction.HorizontalDirection * crossArmLength));
     }
 
-    private static bool ExistsStreak(Coordinate coordinate, int lengthToCheck, List<Direction> directions, string[] input)
+    private static bool ExistsStreak(Coordinate coordinate, int lengthToCheck, Direction direction, string[] input)
     {
         var existsStreak = false;
         var numberOfLines = input.Length;
         var lineLength = input[coordinate.LineIndex].Length;
 
+        existsStreak = coordinate.LineIndex + (direction.VerticalDirection * lengthToCheck) >= 0 &&
+           coordinate.LineIndex + (direction.VerticalDirection * lengthToCheck) < numberOfLines &&
+           coordinate.CharIndex + (direction.HorizontalDirection * lengthToCheck) >= 0 &&
+           coordinate.CharIndex + (direction.HorizontalDirection * lengthToCheck) < lineLength;
+
+        if (!existsStreak)
+        {
+            return false;
+        }
+
+        return existsStreak;
+    }
+
+    private static bool ExistsStreak(Coordinate coordinate, int lengthToCheck, List<Direction> directions, string[] input)
+    {
+        var existsStreak = false;
+
         foreach (var direction in directions)
         {
-            existsStreak = coordinate.LineIndex + (direction.VerticalDirection * lengthToCheck) >= 0 &&
-               coordinate.LineIndex + (direction.VerticalDirection * lengthToCheck) < numberOfLines &&
-               coordinate.CharIndex + (direction.HorizontalDirection * lengthToCheck) >= 0 &&
-               coordinate.CharIndex + (direction.HorizontalDirection * lengthToCheck) < lineLength;
+            existsStreak = ExistsStreak(coordinate, lengthToCheck, direction, input);
 
             if (!existsStreak)
             {

@@ -61,8 +61,23 @@ public class Part2
         // get a-coordinates
         var aCoordinates = XmasService.GetCoordinates(input, wordOfInterest[1]);
 
+        // declare crossDirections
+        var crossDirections = new List<List<Direction>>() 
+        { 
+            new List<Direction> 
+            { 
+                new Direction(-1, -1), 
+                new Direction(1, 1) 
+            }, 
+            new List<Direction> 
+            { 
+                new Direction(-1, 1), 
+                new Direction(1, -1) 
+            } 
+        };
+
         // get crosses
-        var crosses = XmasService.GetCrosses(aCoordinates, input, wordOfInterest);
+        var crosses = XmasService.GetCrosses(aCoordinates, input, wordOfInterest, crossDirections);
 
         // get solution
         var solution = XmasService.ProcessCrosses(crosses, input, wordOfInterest);

@@ -75,8 +75,21 @@ public class Part1
         // get x-coordinates
         var xCoordinates = XmasService.GetCoordinates(input, wordOfInterest[0]);
 
+        // declare Directions
+        var directions = new List<Direction>
+        {
+            new Direction(-1,-1),
+            new Direction(-1,0),
+            new Direction(-1,1),
+            new Direction(0,-1),
+            new Direction(0,1),
+            new Direction(1,-1),
+            new Direction(1,0),
+            new Direction(1,1)
+        };
+
         // get streaks
-        var streaks = XmasService.GetStreaks(xCoordinates, input, wordOfInterest);
+        var streaks = XmasService.GetStreaks(xCoordinates, input, wordOfInterest, directions);
 
         // get solution
         var solution = XmasService.ProcessStreaks(streaks, input, wordOfInterest);

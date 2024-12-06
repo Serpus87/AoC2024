@@ -8,17 +8,15 @@ namespace AdventOfCode.Day4;
 
 public class Cross
 {
-    public Streak Streak1 { get; set; }
-    public Streak Streak2 { get; set; }
+    public List<Streak> Streaks { get; set; }
 
-    public Cross(Streak streak1, Streak streak2)
+    public Cross(List<Streak> streaks)
     {
-        Streak1 = streak1;
-        Streak2 = streak2;
+        Streaks = streaks;
     }
 
     public bool HasOnlyWordOfInterest(string wordOfInterest)
     {
-        return Streak1.HasWordOfInterest(wordOfInterest) && Streak2.HasWordOfInterest(wordOfInterest);
+        return Streaks.All(x=>x.HasWordOfInterest(wordOfInterest));
     }
 }

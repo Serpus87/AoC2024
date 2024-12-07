@@ -25,9 +25,9 @@ public static class UpdateService
 
     private static Update OrderUpdate(Update update, List<OrderingRule> orderingRules)
     {
-        bool incorrectlyOrdered = false;
+        bool correctlyOrdered = false;
 
-        while (!incorrectlyOrdered)
+        while (!correctlyOrdered)
         {
             for (int i = 0; i < update.PageNumbers.Count; i++)
             {
@@ -38,21 +38,20 @@ public static class UpdateService
                 if (nextNumbers.Any(x => pageNumbersThatShouldBePrintedBeforePageNumber.Any(y => y == x)))
                 {
                     var nextNumbersThatShouldBePrintedBeforePageNumber = nextNumbers.Where(x => pageNumbersThatShouldBePrintedBeforePageNumber.Any(y => y == x));
+                    var nextNumbersThatShouldBePrintedAfterPageNumber = nextNumbers.Where(x => !pageNumbersThatShouldBePrintedBeforePageNumber.Any(y => y == x));
                     var numbersUntilPageNumber = update.PageNumbers.Take(i + 1);
 
                     var orderedPageNumbers = new List<int>();
                     orderedPageNumbers.AddRange(nextNumbersThatShouldBePrintedBeforePageNumber);
                     orderedPageNumbers.AddRange(numbersUntilPageNumber);
-
-                    var remainingNumbers = update.PageNumbers.Where(x => !orderedPageNumbers.Any(y => y == x));
-                    orderedPageNumbers.AddRange(remainingNumbers);
+                    orderedPageNumbers.AddRange(nextNumbersThatShouldBePrintedAfterPageNumber);
                     update = new Update(orderedPageNumbers);
 
                     break;
                 }
             }
 
-            incorrectlyOrdered = IsCorrectlyOrdered(update, orderingRules);
+            correctlyOrdered = IsCorrectlyOrdered(update, orderingRules);
         }
 
         return update;

@@ -15,14 +15,15 @@ public static class Day6
     {
         // read file
         var input = File.ReadAllLines($"Day6\\PuzzleInput.txt");
-        var mapService = new MapService();
-        var map = mapService.SetUpMap(input);
-        mapService.Print(map);
 
-        var solution = Part1.Solve(map);
+        var gameService = new GameService();
+        var game = gameService.SetUpGame(input);
+        //PrintingService.Print(game.Map, game.Guard.Position);
+
+        var solution = Part1.Solve(game, gameService);
         Console.WriteLine($"Day6 Part1 Solution: {solution}");
 
-        solution = Part2.Solve(map);
+        solution = Part2.Solve(game);
         Console.WriteLine($"Day6 Part2 Solution: {solution}");
     }
 }

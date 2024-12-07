@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Day6.Models;
+namespace AdventOfCode.Day6.Enums;
 
-public enum FillEnum
+public enum MoveDirection
 {
-    Guard,
-    Obstruction,
-    Empty,
-    X
+    Up,
+    Down, 
+    Left, 
+    Right
 }

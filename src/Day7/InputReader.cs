@@ -18,7 +18,7 @@ public static class InputReader
             var equationString = line.Split(':');
             var testValue = long.Parse(equationString[0]);
             var numbersString = equationString[1].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var numbers = numbersString.Select(int.Parse).ToList();
+            var numbers = numbersString.Select(long.Parse).ToList();
 
             var equation = new Equation(testValue, numbers);
             input.Equations.Add(equation);

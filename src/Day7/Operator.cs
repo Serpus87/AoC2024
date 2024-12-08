@@ -9,5 +9,6 @@ namespace AdventOfCode.Day7;
 public enum Operator
 {
     Add,
-    Multiply
+    Multiply,
+    Concatenate
 }

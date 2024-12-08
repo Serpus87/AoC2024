@@ -8,9 +8,17 @@ namespace AdventOfCode.Day7;
 
 public static class Part2
 {
-    public static uint Solve(Input input)
+    public static long Solve(Input input)
     {
-        uint result = 0;
+        // declare operators
+        var operators = new List<Operator> { Operator.Add, Operator.Multiply, Operator.Concatenate };
+
+        // get solved equations
+        var solvedEquations = EquationService.GetSolvedEquationsWithMoreThanTwoOperators(input.Equations, operators);
+
+        // sum testvalues
+
+        long result = solvedEquations.Sum(x => x.TestValue);
         return result;
     }
 }

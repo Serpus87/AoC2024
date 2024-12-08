@@ -12,9 +12,14 @@ public static class PrintingService
     // todo make this work
     public static void Print(Map map, Position guardPosition)
     {
-        //Console.Clear();
+        Console.Clear();
 
-        var numberOfRowsAndColumnsToPrint = 9;
+        var numberOfRowsAndColumnsToPrint = 31;
+
+        if (numberOfRowsAndColumnsToPrint > (map.NRows - 1)) {
+            numberOfRowsAndColumnsToPrint = map.NRows - 1;
+        }
+
         PrintingMap mapToPrint = GetPrintingMap(map, guardPosition, numberOfRowsAndColumnsToPrint);
 
         for (var row = mapToPrint.FirstRow; row <= mapToPrint.LastRow; row++)

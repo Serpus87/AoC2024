@@ -18,7 +18,7 @@ public static class Day6
 
         var gameService = new GameService();
         var game = gameService.SetUpGame(input);
-        //PrintingService.Print(game.Map, game.Guard.Position);
+        PrintingService.Print(game.Map, game.Guard.Position);
 
         var solution = Part1.Solve(game, gameService);
         Console.WriteLine($"Day6 Part1 Solution: {solution}");

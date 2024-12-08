@@ -83,6 +83,10 @@ public class GameService
                 game.Guard.ObstructionEncounters.Add(obstructionEncounter);
                 game.Guard.TurnRight90Degrees();
             }
+
+            //// this is Only for fun, only uncomment if you have spare time
+            //PrintingService.Print(game.Map, game.Guard.Position);
+            //System.Threading.Thread.Sleep(2);
         }
     }
 

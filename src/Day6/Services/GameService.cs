@@ -78,7 +78,7 @@ public class GameService
             if (isNextPositionObstruction)
             {
                 var obstructionEncounter = new ObstructionEncounter(new Position(game.Guard.Position.Row, game.Guard.Position.Column), game.Guard.MoveDirection);
-                hasObstructionBeenEncounteredBefore = game.Guard.ObstructionEncounters.Contains(obstructionEncounter);
+                hasObstructionBeenEncounteredBefore = game.Guard.ObstructionEncounters.Any(x=>x.MoveDirection == obstructionEncounter.MoveDirection && x.Position.Row == obstructionEncounter.Position.Row && x.Position.Column == obstructionEncounter.Position.Column);
 
                 game.Guard.ObstructionEncounters.Add(obstructionEncounter);
                 game.Guard.TurnRight90Degrees();

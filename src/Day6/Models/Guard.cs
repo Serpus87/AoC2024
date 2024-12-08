@@ -34,17 +34,4 @@ public class Guard
             case MoveDirection.Left: MoveDirection = MoveDirection.Up; break;
         }
     }
-
-    //public List<Position> GetDistinctMoves()
-    //{
-    //    var result = new List<Position>();
-
-    //    foreach (var position in Moves)
-    //    {
-    //        if (!result.Contains(x=>x.Row == position.Row && x.Column == ))
-    //        {
-
-    //        }
-    //    }
-    //}
 }

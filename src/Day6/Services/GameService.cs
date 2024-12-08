@@ -38,8 +38,8 @@ public class GameService
     // todo improve this
     internal void Play(Game game)
     {
-        var guardIsOnMap = true;
-        while (guardIsOnMap)
+        var hasObstructionBeenEncounteredBefore = false;
+        while (game.Guard.IsOnMap && !hasObstructionBeenEncounteredBefore)
         {
             // can Guard move?
             var nextPosition = GetNextPosition(game.Guard);
@@ -56,9 +56,10 @@ public class GameService
             if (!isNextPositionObstruction && isNextPositionOnMap)
             {
                 game.Map.Fields[game.Guard.Position.Row, game.Guard.Position.Column].Fill = 'X';
-
+                
                 if (!(game.Map.Fields[nextPosition.Row, nextPosition.Column].Fill == 'X'))
                 {
+                    game.Guard.Moves.Add(new Position(nextPosition.Row, nextPosition.Column));
                     game.Guard.MoveCounter++;
                 }
 
@@ -69,20 +70,19 @@ public class GameService
 
             if (!isNextPositionOnMap)
             {
+                game.Guard.IsOnMap = false;
                 game.Map.Fields[game.Guard.Position.Row, game.Guard.Position.Column].Fill = 'X';
             }
 
+            // no -> turn
             if (isNextPositionObstruction)
             {
+                var obstructionEncounter = new ObstructionEncounter(new Position(game.Guard.Position.Row, game.Guard.Position.Column), game.Guard.MoveDirection);
+                hasObstructionBeenEncounteredBefore = game.Guard.ObstructionEncounters.Any(x=>x.MoveDirection == obstructionEncounter.MoveDirection && x.Position.Row == obstructionEncounter.Position.Row && x.Position.Column == obstructionEncounter.Position.Column);
+
+                game.Guard.ObstructionEncounters.Add(obstructionEncounter);
                 game.Guard.TurnRight90Degrees();
             }
-
-            // no -> turn
-
-            // print board
-            //PrintingService.Print(game.Map, game.Guard.Position);
-            //guardIsOnMap = isNextPositionOnMap;
-            guardIsOnMap = isNextPositionOnMap;
         }
     }
 
@@ -96,5 +96,24 @@ public class GameService
             Enums.MoveDirection.Right => new Position(guard.Position.Row, guard.Position.Column + 1),
             _ => throw new ArgumentOutOfRangeException($"unknown {guard.MoveDirection}")
         };
+    }
+
+    internal List<Position> FindLoopingObstructions(List<Position> positionsToObstruct, Game game)
+    {
+        var loopingObstructions = new List<Position>();
+
+        foreach (Position positionToObstruct in positionsToObstruct) {
+            var newGame = game.Copy();
+            newGame.Map.Fields[positionToObstruct.Row, positionToObstruct.Column].Fill = '#';
+
+            Play(newGame);
+
+            if (newGame.Guard.IsOnMap)
+            {
+                loopingObstructions.Add(positionToObstruct);
+            }
+        }
+
+        return loopingObstructions;
     }
 }

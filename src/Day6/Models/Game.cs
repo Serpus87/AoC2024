@@ -16,4 +16,19 @@ public class Game
         Map = map;
         Guard = guard;
     }
+
+    internal Game Copy()
+    {
+        var map = new Map(Map.NRows, Map.NColumns);
+        var guard = new Guard(Guard.Position);
+
+        for (int row = 0; row < Map.NRows; row++) {
+            for (int column = 0; column < map.NColumns; column++)
+            {
+                map.Fields[row,column] = new Field(new Position(row, column), Map.Fields[row,column].Fill);
+            }
+        }
+
+        return new Game(map, guard);
+    }
 }

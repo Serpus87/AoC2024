@@ -23,7 +23,7 @@ public static class Day6
         var solution = Part1.Solve(game, gameService);
         Console.WriteLine($"Day6 Part1 Solution: {solution}");
 
-        solution = Part2.Solve(game);
+        solution = Part2.Solve(game, gameService);
         Console.WriteLine($"Day6 Part2 Solution: {solution}");
     }
 }

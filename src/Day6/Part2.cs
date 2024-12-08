@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day6.Models;
+using AdventOfCode.Day6.Services;
 using Microsoft.VisualBasic.FileIO;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -121,8 +122,22 @@ public static class Part2
     /// </summary>
     /// <param name="game"></param>
     /// <returns></returns>
-    public static int Solve(Game game)
+    public static int Solve(Game game, GameService gameService)
     {
-        return 0;
+        // create new game
+        var initialGame = game.Copy();
+
+        // play initial game
+        gameService.Play(initialGame);
+
+        // get positions to obstruct
+        var positionsToObstruct = initialGame.Guard.Moves.ToList();
+        positionsToObstruct.RemoveAt(0);
+
+        // find loopingObstructions
+        var loopingObstruction = gameService.FindLoopingObstructions(positionsToObstruct,game.Copy());
+
+        // count X
+        return loopingObstruction.Count();
     }
 }

@@ -8,9 +8,9 @@ namespace AdventOfCode.Day7;
 
 public static class Part2
 {
-    public static int Solve(Input input)
+    public static uint Solve(Input input)
     {
-        int result = 0;
+        uint result = 0;
         return result;
     }
 }

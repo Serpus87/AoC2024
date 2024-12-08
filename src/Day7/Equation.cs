@@ -8,10 +8,10 @@ namespace AdventOfCode.Day7;
 
 public class Equation
 {
-    public int TestValue { get; set; }
+    public long TestValue { get; set; }
     public List<int> Numbers { get; set; }
 
-    public Equation(int testValue, List<int> numbers)
+    public Equation(long testValue, List<int> numbers)
     {
         TestValue = testValue;
         Numbers = numbers;

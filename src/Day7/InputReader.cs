@@ -16,7 +16,7 @@ public static class InputReader
         foreach (var line in lines)
         {
             var equationString = line.Split(':');
-            var testValue = int.Parse(equationString[0]);
+            var testValue = long.Parse(equationString[0]);
             var numbersString = equationString[1].Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var numbers = numbersString.Select(int.Parse).ToList();
 

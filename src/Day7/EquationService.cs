@@ -36,11 +36,12 @@ public static class EquationService
         for ( var i = 0; i < numberOfOperatorCombinations; i++)
         {
             var binaryString = GetBinaryString(i, numberOfSplitEquations);
+            Console.WriteLine(binaryString);
             var solution = equation.Numbers[0];
             for ( var j = 0; j < numberOfSplitEquations; j++)
             {
                 var operatorToApply = operators[int.Parse(binaryString[j].ToString())];
-                solution = ApplyOperator(solution, equation.Numbers[i + 1], operatorToApply);
+                solution = ApplyOperator(solution, equation.Numbers[j + 1], operatorToApply);
 
                 if (solution > equation.TestValue)
                 {

@@ -9,7 +9,7 @@ namespace AdventOfCode.Day7;
 
 public static class Part1
 {
-    public static int Solve(Input input)
+    public static long Solve(Input input)
     {
         // declare operators
         var operators = new List<Operator> { Operator.Add, Operator.Multiply };
@@ -19,7 +19,7 @@ public static class Part1
 
         // sum testvalues
 
-        int result = solvedEquations.Sum(x=>x.TestValue);
+        long result = solvedEquations.Sum(x=>x.TestValue);
         return result;
     }
 }

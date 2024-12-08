@@ -116,11 +116,14 @@ public static class Part1
 
     public static int Solve(Game game, GameService gameService)
     {
-        // move guard
-        gameService.Play(game);
+        // create new game
+        var newGame = game.Copy();
+
+        // play game
+        gameService.Play(newGame);
 
         // count X
-        return game.Guard.MoveCounter;
+        return newGame.Guard.Moves.Count();
     }
 }
 

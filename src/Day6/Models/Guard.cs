@@ -11,12 +11,16 @@ public class Guard
 {
     public Position Position { get; set; }
     public MoveDirection MoveDirection { get; set; }
+    public List<Position> Moves { get; set; }
+    public List<ObstructionEncounter> ObstructionEncounters { get; set; } = new List<ObstructionEncounter>();
+    public bool IsOnMap { get; set; } = true;
     public int MoveCounter { get; set; }
 
     public Guard(Position position)
     {
         Position = position;
         MoveDirection = MoveDirection.Up;
+        Moves = new List<Position> { position };
         MoveCounter = 1;
     }
 
@@ -30,4 +34,17 @@ public class Guard
             case MoveDirection.Left: MoveDirection = MoveDirection.Up; break;
         }
     }
+
+    //public List<Position> GetDistinctMoves()
+    //{
+    //    var result = new List<Position>();
+
+    //    foreach (var position in Moves)
+    //    {
+    //        if (!result.Contains(x=>x.Row == position.Row && x.Column == ))
+    //        {
+
+    //        }
+    //    }
+    //}
 }

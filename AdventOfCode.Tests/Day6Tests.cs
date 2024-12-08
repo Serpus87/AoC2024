@@ -35,7 +35,7 @@ public class Day6Tests
     public void Part2Solve_Example_ReturnsExpectedSolution()
     {
         // Arrange
-        var expectedSolution = 123;
+        var expectedSolution = 6;
         var fileName = "Example.txt";
 
         var input = File.ReadAllLines($"Day6\\{fileName}");
@@ -44,7 +44,7 @@ public class Day6Tests
         var game = gameService.SetUpGame(input);
 
         // Act
-        var actualSolution = Part2.Solve(game);
+        var actualSolution = Part2.Solve(game, gameService);
 
         // Assert
         Assert.AreEqual(expectedSolution, actualSolution);

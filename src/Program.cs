@@ -5,11 +5,12 @@ using AdventOfCode.Day4;
 using AdventOfCode.Day5;
 using AdventOfCode.Day6;
 using AdventOfCode.Day7;
+using AdventOfCode.Day8;
 
 public class Program
 {
     private static void Main(string[] args)
     {
-        Day7.Solve();
+        Day8.Solve();
     }
 }

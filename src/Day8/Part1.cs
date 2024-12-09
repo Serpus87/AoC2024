@@ -120,6 +120,20 @@ public static class Part1
         // count antinodes
         var result = MapService.CountAntiNodes(map);
 
+        // temp
+        for (var row = 0; row < map.NRows; row++)
+        {
+            var rowToPrint = new List<char>();
+            for (var column = 0; column < map.NColumns; column++)
+            {
+                rowToPrint.Add(map.Fields[row, column].Fill);
+            }
+
+            Console.WriteLine(string.Join(' ', rowToPrint));
+        }
+
+        // /temp
+
         return result;
     }
 }

@@ -18,6 +18,11 @@ public static class MapService
             if (isOnMap) 
             {
                 map.Fields[position.Row, position.Column].HasAntiNode = true;
+
+                if (map.Fields[position.Row, position.Column].Fill == '.')
+                {
+                    map.Fields[position.Row, position.Column].Fill = '#';
+                }
             }
         }
     }

@@ -15,6 +15,9 @@ public static class AntennaService
 
         foreach (var antennaGroup in antennaGroups)
         {
+            if (antennaGroup.Count == 0) {
+                continue;
+            }
             antennaPairs.AddRange(PairAntennas(antennaGroup));
         }
 
@@ -30,27 +33,8 @@ public static class AntennaService
             var rowDifference = antennaPair.Antenna1.Position.Row - antennaPair.Antenna2.Position.Row;
             var columnDifference = antennaPair.Antenna1.Position.Column - antennaPair.Antenna2.Position.Column;
 
-            if(rowDifference < 0 && columnDifference < 0)
-            {
-                antiNodes.Add(new Position(antennaPair.Antenna1.Position.Row - rowDifference, antennaPair.Antenna1.Position.Column - columnDifference));
-                antiNodes.Add(new Position(antennaPair.Antenna2.Position.Row + rowDifference, antennaPair.Antenna2.Position.Column + columnDifference));
-            }
-            if (rowDifference < 0 && columnDifference >= 0)
-            {
-                antiNodes.Add(new Position(antennaPair.Antenna1.Position.Row - rowDifference, antennaPair.Antenna1.Position.Column + columnDifference));
-                antiNodes.Add(new Position(antennaPair.Antenna2.Position.Row + rowDifference, antennaPair.Antenna2.Position.Column - columnDifference));
-            }
-
-            if (rowDifference > 0 && columnDifference > 0)
-            {
-                antiNodes.Add(new Position(antennaPair.Antenna1.Position.Row + rowDifference, antennaPair.Antenna1.Position.Column + columnDifference));
-                antiNodes.Add(new Position(antennaPair.Antenna2.Position.Row - rowDifference, antennaPair.Antenna2.Position.Column - columnDifference));
-            }
-            if (rowDifference > 0 && columnDifference <= 0)
-            {
-                antiNodes.Add(new Position(antennaPair.Antenna1.Position.Row + rowDifference, antennaPair.Antenna1.Position.Column - columnDifference));
-                antiNodes.Add(new Position(antennaPair.Antenna2.Position.Row - rowDifference, antennaPair.Antenna2.Position.Column + columnDifference));
-            }
+            antiNodes.Add(new Position(antennaPair.Antenna1.Position.Row + rowDifference, antennaPair.Antenna1.Position.Column + columnDifference));
+            antiNodes.Add(new Position(antennaPair.Antenna2.Position.Row - rowDifference, antennaPair.Antenna2.Position.Column - columnDifference));
         }
 
         return antiNodes;

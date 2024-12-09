@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using AdventOfCode.Day8.Models;
+using AdventOfCode.Day8.Services;
 
 
 namespace AdventOfCode.Day8;
@@ -66,6 +67,35 @@ public static class Part2
 
     public static int Solve(Map map, List<Antenna> antennas)
     {
-        return 0;
+        // get antenna groups
+        var antennaGroups = AntennaService.MakeAntennaGroups(antennas);
+
+        // get antenna pairs
+        var antennaPairs = AntennaService.GetAntennaPairs(antennaGroups);
+
+        // get antinodes
+        var antinodes = AntennaService.GetResonantAntinodes(antennaPairs,map);
+
+        // set antinodes
+        MapService.SetAntiNodes(map, antinodes);
+
+        // count antinodes
+        var result = MapService.CountAntiNodes(map);
+
+        // temp
+        for (var row = 0; row < map.NRows; row++)
+        {
+            var rowToPrint = new List<char>();
+            for (var column = 0; column < map.NColumns; column++)
+            {
+                rowToPrint.Add(map.Fields[row, column].Fill);
+            }
+
+            Console.WriteLine(string.Join(' ', rowToPrint));
+        }
+
+        // /temp
+
+        return result;
     }
 }

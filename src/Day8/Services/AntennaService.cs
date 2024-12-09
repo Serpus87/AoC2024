@@ -40,6 +40,43 @@ public static class AntennaService
         return antiNodes;
     }
 
+    internal static List<Position> GetResonantAntinodes(List<AntennaPair> antennaPairs, Map map)
+    {
+        var antiNodes = new List<Position>();
+
+        foreach (var antennaPair in antennaPairs)
+        {
+            var rowDifference = antennaPair.Antenna1.Position.Row - antennaPair.Antenna2.Position.Row;
+            var columnDifference = antennaPair.Antenna1.Position.Column - antennaPair.Antenna2.Position.Column;
+
+            var newRow = antennaPair.Antenna1.Position.Row;
+            var newColumn = antennaPair.Antenna1.Position.Column;
+            var isOnMap = newRow >= 0 && newRow < map.NRows && newColumn >= 0 && newColumn < map.NColumns;
+
+            while (isOnMap)
+            {
+                antiNodes.Add(new Position(newRow, newColumn));
+                newRow = newRow + rowDifference; 
+                newColumn = newColumn + columnDifference;
+                isOnMap = newRow >= 0 && newRow < map.NRows && newColumn >= 0 && newColumn < map.NColumns;
+            }
+
+            newRow = antennaPair.Antenna2.Position.Row;
+            newColumn = antennaPair.Antenna2.Position.Column;
+            isOnMap = newRow >= 0 && newRow < map.NRows && newColumn >= 0 && newColumn < map.NColumns;
+
+            while (isOnMap)
+            {
+                antiNodes.Add(new Position(newRow, newColumn));
+                newRow = newRow - rowDifference;
+                newColumn = newColumn - columnDifference;
+                isOnMap = newRow >= 0 && newRow < map.NRows && newColumn >= 0 && newColumn < map.NColumns;
+            }
+        }
+
+        return antiNodes;
+    }
+
     internal static List<List<Antenna>> MakeAntennaGroups(List<Antenna> antennas)
     {
         var frequencies = antennas.Select(x=>x.Frequency).Distinct();

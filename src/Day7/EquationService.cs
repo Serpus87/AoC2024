@@ -35,7 +35,7 @@ public static class EquationService
         for ( var i = 0; i < numberOfOperatorCombinations; i++)
         {
             var binaryString = GetBinaryString(i, numberOfSplitEquations);
-            Console.WriteLine(binaryString);
+            //Console.WriteLine(binaryString);
             var solution = equation.Numbers[0];
             for ( var j = 0; j < numberOfSplitEquations; j++)
             {
@@ -67,29 +67,6 @@ public static class EquationService
         };
     }
 
-    //private static List<List<Operator>> GetOperatorCombinations(int numberOfSplitEquations, List<Operator> operators)
-    //{
-    //    var binaryStrings = GetBinaryStrings(operators.Count, numberOfSplitEquations);
-
-    //    var numberOfOperatorCombinations = Math.Pow(operators.Count, numberOfSplitEquations);
-    //    var operatorCounter = 0;
-    //    List<List<Operator>> operatorLists = new List<List<Operator>>();
-    //    var operatorList = new List<Operator>();
-
-    //    for (int i = 0; i < numberOfOperatorCombinations; i++)
-    //    {
-    //        operatorCounter = i % numberOfSplitEquations;
-
-    //        operatorList.Add()
-
-    //        if (operatorCounter == 0)
-    //        {
-    //            operatorLists.Add(operatorList);
-    //            operatorList = new List<Operator>();
-    //        }
-    //    }
-    //}
-
     private static string GetBinaryString(int number, int numberOfSplitEquations)
     {
         var binarystring = Convert.ToString(number, 2);
@@ -103,9 +80,12 @@ public static class EquationService
     internal static List<Equation> GetSolvedEquationsWithMoreThanTwoOperators(List<Equation> equations, List<Operator> operators)
     {
         var solvedEquations = new List<Equation>();
+        var equationCounter = 0;
 
         foreach (Equation equation in equations)
         {
+            equationCounter++;
+            //Console.WriteLine($"Checking equation: '{equationCounter}' of total number of equations: '{equations.Count}'");
             bool isSolvable = IsSolvableWithMoreThanTwoOperators(equation, operators);
 
             if (isSolvable)
@@ -125,7 +105,6 @@ public static class EquationService
 
         foreach (var operatorCombination in operatorCombinations)
         {
-            Console.WriteLine(operatorCombination);
             var solution = equation.Numbers[0];
             for (var j = 0; j < numberOfSplitEquations; j++)
             {
@@ -160,7 +139,6 @@ public static class EquationService
         var combinationCounter = 0;
 
         var array = new int[length];
-        Console.WriteLine(string.Join("", array));
         operatorCombinations.Add(string.Join("", array));
 
         var index = 0;
@@ -174,7 +152,6 @@ public static class EquationService
                     array[index]++;
                     combinationCounter++;
 
-                    Console.WriteLine(string.Join("", array));
                     operatorCombinations.Add(string.Join("", array));
                     continue;
                 }
@@ -205,7 +182,6 @@ public static class EquationService
                         break;
                     }
 
-                    Console.WriteLine(string.Join("", array));
                     operatorCombinations.Add(string.Join("", array));
                     break;
                 }

@@ -108,7 +108,7 @@ public static class DiskMapService
 
         for (int fileId = fileIds.Max(); fileId >= 0; fileId--)
         {
-            Console.WriteLine(fileId);
+            //Console.WriteLine(fileId);
 
             var fileSize = files.Single(x => x.Id == fileId).NumberOfBlocks;
 
@@ -117,7 +117,8 @@ public static class DiskMapService
             var firstPositionOfFreeSpace = disk.Blocks.First(x => x.Id == null).Position;
 
             // find freeSpace with enough size for fileSize
-            var blocksOfFreeSpace = FindBlocksOfFreeSpaceLargeEnough(disk, firstPositionOfFreeSpace, firstPositionOfFile, fileSize);
+            var relevantBlocks = disk.Blocks.Where(x => x.Position >= firstPositionOfFreeSpace && x.Position < firstPositionOfFile && x.Id == null).ToList();
+            var blocksOfFreeSpace = FindBlocksOfFreeSpaceLargeEnoughNewStrategy(relevantBlocks, firstPositionOfFreeSpace, firstPositionOfFile, fileSize);
 
             if (blocksOfFreeSpace.Count == 0)
             {
@@ -137,6 +138,31 @@ public static class DiskMapService
 
         disk.Print();
         return disk;
+    }
+
+    private static List<Block> FindBlocksOfFreeSpaceLargeEnoughNewStrategy(List<Block> relevantBlocks, int firstPositionOfFreeSpace, int firstPositionOfFile, int fileSize)
+    {
+        var blocksOfFreeSpaceLargeEnough = new List<Block>();
+        var possibleLastPosition = firstPositionOfFreeSpace + fileSize - 1;
+        var relevantDifferenceInPositions = fileSize - 1;
+
+        for (int i = 0; i <= (relevantBlocks.Count - fileSize); i++)
+        {
+            var firstBlockPosition = relevantBlocks[i].Position;
+            var lastBlockId = i + relevantDifferenceInPositions;
+
+            var lastBlockPosition = relevantBlocks[lastBlockId].Position;
+
+            if (lastBlockPosition - firstBlockPosition != relevantDifferenceInPositions)
+            {
+                continue;
+            }
+
+            blocksOfFreeSpaceLargeEnough = relevantBlocks.Skip(i).Take(fileSize).ToList();
+            break;
+        }
+
+        return blocksOfFreeSpaceLargeEnough;
     }
 
     private static List<Block> GetFileBlocks(PuzzleFile file, int diskIndex)

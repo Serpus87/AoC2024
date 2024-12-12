@@ -44,9 +44,17 @@ public static class Part2
     /// 
     /// You can also[Share] this puzzle.
     ///  </summary>
-    public static int Solve(DiskMap diskMap)
+    public static long Solve(DiskMap diskMap)
     {
-        int result = 0;
-        return result;
+        // get disk
+        var disk = DiskMapService.GetDisk(diskMap);
+
+        // update files on disk
+        disk = DiskMapService.UpdateWholeFilesOnDisk(disk, diskMap.Files);
+
+        // get checksum
+        var checkSum = DiskMapService.CalculateCheckSum(disk);
+
+        return checkSum;
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day9.Models;
@@ -41,7 +42,7 @@ public static class DiskMapService
 
         var fileCounter = 0;
         var freeSpaceCounter = 0;
-        long diskIndex = 0;
+        int diskIndex = 0;
 
         for (int i = 0; i < diskLength; i++)
         {
@@ -74,7 +75,7 @@ public static class DiskMapService
             var firstFreeSpaceBlock = disk.Blocks.First(x => x.Id == null);
             var lastFileBlock = disk.Blocks.Last(x => x.Id != null);
 
-            if(firstFreeSpaceBlock.Position >= lastFileBlock.Position)
+            if (firstFreeSpaceBlock.Position >= lastFileBlock.Position)
             {
                 break;
             };
@@ -89,7 +90,7 @@ public static class DiskMapService
         return disk;
     }
 
-    internal static long CalculateCheckSum(Disk disk)
+    public static long CalculateCheckSum(Disk disk)
     {
         long checkSum = 0;
 
@@ -101,7 +102,43 @@ public static class DiskMapService
         return checkSum;
     }
 
-    private static List<Block> GetFileBlocks(PuzzleFile file, long diskIndex)
+    public static Disk UpdateWholeFilesOnDisk(Disk disk, List<PuzzleFile> files)
+    {
+        var fileIds = files.Select(x => x.Id);
+
+        for (int fileId = fileIds.Max(); fileId >= 0; fileId--)
+        {
+            var fileSize = files.Single(x => x.Id == fileId).NumberOfBlocks;
+
+            var blocksOfFile = disk.Blocks.Where(x => x.Id == fileId).ToList();
+            var firstPositionOfFile = blocksOfFile.Min(x => x.Position);
+
+
+            var firstPositionOfFreeSpace = disk.Blocks.First(x => x.Id == null).Position;
+
+            // find freeSpace with enough size for fileSize
+            var blocksOfFreeSpace = FindBlocksOfFreeSpaceLargeEnough(disk, firstPositionOfFreeSpace, firstPositionOfFile, fileSize);
+
+            if (blocksOfFreeSpace.Count == 0)
+            {
+                continue;
+            }
+
+            // move file
+            for (int i = 0; i < blocksOfFile.Count; i++)
+            {
+                var blockOfFile = blocksOfFile[i];
+                var blockOfFreeSpace = blocksOfFreeSpace[i];
+
+                blockOfFile.Id = null;
+                blockOfFreeSpace.Id = blockOfFile.Id;
+            }
+        }
+
+        return disk;
+    }
+
+    private static List<Block> GetFileBlocks(PuzzleFile file, int diskIndex)
     {
         var blocks = new List<Block>();
         for (int i = 0; i < file.NumberOfBlocks; i++)
@@ -113,7 +150,7 @@ public static class DiskMapService
         return blocks;
     }
 
-    private static List<Block> GetFreeSpaceBlocks(FreeSpace freeSpace, long diskIndex)
+    private static List<Block> GetFreeSpaceBlocks(FreeSpace freeSpace, int diskIndex)
     {
         var blocks = new List<Block>();
         for (int i = 0; i < freeSpace.NumberOfBlocks; i++)
@@ -123,5 +160,32 @@ public static class DiskMapService
         }
 
         return blocks;
+    }
+
+    private static List<Block> FindBlocksOfFreeSpaceLargeEnough(Disk disk, int firstPositionOfFreeSpace, int firstPositionOfFile, int fileSize)
+    {
+        var blocksOfFreeSpaceLargeEnough = new List<Block>();
+        var possibleLastPosition = firstPositionOfFreeSpace + fileSize;
+        var hasBlocksOfFreeSpaceLargeEnough = true;
+
+        if (possibleLastPosition >= firstPositionOfFile)
+        {
+            return blocksOfFreeSpaceLargeEnough;
+        }
+
+        for (; firstPositionOfFreeSpace < possibleLastPosition; firstPositionOfFreeSpace++) 
+        {
+            hasBlocksOfFreeSpaceLargeEnough = disk.Blocks[firstPositionOfFreeSpace].Id == null;
+
+            if (!hasBlocksOfFreeSpaceLargeEnough) 
+            {
+                var newFirstPositionOfFreeSpace = (int)disk.Blocks.First(x => x.Position > firstPositionOfFreeSpace && x.Id == null).Position;
+                return FindBlocksOfFreeSpaceLargeEnough(disk, newFirstPositionOfFreeSpace, firstPositionOfFile, fileSize);
+            }
+
+            blocksOfFreeSpaceLargeEnough.Add(disk.Blocks[firstPositionOfFreeSpace]);
+        }
+
+        return blocksOfFreeSpaceLargeEnough;
     }
 }

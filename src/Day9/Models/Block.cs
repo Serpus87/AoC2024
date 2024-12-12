@@ -9,9 +9,9 @@ namespace AdventOfCode.Day9.Models;
 public class Block
 {
     public int? Id { get; set; }
-    public long Position { get; set; }
+    public int Position { get; set; }
 
-    public Block(int? id, long position)
+    public Block(int? id, int position)
     {
         Id = id;
         Position = position;

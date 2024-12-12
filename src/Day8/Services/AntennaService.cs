@@ -24,7 +24,7 @@ public static class AntennaService
         return antennaPairs;
     }
 
-    internal static List<Position> GetAntinodes(List<AntennaPair> antennaPairs)
+    public static List<Position> GetAntinodes(List<AntennaPair> antennaPairs)
     {
         var antiNodes = new List<Position>();
 
@@ -40,7 +40,7 @@ public static class AntennaService
         return antiNodes;
     }
 
-    internal static List<Position> GetResonantAntinodes(List<AntennaPair> antennaPairs, Map map)
+    public static List<Position> GetResonantAntinodes(List<AntennaPair> antennaPairs, Map map)
     {
         var antiNodes = new List<Position>();
 
@@ -77,7 +77,7 @@ public static class AntennaService
         return antiNodes;
     }
 
-    internal static List<List<Antenna>> MakeAntennaGroups(List<Antenna> antennas)
+    public static List<List<Antenna>> MakeAntennaGroups(List<Antenna> antennas)
     {
         var frequencies = antennas.Select(x=>x.Frequency).Distinct();
 

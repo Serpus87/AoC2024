@@ -36,7 +36,7 @@ public class GameService
     }
 
     // todo improve this
-    internal void Play(Game game)
+    public void Play(Game game)
     {
         var hasObstructionBeenEncounteredBefore = false;
         while (game.Guard.IsOnMap && !hasObstructionBeenEncounteredBefore)
@@ -102,7 +102,7 @@ public class GameService
         };
     }
 
-    internal List<Position> FindLoopingObstructions(List<Position> positionsToObstruct, Game game)
+    public List<Position> FindLoopingObstructions(List<Position> positionsToObstruct, Game game)
     {
         var loopingObstructions = new List<Position>();
 

@@ -77,7 +77,7 @@ public static class EquationService
         return stringStart + binarystring;
     }
 
-    internal static List<Equation> GetSolvedEquationsWithMoreThanTwoOperators(List<Equation> equations, List<Operator> operators)
+    public static List<Equation> GetSolvedEquationsWithMoreThanTwoOperators(List<Equation> equations, List<Operator> operators)
     {
         var solvedEquations = new List<Equation>();
         var equationCounter = 0;

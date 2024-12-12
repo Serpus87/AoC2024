@@ -17,7 +17,7 @@ public class Game
         Guard = guard;
     }
 
-    internal Game Copy()
+    public Game Copy()
     {
         var map = new Map(Map.NRows, Map.NColumns);
         var guard = new Guard(Guard.Position);

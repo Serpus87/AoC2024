@@ -73,16 +73,21 @@ public static class MapService
             }
 
             trailHead.AddTrailEndIfNew(new Position(position.Row, position.Column));
-            return WalkTrails(trailHead.Position, trailHead, map);
+            return WalkTrails(trailHead.Position, trailHead, map); 
         }
 
         var availablePositions = GetAvailablePositions(map, trailHead, position);
+
+        if (availablePositions.Count == 0 && position.Row == trailHead.Position.Row && position.Column == trailHead.Position.Column)
+        {
+            return false;
+        }
 
         if (availablePositions.Count == 0)
         {
             //map.Fields[position.Row, position.Column].IsPassable = false; // todo imprive this -- split HasPassablePositions and HasAvailablePositions
             trailHead.AddTrailEndIfNew(new Position(position.Row, position.Column));
-            return false;
+            return WalkTrails(trailHead.Position, trailHead, map);
         }
 
         foreach (var availablePosition in availablePositions)
@@ -90,7 +95,7 @@ public static class MapService
             return WalkTrails(availablePosition, trailHead, map);
         }
 
-        return false;
+        return WalkTrails(trailHead.Position, trailHead, map);
     }
 
     private static List<Position> GetAvailablePositions(Map map, TrailHead trailHead, Position position)

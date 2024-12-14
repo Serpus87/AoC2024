@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day10;
-using AdventOfCode.Day9;
 
 namespace AdventOfCode.Day10;
 
@@ -18,9 +17,9 @@ public static class Day10
         var map = MapService.GetMap(input);
 
         var solution = Part1.Solve(map);
-        Console.WriteLine($"Day9 Part1 Solution: {solution}");
+        Console.WriteLine($"Day10 Part1 Solution: {solution}");
 
         solution = Part2.Solve(map);
-        Console.WriteLine($"Day9 Part2 Solution: {solution}");
+        Console.WriteLine($"Day10 Part2 Solution: {solution}");
     }
 }

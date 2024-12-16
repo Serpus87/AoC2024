@@ -27,6 +27,7 @@ public class TrailHead
         {
             TrailTails.Add(trailTail);
             Score++;
+            Rating++;
         }
     }
 

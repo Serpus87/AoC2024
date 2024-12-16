@@ -9,6 +9,7 @@ namespace AdventOfCode.Day10.Models;
 public class Trail
 {
     public List<Position> Positions { get; set; } = new List<Position>();
+    public bool HasAlternativesBeenChecked { get; set; } = false;
 
     public Trail()
     {

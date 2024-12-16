@@ -83,7 +83,7 @@ public static class MapService
 
         for (int j = 0; j < totalNumberOfAlternativeRoutes; j++)
         {
-            foreach (var trail in trailHead.Trails.ToList())
+            foreach (var trail in trailHead.Trails.Where(x=>!x.HasAlternativesBeenChecked).ToList())
             {
                 var startingTrail = new Trail();
                 for (var i = 0; i < (trail.Positions.Count - 1); i++)
@@ -104,6 +104,8 @@ public static class MapService
                         }
                     }
                 }
+
+                trail.HasAlternativesBeenChecked = true;
             }
         } 
     }
@@ -117,8 +119,7 @@ public static class MapService
             var temp = true;
         }
 
-        var height = map.Fields[currentPosition.Row, currentPosition.Column].Height;
-        if (height == 9)
+        if (currentPosition.IsEqual(trailTail))
         {
             if (trailHead.Trails.HasTrail(currentTrail))
             {

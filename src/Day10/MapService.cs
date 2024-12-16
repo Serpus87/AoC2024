@@ -271,7 +271,7 @@ public static class MapService
         {
             foreach (var excludingPosition in excludingPositions) 
             {
-                availablePositions = availablePositions.Where(x => x.Row != excludingPosition.Row && x.Column != excludingPosition.Column).ToList();
+                availablePositions = availablePositions.Where(x => x.Row != excludingPosition.Row || x.Column != excludingPosition.Column).ToList();
             }
         }
 

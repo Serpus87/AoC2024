@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AdventOfCode.Day10.Extensions;
 using AdventOfCode.Day10.Models;
 using AdventOfCode.Day4;
 
@@ -51,29 +54,126 @@ public static class MapService
         }
     }
 
+    public static void GetTrailHeadsRatings(Map map)
+    {
+        foreach (var trailHead in map.TrailHeads)
+        {
+            GetTrailHeadRatings(trailHead, map);
+        }
+    }
+
     private static void GetTrailHeadScores(TrailHead trailHead, Map map)
     {
         var hasAvailableTrails = true;
         while (hasAvailableTrails)
         {
-            hasAvailableTrails = WalkTrails(trailHead.Position, trailHead, map);
+            hasAvailableTrails = WalkTrails(trailHead.Position, trailHead, map, new Trail());
         }
     }
 
-    private static bool WalkTrails(Position position, TrailHead trailHead, Map map)
+    // todo refactor this; it is way too complex
+    private static void GetTrailHeadRatings(TrailHead trailHead, Map map)
     {
+        var totalNumberOfAlternativeRoutes = 4 * Math.Pow(3, 7);
+        trailHead.TrailEnds = new List<Position>();
+        //while(trailHead.Trails.Count < totalNumberOfAlternativeRoutes)
+        //{
+
+        //}
+
+        for (int j = 0; j < totalNumberOfAlternativeRoutes; j++)
+        {
+            foreach (var trail in trailHead.Trails.ToList())
+            {
+                var startingTrail = new Trail();
+                for (var i = 0; i < (trail.Positions.Count - 1); i++)
+                {
+                    startingTrail.Positions.Add(trail.Positions[i]);
+                    
+                    var alternativeNextPositions = GetAvailablePositions(map, trailHead, trail.Positions[i], trail.Positions[i + 1], trail.Positions.Last());
+
+                    foreach (var position in alternativeNextPositions)
+                    {
+                        trailHead.TrailEnds = new List<Position>();
+                        var hasAlternativeTrails = true;
+                        
+                        while (hasAlternativeTrails)
+                        {
+                            var currentTrail = new Trail(startingTrail.Positions);
+                            hasAlternativeTrails = WalkAlternativeTrails(position, position, trail.Positions.Last(), trailHead, map, currentTrail, startingTrail);
+                        }
+                    }
+                }
+            }
+        } 
+    }
+
+    private static bool WalkAlternativeTrails(Position currentPosition, Position startingPosition, Position trailTail, TrailHead trailHead, Map map, Trail currentTrail, Trail startingTrail)
+    {
+        currentTrail.Positions.Add(currentPosition);
+
+        if (currentTrail.Positions.Count>10)
+        {
+            var temp = true;
+        }
+
+        var height = map.Fields[currentPosition.Row, currentPosition.Column].Height;
+        if (height == 9)
+        {
+            if (trailHead.Trails.HasTrail(currentTrail))
+            {
+                trailHead.AddTrailEndIfNew(new Position(currentPosition.Row, currentPosition.Column));
+            }
+
+            trailHead.AddTrailIfNew(currentTrail);
+
+            return WalkAlternativeTrails(startingPosition, startingPosition, trailTail, trailHead, map, new Trail(startingTrail.Positions), startingTrail);
+        }
+
+        var availablePositions = GetAvailablePositions(map, trailHead, currentPosition, null, trailTail);
+
+        if (availablePositions.Count == 0 && currentPosition.Row == startingPosition.Row && currentPosition.Column == startingPosition.Column)
+        {
+            return false;
+        }
+
+        if (availablePositions.Count == 0)
+        {
+            //map.Fields[position.Row, position.Column].IsPassable = false; // todo imprive this -- split HasPassablePositions and HasAvailablePositions
+            trailHead.AddTrailEndIfNew(new Position(currentPosition.Row, currentPosition.Column));
+            return WalkAlternativeTrails(startingPosition, startingPosition, trailTail, trailHead, map, new Trail(startingTrail.Positions), startingTrail);
+        }
+
+        foreach (var availablePosition in availablePositions)
+        {
+            return WalkAlternativeTrails(availablePosition, startingPosition, trailTail, trailHead, map, currentTrail, startingTrail);
+        }
+
+        return WalkAlternativeTrails(startingPosition, startingPosition, trailTail, trailHead, map, new Trail(startingTrail.Positions), startingTrail);
+    }
+
+    private static bool WalkTrails(Position position, TrailHead trailHead, Map map, Trail trail)
+    {
+        trail.Positions.Add(position);
+
         var height = map.Fields[position.Row, position.Column].Height;
         if (height == 9)
         {
             trailHead.AddTrailTailIfNew(new Position(position.Row, position.Column));
 
-            if (trailHead.TrailTails.Count == map.TrailTails.Count)
+            //if (trailHead.TrailTails.Count == map.TrailTails.Count)
+            //{
+            //    return false;
+            //}
+
+            if (trailHead.Trails.HasTrail(trail))
             {
-                return false;
+                trailHead.AddTrailEndIfNew(new Position(position.Row, position.Column));
             }
 
-            trailHead.AddTrailEndIfNew(new Position(position.Row, position.Column));
-            return WalkTrails(trailHead.Position, trailHead, map); 
+            trailHead.AddTrailIfNew(trail);
+
+            return WalkTrails(trailHead.Position, trailHead, map, new Trail());
         }
 
         var availablePositions = GetAvailablePositions(map, trailHead, position);
@@ -87,18 +187,18 @@ public static class MapService
         {
             //map.Fields[position.Row, position.Column].IsPassable = false; // todo imprive this -- split HasPassablePositions and HasAvailablePositions
             trailHead.AddTrailEndIfNew(new Position(position.Row, position.Column));
-            return WalkTrails(trailHead.Position, trailHead, map);
+            return WalkTrails(trailHead.Position, trailHead, map, new Trail());
         }
 
         foreach (var availablePosition in availablePositions)
         {
-            return WalkTrails(availablePosition, trailHead, map);
+            return WalkTrails(availablePosition, trailHead, map, trail);
         }
 
-        return WalkTrails(trailHead.Position, trailHead, map);
+        return WalkTrails(trailHead.Position, trailHead, map, new Trail());
     }
 
-    private static List<Position> GetAvailablePositions(Map map, TrailHead trailHead, Position position)
+    private static List<Position> GetAvailablePositions(Map map, TrailHead trailHead, Position position, Position? excludingPosition = null, Position? trailTail = null)
     {
         var availablePositions = new List<Position>();
         var directions = new List<(int, int)> { (-1, 0), (1, 0), (0, -1), (0, 1) };
@@ -106,7 +206,7 @@ public static class MapService
         foreach (var direction in directions)
         {
             var newPosition = new Position(position.Row + direction.Item1, position.Column + direction.Item2);
-            var isNewPositionAvailable = IsNewPositionAvailable(position, newPosition, trailHead, map);
+            var isNewPositionAvailable = IsNewPositionAvailable(position, newPosition, trailHead, map, trailTail);
 
             if (isNewPositionAvailable)
             {
@@ -114,10 +214,15 @@ public static class MapService
             }
         }
 
+        if (excludingPosition != null)
+        {
+            availablePositions = availablePositions.Where(x => x.Row != excludingPosition.Row && x.Column != excludingPosition.Column).ToList();
+        }
+
         return availablePositions;
     }
 
-    private static bool IsNewPositionAvailable(Position currentPosition, Position newPosition, TrailHead trailhead, Map map)
+    private static bool IsNewPositionAvailable(Position currentPosition, Position newPosition, TrailHead trailhead, Map map, Position? trailTail = null)
     {
         if (newPosition.Row < 0 || newPosition.Row >= map.NRows || newPosition.Column < 0 || newPosition.Column >= map.NColumns)
         {
@@ -136,6 +241,20 @@ public static class MapService
 
         var newHeight = map.Fields[newPosition.Row, newPosition.Column].Height;
         var currentHeight = map.Fields[currentPosition.Row, currentPosition.Column].Height;
+
+        if (trailTail != null)
+        {
+            var rowDifference = Math.Abs(newPosition.Row - trailTail.Row);
+            var columnDifference = Math.Abs(newPosition.Column - trailTail.Column);
+            var totalDistance = rowDifference * columnDifference;
+
+            var heightDifference = 9 - newHeight;
+
+            if (totalDistance > heightDifference)
+            {
+                return false;
+            }
+        }
 
         return (newHeight - currentHeight) == 1;
     }

@@ -14,7 +14,7 @@ public static class BlinkingService
         var stonesToApplyRulesTo = stones;
         for (int i = 0; i < numberOfBlinks; i++)
         {
-            Console.WriteLine($"Blink {i + 1} out of {numberOfBlinks} total number of blinks");
+            //Console.WriteLine($"Blink {i + 1} out of {numberOfBlinks} total number of blinks");
             var newStones = ApplyBlinkingRules(stonesToApplyRulesTo);
 
             stonesToApplyRulesTo = newStones;

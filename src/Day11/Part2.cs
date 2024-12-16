@@ -29,14 +29,19 @@ public static class Part2
 
     public static int Solve(List<long> stones, int numberOfTimesToBlink)
     {
-        // setup StartFile
-        BlinkingService.WriteStonesToFile(stones, "File0.txt");
+        // part 1: 40 blinks:
+        var stonesAfter30Blinks = BlinkingService.Blink(stones, 45);
 
-        // blink blink blink
-        BlinkingService.BlinkWithHelpFromFile(numberOfTimesToBlink);
+        // part 2: 35 blinks, and count
+        var result = 0;
 
-        // get stones from file
-        var result = BlinkingService.CountStonesFromFile("File1.txt");
+        var stoneCounter = 0;
+        foreach (var stone in stonesAfter30Blinks)
+        {
+            Console.WriteLine($"Stone number {stoneCounter} out of {stonesAfter30Blinks.Count} total number of stones");
+            result += BlinkingService.Blink(new List<long> { stone }, numberOfTimesToBlink - 45).Count;
+            stoneCounter++;
+        }
 
         return result;
     }

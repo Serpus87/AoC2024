@@ -76,7 +76,15 @@ public static class Part2
 
     public static int Solve(Map map)
     {
-        var result = 0;
+        // foreach trailHead walk trails
+        MapService.GetTrailHeadsScores(map);
+
+        // get ratings
+        MapService.GetTrailHeadsRatings(map);
+
+        // add scores
+        var result = map.TrailHeads.Sum(x => x.Rating);
+
         return result;
     }
 }

@@ -14,4 +14,9 @@ public static class TrailExtensions
     {
         return trails.Any(trail => trail.Positions.AreEqual(trailToCompare.Positions));
     }
+
+    public static List<Trail> GetTrailsWithSimilarStartingTrail(this List<Trail> trails, Trail trailToCompare, Position trailTail)
+    {
+        return trails.Where(trail => trail.Positions.HasSimilarStart(trailToCompare.Positions) && trail.Positions.Last().IsEqual(trailTail)).ToList();
+    }
 }

@@ -26,4 +26,16 @@ public static class PositionExtensions
 
         return areEqual.All(x => x == true);
     }
+
+    public static bool HasSimilarStart(this List<Position> positions, List<Position> positionsToCompare)
+    {
+        var areEqual = new List<bool>();
+
+        for (var i = 0; i < positionsToCompare.Count; i++)
+        {
+            areEqual.Add(positions[i].IsEqual(positionsToCompare[i]));
+        }
+
+        return areEqual.All(x => x == true);
+    }
 }

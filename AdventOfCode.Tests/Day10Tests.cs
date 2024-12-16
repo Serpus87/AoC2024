@@ -49,8 +49,8 @@ public class Day10Tests
     public void Part2Solve_Example_ReturnsExpectedSolution()
     {
         // Arrange
-        var expectedSolution = 36;
-        var fileName = "Example1.txt";
+        var expectedSolution = 81;
+        var fileName = "Example2.txt";
         var input = File.ReadAllLines($"Day10\\{fileName}");
         var map = MapService.GetMap(input);
 

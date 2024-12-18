@@ -20,7 +20,7 @@ public static class Day11
         Console.WriteLine($"Day11 Part1 Solution: {solution}");
 
         numberOfBlinks = 75;
-        solution = Part2.Solve(stoneNumbers, numberOfBlinks);
-        Console.WriteLine($"Day11 Part2 Solution: {solution}");
+        var solutionPart2 = Part2.Solve(stoneNumbers, numberOfBlinks);
+        Console.WriteLine($"Day11 Part2 Solution: {solutionPart2}");
     }
 }

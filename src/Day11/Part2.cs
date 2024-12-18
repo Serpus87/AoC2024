@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,27 +28,19 @@ public static class Part2
     /// You can also[Share] this puzzle.
     /// </summary>
 
-    public static int Solve(List<long> stones, int numberOfTimesToBlink)
+    public static long Solve(List<long> stoneNumbers, int numberOfTimesToBlink)
     {
-        // part 1: 25 blinks:
-        var stonesAfter25Blinks = BlinkingService.Blink(stones, 25);
+        // Create Stones
+        var stones = new List<Stone>();
 
-        // part 2: 25 blinks, 25 blinks ,and count
-        var result = 0;
-
-        var stoneCounter = 0;
-        foreach (var stoneAfter25Blinks in stonesAfter25Blinks)
+        foreach (var stoneNumber in stoneNumbers) 
         {
-            stoneCounter++;
-            Console.WriteLine($"StoneAfter25Blinks Number {stoneCounter} out of total {stonesAfter25Blinks.Count} number of stones");
-            var stonesAfter50Blinks = BlinkingService.Blink(new List<long> { stoneAfter25Blinks }, 25);
-
-            foreach (var stoneAfter50Blinks in stonesAfter50Blinks)
-            {
-                result += BlinkingService.Blink(new List<long> { stoneAfter50Blinks }, 25).Count;
-            }
+            stones.Add(new Stone(stoneNumber));
         }
 
-        return result;
+        // Blink with disregard of instructions
+        var stonesAfterBlinking = BlinkingService.BlinkWithDisregardOfInstructions(stones,numberOfTimesToBlink);
+
+        return stonesAfterBlinking.Sum(x=>x.Count);
     }
 }

@@ -14,7 +14,7 @@ public static class BlinkingService
         var stonesToApplyRulesTo = stones;
         for (int i = 0; i < numberOfBlinks; i++)
         {
-            //Console.WriteLine($"Blink {i + 1} out of {numberOfBlinks} total number of blinks");
+            Console.WriteLine($"Blink {i + 1} out of {numberOfBlinks} total number of blinks");
             var newStones = ApplyBlinkingRules(stonesToApplyRulesTo);
 
             stonesToApplyRulesTo = newStones;
@@ -98,6 +98,17 @@ public static class BlinkingService
         return newStones;
     }
 
+    private static List<Stone> ApplyBlinkingRules(List<Stone> stonesToApplyRulesTo)
+    {
+        var newStones = new List<Stone>();
+        for (int i = 0; i < stonesToApplyRulesTo.Count; i++)
+        {
+            newStones.AddRange(ApplyBlinkingRule(stonesToApplyRulesTo[i]));
+        }
+
+        return newStones;
+    }
+
     private static List<long> ApplyBlinkingRule(long stone)
     {
         var stonesToAdd = new List<long>();
@@ -120,6 +131,32 @@ public static class BlinkingService
         }
 
         stonesToAdd.Add(stone * 2024);
+
+        return stonesToAdd;
+    }
+
+    private static List<Stone> ApplyBlinkingRule(Stone stone)
+    {
+        var stonesToAdd = new List<Stone>();
+        var stoneString = stone.Number.ToString();
+
+        if (stone.Number == 0)
+        {
+            stonesToAdd.Add(new Stone(1, stone.Count));
+            return stonesToAdd;
+        }
+        if (stoneString.Length % 2 == 0)
+        {
+            var halfWay = stoneString.Length / 2;
+            var firstStoneNumber = int.Parse(stoneString.Substring(0, halfWay));
+            var secondStoneNumber = int.Parse(stoneString.Substring(halfWay, halfWay));
+
+            stonesToAdd.Add(new Stone(firstStoneNumber, stone.Count));
+            stonesToAdd.Add(new Stone(secondStoneNumber, stone.Count));
+            return stonesToAdd;
+        }
+
+        stonesToAdd.Add(new Stone(stone.Number * 2024, stone.Count));
 
         return stonesToAdd;
     }
@@ -158,5 +195,25 @@ public static class BlinkingService
         }
 
         return stoneCounter;
+    }
+
+    public static List<Stone> BlinkWithDisregardOfInstructions(List<Stone> stones, int numberOfTimesToBlink)
+    {
+        var stonesToApplyRulesTo = stones;
+        var stonesAfterBlinking = new List<Stone>();
+
+        for (int i = 0; i < numberOfTimesToBlink; i++)
+        {
+            Console.WriteLine($"Blink {i + 1} out of {numberOfTimesToBlink} total number of blinks");
+            // apply rules
+            stonesAfterBlinking = ApplyBlinkingRules(stonesToApplyRulesTo);
+
+            // collect stones (disregard instructions)
+            stonesAfterBlinking = stonesAfterBlinking.Collect();
+
+            stonesToApplyRulesTo = stonesAfterBlinking;
+        }
+
+        return stonesAfterBlinking;
     }
 }

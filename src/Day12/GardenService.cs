@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,9 @@ public static class GardenService
         {
             for (int column = 0; column < garden.NumberOfColumns; column++)
             {
-                garden.Plots[row, column] = new Plot(new Position(row, column), input[row][column]);
+                var plot = new Plot(new Position(row, column), input[row][column]);
+                garden.Plots[row, column] = plot;
+                garden.PlotsAsList.Add(plot);
             }
         }
 
@@ -29,49 +32,40 @@ public static class GardenService
     public static void SetupPlots(Garden garden)
     {
         var allPlotsHaveHasWalked = false;
-        var gardenHasWillWalk = false;
         var regionId = 0;
+        var counter = 0;
 
         while (!allPlotsHaveHasWalked)
         {
-            for (int row = 0; row < garden.NumberOfRows; row++)
+            if (garden.HasWillWalk())
             {
-                for (int column = 0; column < garden.NumberOfColumns; column++)
-                {
-                    if (garden.Plots[row, column].WalkEnum == WalkEnum.HasWalked) 
-                    {
-                        continue;
-                    }
-
-                    if (!garden.HasWillWalk())
-                    {
-                        regionId++;
-                        garden.Plots[row, column].WalkEnum = WalkEnum.WillWalk;
-                        garden.Plots[row, column].RegionId = regionId;
-                    }
-                    if (garden.Plots[row, column].WalkEnum == WalkEnum.WillWalk)
-                    {
-                        WalkInRegion(garden, row, column);
-                    }
-                }
+                counter++;
+                //Console.WriteLine($"Setting up Plot number {counter} out of {garden.PlotsAsList.Count} total number of Plots");
+                var plotThatWillBeWalkedFrom = garden.PlotsAsList.First(x => x.WalkEnum == WalkEnum.WillWalk);
+                WalkInRegion(garden, plotThatWillBeWalkedFrom);
+            }
+            else
+            {
+                regionId++;
+                garden.PlotsAsList.First(x => x.WalkEnum == WalkEnum.HasNotWalked).RegionId = regionId;
+                garden.PlotsAsList.First(x => x.WalkEnum == WalkEnum.HasNotWalked).WalkEnum = WalkEnum.WillWalk;
             }
 
             allPlotsHaveHasWalked = garden.AllPlotsHaveHasWalked();
         }
     }
 
-    private static void WalkInRegion(Garden garden, int row, int column)
+    private static void WalkInRegion(Garden garden, Plot plotThatWillBeWalkedFrom)
     {
-        var currentPlot = garden.Plots[row, column];
-        var plot1ToTheLeft = garden.GetPlotIfInGarden(row, column - 1);
-        var plot1ToTheAbove = garden.GetPlotIfInGarden(row - 1, column);
-        var plot1ToTheRight = garden.GetPlotIfInGarden(row, column + 1);
-        var plot1ToTheBelow = garden.GetPlotIfInGarden(row + 1, column);
+        var plot1ToTheLeft = garden.GetPlotIfInGarden(plotThatWillBeWalkedFrom.Position.Row, plotThatWillBeWalkedFrom.Position.Column - 1);
+        var plot1ToTheAbove = garden.GetPlotIfInGarden(plotThatWillBeWalkedFrom.Position.Row - 1, plotThatWillBeWalkedFrom.Position.Column);
+        var plot1ToTheRight = garden.GetPlotIfInGarden(plotThatWillBeWalkedFrom.Position.Row, plotThatWillBeWalkedFrom.Position.Column + 1);
+        var plot1ToTheBelow = garden.GetPlotIfInGarden(plotThatWillBeWalkedFrom.Position.Row + 1, plotThatWillBeWalkedFrom.Position.Column);
 
-        var regiondId = currentPlot.RegionId;
+        var regiondId = plotThatWillBeWalkedFrom.RegionId;
         var numberOfSidesAdjacentToOtherRegion = 4;
 
-        if (currentPlot.Plant == plot1ToTheLeft?.Plant)
+        if (plotThatWillBeWalkedFrom.Plant == plot1ToTheLeft?.Plant)
         {
             plot1ToTheLeft.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
@@ -81,7 +75,7 @@ public static class GardenService
             }
         }
 
-        if (currentPlot.Plant == plot1ToTheAbove?.Plant)
+        if (plotThatWillBeWalkedFrom.Plant == plot1ToTheAbove?.Plant)
         {
             plot1ToTheAbove.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
@@ -91,7 +85,7 @@ public static class GardenService
             }
         }
 
-        if (currentPlot.Plant == plot1ToTheRight?.Plant)
+        if (plotThatWillBeWalkedFrom.Plant == plot1ToTheRight?.Plant)
         {
             plot1ToTheRight.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
@@ -101,7 +95,7 @@ public static class GardenService
             }
         }
 
-        if (currentPlot.Plant == plot1ToTheBelow?.Plant)
+        if (plotThatWillBeWalkedFrom.Plant == plot1ToTheBelow?.Plant)
         {
             plot1ToTheBelow.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
@@ -111,20 +105,21 @@ public static class GardenService
             }
         }
 
-        currentPlot.WalkEnum = WalkEnum.HasWalked;
-        currentPlot.NumberOfSidesAdjacentToOtherRegion = numberOfSidesAdjacentToOtherRegion;
+        plotThatWillBeWalkedFrom.WalkEnum = WalkEnum.HasWalked;
+        plotThatWillBeWalkedFrom.NumberOfSidesAdjacentToOtherRegion = numberOfSidesAdjacentToOtherRegion;
     }
 
     public static void SetupRegions(Garden garden)
     {
         var regions = new List<Region>();
 
-        var regionIds = garden.GetPlotRegionIds();
+        var regionIds = garden.PlotsAsList.Select(x => x.RegionId).Distinct().ToList();
         var plotsOfRegion = new List<Plot>();
 
         foreach (var regionId in regionIds)
         {
-            plotsOfRegion = garden.GetPlots(regionId);
+            //Console.WriteLine($"Setting up Region {regionId} out of {regionIds.Count} total number of regions");
+            plotsOfRegion = garden.PlotsAsList.Where(x => x.RegionId == regionId).ToList();
             regions.Add(new Region(regionId, plotsOfRegion));
         }
 

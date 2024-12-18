@@ -10,7 +10,7 @@ public class Plot
 {
     public Position Position { get; init; }
     public char Plant { get; init; }
-    public int? RegionId { get; set; }
+    public int RegionId { get; set; }
     public int NumberOfSidesAdjacentToOtherRegion { get; set; }
     public WalkEnum WalkEnum { get; set; } = WalkEnum.HasNotWalked;
 

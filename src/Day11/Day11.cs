@@ -13,14 +13,14 @@ public static class Day11
         // read file
         var fileName = "PuzzleInput.txt";
         var input = File.ReadAllText($"Day11\\{fileName}");
-        var stones = input.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
+        var stoneNumbers = input.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
         var numberOfBlinks = 25;
 
-        var solution = Part1.Solve(stones, numberOfBlinks);
+        var solution = Part1.Solve(stoneNumbers, numberOfBlinks);
         Console.WriteLine($"Day11 Part1 Solution: {solution}");
 
         numberOfBlinks = 75;
-        solution = Part2.Solve(stones, numberOfBlinks);
+        solution = Part2.Solve(stoneNumbers, numberOfBlinks);
         Console.WriteLine($"Day11 Part2 Solution: {solution}");
     }
 }

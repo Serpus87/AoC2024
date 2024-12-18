@@ -29,18 +29,23 @@ public static class Part2
 
     public static int Solve(List<long> stones, int numberOfTimesToBlink)
     {
-        // part 1: 40 blinks:
-        var stonesAfter30Blinks = BlinkingService.Blink(stones, 45);
+        // part 1: 25 blinks:
+        var stonesAfter25Blinks = BlinkingService.Blink(stones, 25);
 
-        // part 2: 35 blinks, and count
+        // part 2: 25 blinks, 25 blinks ,and count
         var result = 0;
 
         var stoneCounter = 0;
-        foreach (var stone in stonesAfter30Blinks)
+        foreach (var stoneAfter25Blinks in stonesAfter25Blinks)
         {
-            Console.WriteLine($"Stone number {stoneCounter} out of {stonesAfter30Blinks.Count} total number of stones");
-            result += BlinkingService.Blink(new List<long> { stone }, numberOfTimesToBlink - 45).Count;
             stoneCounter++;
+            Console.WriteLine($"StoneAfter25Blinks Number {stoneCounter} out of total {stonesAfter25Blinks.Count} number of stones");
+            var stonesAfter50Blinks = BlinkingService.Blink(new List<long> { stoneAfter25Blinks }, 25);
+
+            foreach (var stoneAfter50Blinks in stonesAfter50Blinks)
+            {
+                result += BlinkingService.Blink(new List<long> { stoneAfter50Blinks }, 25).Count;
+            }
         }
 
         return result;

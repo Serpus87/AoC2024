@@ -69,6 +69,7 @@ public static class GardenService
         {
             plot1ToTheLeft.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
+            plotThatWillBeWalkedFrom.Fences.Remove(FenceEnum.LeftFence);
             if (plot1ToTheLeft.WalkEnum == WalkEnum.HasNotWalked)
             {
                 plot1ToTheLeft.WalkEnum = WalkEnum.WillWalk;
@@ -79,6 +80,7 @@ public static class GardenService
         {
             plot1ToTheAbove.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
+            plotThatWillBeWalkedFrom.Fences.Remove(FenceEnum.TopFence);
             if (plot1ToTheAbove.WalkEnum == WalkEnum.HasNotWalked)
             {
                 plot1ToTheAbove.WalkEnum = WalkEnum.WillWalk;
@@ -89,6 +91,7 @@ public static class GardenService
         {
             plot1ToTheRight.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
+            plotThatWillBeWalkedFrom.Fences.Remove(FenceEnum.RightFence);
             if (plot1ToTheRight.WalkEnum == WalkEnum.HasNotWalked)
             {
                 plot1ToTheRight.WalkEnum = WalkEnum.WillWalk;
@@ -99,6 +102,7 @@ public static class GardenService
         {
             plot1ToTheBelow.RegionId = regiondId;
             numberOfSidesAdjacentToOtherRegion--;
+            plotThatWillBeWalkedFrom.Fences.Remove(FenceEnum.BottomFence);
             if (plot1ToTheBelow.WalkEnum == WalkEnum.HasNotWalked)
             {
                 plot1ToTheBelow.WalkEnum = WalkEnum.WillWalk;
@@ -124,5 +128,98 @@ public static class GardenService
         }
 
         garden.Regions = regions;
+    }
+
+    public static void SetRegionSides(Garden garden)
+    {
+        foreach (var region in garden.Regions)
+        {
+            var allSidesHaveBeenCounted = false;
+
+            var sidesCounter = 0;
+            var nextPlotToCheck = region.Plots.First();
+            var firstSideToCheck = nextPlotToCheck.Fences.First();
+            var lastSideChecked = GetPreviousSideToCheck(FenceEnum.BottomFence);
+
+            while (!allSidesHaveBeenCounted)
+            {
+                allSidesHaveBeenCounted = region.Plots.All(x => x.FencesThatHaveBeenCheckedForRegionSides.Count >= 4); // todo improve this
+
+                if (nextPlotToCheck.Fences.Contains(firstSideToCheck) && !nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Contains(firstSideToCheck))
+                {
+                    if(firstSideToCheck != lastSideChecked)
+                    {
+                        sidesCounter++;
+                    }
+                    nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Add(lastSideChecked);
+
+                    lastSideChecked = firstSideToCheck;
+                    firstSideToCheck = GetNextSideToCheck(lastSideChecked);
+                    continue;
+                }
+                if (nextPlotToCheck.Fences.Contains(firstSideToCheck) && nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Contains(firstSideToCheck))
+                {
+                    lastSideChecked = firstSideToCheck;
+                    firstSideToCheck = GetNextSideToCheck(lastSideChecked);
+                    continue;
+                }
+                if (!nextPlotToCheck.Fences.Contains(firstSideToCheck))
+                {
+                    nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Add(firstSideToCheck);
+                    nextPlotToCheck = GetNextPlotToCheck(region, nextPlotToCheck, firstSideToCheck);
+
+                    firstSideToCheck = lastSideChecked;
+                    continue;
+                }
+            }
+
+            region.SetSides(sidesCounter);
+        }
+    }
+
+    private static Plot GetNextPlotToCheck(Region region, Plot currentPlot, FenceEnum firstSideToCheck)
+    {
+        var nextRow = currentPlot.Position.Row;
+        var nextColumn = currentPlot.Position.Column;
+
+        switch (firstSideToCheck)
+        {
+            case FenceEnum.LeftFence:
+                nextColumn--;
+                break;
+            case FenceEnum.TopFence:
+                nextRow++;
+                break;
+            case FenceEnum.RightFence:
+                nextColumn++;
+                break;
+            case FenceEnum.BottomFence:
+                nextRow--;
+                break;
+        }
+
+        return  region.Plots.First(x=>x.Position.Row == nextRow && x.Position.Column == nextColumn);
+    }
+
+    private static FenceEnum GetNextSideToCheck(FenceEnum lastSideChecked)
+    {
+        return lastSideChecked switch
+        {
+            FenceEnum.LeftFence => FenceEnum.TopFence,
+            FenceEnum.TopFence => FenceEnum.RightFence,
+            FenceEnum.RightFence => FenceEnum.BottomFence,
+            FenceEnum.BottomFence => FenceEnum.LeftFence,
+        };
+    }
+
+    private static FenceEnum GetPreviousSideToCheck(FenceEnum lastSideChecked)
+    {
+        return lastSideChecked switch
+        {
+            FenceEnum.LeftFence => FenceEnum.BottomFence,
+            FenceEnum.BottomFence => FenceEnum.RightFence,
+            FenceEnum.RightFence => FenceEnum.TopFence,
+            FenceEnum.TopFence => FenceEnum.LeftFence,
+        };
     }
 }

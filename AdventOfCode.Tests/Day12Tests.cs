@@ -59,4 +59,20 @@ public class Day12Tests
         // Assert
         Assert.AreEqual(expectedSolution, actualSolution);
     }
+
+    [TestMethod]
+    public void Part2Solve_Example1_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 80;
+        var fileName = "Example1.txt";
+        var input = File.ReadAllLines($"Day12\\{fileName}");
+        var garden = GardenService.SetupGarden(input);
+
+        // Act
+        var actualSolution = Part2.Solve(garden);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 }

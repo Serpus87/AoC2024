@@ -143,7 +143,7 @@ public static class GardenService
 
             while (!allSidesHaveBeenCounted)
             {
-                allSidesHaveBeenCounted = region.Plots.All(x => x.FencesThatHaveBeenCheckedForRegionSides.Count >= 4); // todo improve this
+                allSidesHaveBeenCounted = region.Plots.Any(x => x.FencesThatHaveBeenCheckedForRegionSides.Count >= 4); // todo improve this
 
                 if (nextPlotToCheck.Fences.Contains(firstSideToCheck) && !nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Contains(firstSideToCheck))
                 {
@@ -188,13 +188,13 @@ public static class GardenService
                 nextColumn--;
                 break;
             case FenceEnum.TopFence:
-                nextRow++;
+                nextRow--;
                 break;
             case FenceEnum.RightFence:
                 nextColumn++;
                 break;
             case FenceEnum.BottomFence:
-                nextRow--;
+                nextRow++;
                 break;
         }
 

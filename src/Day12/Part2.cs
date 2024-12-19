@@ -86,7 +86,7 @@ public static class Part2
         GardenService.SetupRegions(garden);
 
         // Set Region Sides
-        GardenService.SetRegionSides(garden);
+        GardenService.SetRegionsSides(garden);
 
         // Get total price
         var totalPrice = garden.Regions.Sum(x => x.BulkDiscountPrice);

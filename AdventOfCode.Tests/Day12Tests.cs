@@ -75,4 +75,52 @@ public class Day12Tests
         // Assert
         Assert.AreEqual(expectedSolution, actualSolution);
     }
+
+    [TestMethod]
+    public void Part2Solve_Part2Example1_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 236;
+        var fileName = "Part2Example1.txt";
+        var input = File.ReadAllLines($"Day12\\{fileName}");
+        var garden = GardenService.SetupGarden(input);
+
+        // Act
+        var actualSolution = Part2.Solve(garden);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
+
+    [TestMethod]
+    public void Part2Solve_Part2Example2_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 368;
+        var fileName = "Part2Example2.txt";
+        var input = File.ReadAllLines($"Day12\\{fileName}");
+        var garden = GardenService.SetupGarden(input);
+
+        // Act
+        var actualSolution = Part2.Solve(garden);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
+
+    [TestMethod]
+    public void Part2Solve_Example3_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 1206;
+        var fileName = "Example3.txt";
+        var input = File.ReadAllLines($"Day12\\{fileName}");
+        var garden = GardenService.SetupGarden(input);
+
+        // Act
+        var actualSolution = Part2.Solve(garden);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 }

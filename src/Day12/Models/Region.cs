@@ -21,7 +21,7 @@ public class Region
         Id = id;
         Plots = plots;
         Area = plots.Count;
-        Perimeter = plots.Sum(x=>x.Fences.Count);
+        Perimeter = plots.Sum(x => x.Fences.Count);
         Price = Area * Perimeter;
     }
 
@@ -29,5 +29,48 @@ public class Region
     {
         Sides = sides;
         BulkDiscountPrice = Sides * Area;
+    }
+
+    public Plot? GetPlotIfInRegion(int row, int column)
+    {
+        return Plots.FirstOrDefault(x => x.Position.Row == row && x.Position.Column == column);
+    }
+
+    internal bool HasWillWalk()
+    {
+        return Plots.Any(x => x.WalkEnum == WalkEnum.WillWalk);
+    }
+
+    internal bool AllPlotsHaveHasWalked()
+    {
+        return Plots.All(x => x.WalkEnum == WalkEnum.HasWalked);
+    }
+
+    internal void ResetWalking()
+    {
+        foreach (var plot in Plots)
+        {
+            plot.WalkEnum = WalkEnum.HasNotWalked;
+        }
+    }
+
+    internal List<Plot> GetSurroundingPlots(Plot plotThatWillBeWalkedFrom)
+    {
+        var surroundingPlots = new List<Plot>();
+
+        var directions = new List<(int row, int column)> { (0, -1), (-1, 0), (0, 1), (1, 0) };
+
+        foreach (var direction in directions) 
+        {
+            var newPosition = new Position(plotThatWillBeWalkedFrom.Position.Row + direction.row, plotThatWillBeWalkedFrom.Position.Column + direction.column);
+            var plot = GetPlotIfInRegion(newPosition.Row, newPosition.Column);
+
+            if (plot != null)
+            {
+                surroundingPlots.Add(plot);
+            }
+        }
+
+        return surroundingPlots;
     }
 }

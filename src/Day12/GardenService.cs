@@ -42,7 +42,7 @@ public static class GardenService
                 counter++;
                 //Console.WriteLine($"Setting up Plot number {counter} out of {garden.PlotsAsList.Count} total number of Plots");
                 var plotThatWillBeWalkedFrom = garden.PlotsAsList.First(x => x.WalkEnum == WalkEnum.WillWalk);
-                WalkInRegion(garden, plotThatWillBeWalkedFrom);
+                WalkInGarden(garden, plotThatWillBeWalkedFrom);
             }
             else
             {
@@ -55,7 +55,7 @@ public static class GardenService
         }
     }
 
-    private static void WalkInRegion(Garden garden, Plot plotThatWillBeWalkedFrom)
+    private static void WalkInGarden(Garden garden, Plot plotThatWillBeWalkedFrom)
     {
         var plot1ToTheLeft = garden.GetPlotIfInGarden(plotThatWillBeWalkedFrom.Position.Row, plotThatWillBeWalkedFrom.Position.Column - 1);
         var plot1ToTheAbove = garden.GetPlotIfInGarden(plotThatWillBeWalkedFrom.Position.Row - 1, plotThatWillBeWalkedFrom.Position.Column);
@@ -130,51 +130,64 @@ public static class GardenService
         garden.Regions = regions;
     }
 
-    public static void SetRegionSides(Garden garden)
+    public static void SetRegionsSides(Garden garden)
     {
+        var regionCounter = 0;
         foreach (var region in garden.Regions)
         {
-            var allSidesHaveBeenCounted = false;
+            regionCounter++;
+            Console.WriteLine($"Setting Sides for Region number {regionCounter} out of {garden.Regions.Count} total number of Regions");
+            region.ResetWalking();
+            SetRegionSides(region);
+        }
+    }
 
-            var sidesCounter = 0;
-            var nextPlotToCheck = region.Plots.First();
-            var firstSideToCheck = nextPlotToCheck.Fences.First();
-            var lastSideChecked = GetPreviousSideToCheck(FenceEnum.BottomFence);
+    private static void SetRegionSides(Region region)
+    {
+        var allPlotsHaveHasWalked = false;
+        var regionId = 0;
+        var sidesCounter = 0;
 
-            while (!allSidesHaveBeenCounted)
+        while (!allPlotsHaveHasWalked)
+        {
+            if (region.HasWillWalk())
             {
-                allSidesHaveBeenCounted = region.Plots.Any(x => x.FencesThatHaveBeenCheckedForRegionSides.Count >= 4); // todo improve this
-
-                if (nextPlotToCheck.Fences.Contains(firstSideToCheck) && !nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Contains(firstSideToCheck))
-                {
-                    if(firstSideToCheck != lastSideChecked)
-                    {
-                        sidesCounter++;
-                    }
-                    nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Add(lastSideChecked);
-
-                    lastSideChecked = firstSideToCheck;
-                    firstSideToCheck = GetNextSideToCheck(lastSideChecked);
-                    continue;
-                }
-                if (nextPlotToCheck.Fences.Contains(firstSideToCheck) && nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Contains(firstSideToCheck))
-                {
-                    lastSideChecked = firstSideToCheck;
-                    firstSideToCheck = GetNextSideToCheck(lastSideChecked);
-                    continue;
-                }
-                if (!nextPlotToCheck.Fences.Contains(firstSideToCheck))
-                {
-                    nextPlotToCheck.FencesThatHaveBeenCheckedForRegionSides.Add(firstSideToCheck);
-                    nextPlotToCheck = GetNextPlotToCheck(region, nextPlotToCheck, firstSideToCheck);
-
-                    firstSideToCheck = lastSideChecked;
-                    continue;
-                }
+                var plotThatWillBeWalkedFrom = region.Plots.First(x => x.WalkEnum == WalkEnum.WillWalk);
+                sidesCounter += WalkInRegion(region, plotThatWillBeWalkedFrom);
+            }
+            else
+            {
+                region.Plots.First(x => x.WalkEnum == WalkEnum.HasNotWalked).WalkEnum = WalkEnum.WillWalk;
             }
 
-            region.SetSides(sidesCounter);
+            allPlotsHaveHasWalked = region.AllPlotsHaveHasWalked();
         }
+
+        region.SetSides(sidesCounter);
+    }
+
+    private static int WalkInRegion(Region region, Plot plotThatWillBeWalkedFrom)
+    {
+        var surroundingPlotsInRegion = region.GetSurroundingPlots(plotThatWillBeWalkedFrom);
+        var plotFences = plotThatWillBeWalkedFrom.Fences;
+        var sidesCounter = plotFences.Count;
+
+        foreach ( var surroundingPlot in surroundingPlotsInRegion)
+        {
+            if(surroundingPlot.WalkEnum == WalkEnum.HasNotWalked)
+            {
+                surroundingPlot.WalkEnum = WalkEnum.WillWalk;
+            }
+
+            if (surroundingPlot.WalkEnum == WalkEnum.HasWalked)
+            {
+                sidesCounter -= plotFences.Count(x=>surroundingPlot.Fences.Contains(x));
+            }
+        }
+
+        plotThatWillBeWalkedFrom.WalkEnum = WalkEnum.HasWalked;
+        return sidesCounter > 0 ? sidesCounter : 0;
+
     }
 
     private static Plot GetNextPlotToCheck(Region region, Plot currentPlot, FenceEnum firstSideToCheck)

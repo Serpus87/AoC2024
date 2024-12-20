@@ -19,7 +19,7 @@ public static class Day13
         var solution = Part1.Solve(machines);
         Console.WriteLine($"Day10 Part1 Solution: {solution}");
 
-        solution = Part2.Solve(machines);
-        Console.WriteLine($"Day10 Part2 Solution: {solution}");
+        var longSolution = Part2.Solve(machines);
+        Console.WriteLine($"Day10 Part2 Solution: {longSolution}");
     }
 }

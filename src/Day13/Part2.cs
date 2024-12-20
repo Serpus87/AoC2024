@@ -9,12 +9,13 @@ namespace AdventOfCode.Day13;
 
 public static class Part2
 {
-    public static int Solve(List<ClawMachine> machines)
+    public static ulong Solve(List<ClawMachine> machines)
     {
         // recalibrate prize locations
         ArcadeService.RecalibratePrizeLocations(machines);
 
-        var result = ArcadeService.PlayMachines(machines);
+
+        var result = ArcadeService.SolveWithoutPlayingMachines(machines);
 
         return result;
     }

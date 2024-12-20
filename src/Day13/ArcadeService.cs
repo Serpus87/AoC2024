@@ -184,4 +184,94 @@ public static class ArcadeService
             machine.Prize.Location.YCoordinate += 10000000000000;
         }
     }
+
+    public static ulong SolveWithoutPlayingMachines(List<ClawMachine> machines)
+    {
+        ulong totalCost = 0;
+
+        var machineCounter = 0;
+        foreach (var machine in machines)
+        {
+            machineCounter++;
+            Console.WriteLine($"Playing machine number {machineCounter} out of {machines.Count} total number of machines");
+            totalCost += TryWinPrizeWithMath(machine);
+        }
+
+        return totalCost;
+    }
+
+    private static ulong TryWinPrizeWithMath(ClawMachine machine)
+    {
+        // --- pseudoCode AKA math ---
+        /*  
+         * machine.Prize.Location.XCoordinate = numberOfAButtons * machine.AButton.XMove + numberOfBButtons * machine.BButton.XMove;
+         * machine.Prize.Location.YCoordinate = numberOfAButtons * machine.AButton.YMove + numberOfBButtons * machine.BButton.YMove;
+         *
+         * numberOfAButtons = (machine.Prize.Location.XCoordinate - numberOfBButtons * machine.BButton.XMove) / machine.AButton.XMove;
+         * machine.Prize.Location.YCoordinate = ((machine.Prize.Location.XCoordinate - numberOfBButtons * machine.BButton.XMove) / machine.AButton.XMove) * machine.AButton.YMove + numberOfBButtons * machine.BButton.YMove;
+         * machine.Prize.Location.YCoordinate = (machine.Prize.Location.XCoordinate * machine.AButton.YMove - numberOfBButtons * machine.BButton.XMove * machine.AButton.YMove) / machine.AButton.XMove  + numberOfBButtons * machine.BButton.YMove;
+         * machine.Prize.Location.YCoordinate * machine.AButton.XMove = machine.Prize.Location.XCoordinate * machine.AButton.YMove - numberOfBButtons * machine.BButton.XMove * machine.AButton.YMove + numberOfBButtons * machine.BButton.YMove * machine.AButton.XMove;
+         * machine.Prize.Location.YCoordinate * machine.AButton.XMove - machine.Prize.Location.XCoordinate * machine.AButton.YMove =  - numberOfBButtons * machine.BButton.XMove * machine.AButton.YMove + numberOfBButtons * machine.BButton.YMove * machine.AButton.XMove;
+         * machine.Prize.Location.YCoordinate * machine.AButton.XMove - machine.Prize.Location.XCoordinate * machine.AButton.YMove = numberOfBButtons * machine.BButton.YMove * machine.AButton.XMove - numberOfBButtons * machine.BButton.XMove * machine.AButton.YMove;
+         * machine.Prize.Location.YCoordinate * machine.AButton.XMove - machine.Prize.Location.XCoordinate * machine.AButton.YMove = numberOfBButtons * (machine.BButton.YMove * machine.AButton.XMove - machine.BButton.XMove * machine.AButton.YMove);
+         * 
+         * numberOfBButtons = (machine.Prize.Location.YCoordinate * machine.AButton.XMove - machine.Prize.Location.XCoordinate * machine.AButton.YMove) / (machine.BButton.YMove * machine.AButton.XMove - machine.BButton.XMove * machine.AButton.YMove);
+         * numberOfAButtons = (machine.Prize.Location.XCoordinate - numberOfBButtons * machine.BButton.XMove) / machine.AButton.XMove;
+         *
+         * 
+         */
+
+        // 4 possible solutions
+
+        // first solve for B on XPrizeLocation
+        var numberOfBButtons1 = (decimal)(machine.Prize.Location.YCoordinate * machine.AButton.XMove - machine.Prize.Location.XCoordinate * machine.AButton.YMove) / (machine.BButton.YMove * machine.AButton.XMove - machine.BButton.XMove * machine.AButton.YMove);
+        var numberOfAButtons1 = (machine.Prize.Location.XCoordinate - numberOfBButtons1 * machine.BButton.XMove) / machine.AButton.XMove;
+
+        if (Math.Ceiling(numberOfAButtons1) != Math.Floor(numberOfAButtons1))
+        {
+            return 0;
+        }
+
+        var cost1 = (ulong)machine.AButton.Token * (ulong)numberOfAButtons1 + (ulong)machine.BButton.Token * (ulong)numberOfBButtons1;
+
+        // second solve for B on YPrizeLocation
+        var numberOfBButtons2 = (decimal)(machine.Prize.Location.XCoordinate * machine.AButton.YMove - machine.Prize.Location.YCoordinate * machine.AButton.XMove) / (machine.BButton.XMove * machine.AButton.YMove - machine.BButton.YMove * machine.AButton.XMove);
+        var numberOfAButtons2 = (machine.Prize.Location.YCoordinate - numberOfBButtons2 * machine.BButton.YMove) / machine.AButton.YMove;
+
+        var cost2 = (ulong)machine.AButton.Token * (ulong)numberOfAButtons2 + (ulong)machine.BButton.Token * (ulong)numberOfBButtons2;
+
+        // third solve for A on XPrizeLocation
+        var numberOfAButtons3 = (decimal)(machine.Prize.Location.YCoordinate * machine.BButton.XMove - machine.Prize.Location.XCoordinate * machine.BButton.YMove) / (machine.AButton.YMove * machine.BButton.XMove - machine.AButton.XMove * machine.BButton.YMove);
+        var numberOfBButtons3 = (machine.Prize.Location.XCoordinate - numberOfAButtons3 * machine.AButton.XMove) / machine.BButton.XMove;
+
+        var cost3 = (ulong)machine.AButton.Token * (ulong)numberOfAButtons3 + (ulong)machine.BButton.Token * (ulong)numberOfBButtons3;
+
+        // fourth solve for A on YPrizeLocation
+        var numberOfAButtons4 = (decimal)(machine.Prize.Location.XCoordinate * machine.BButton.YMove - machine.Prize.Location.YCoordinate * machine.BButton.XMove) / (machine.AButton.XMove * machine.BButton.YMove - machine.AButton.YMove * machine.BButton.XMove);
+        var numberOfBButtons4 = (machine.Prize.Location.YCoordinate - numberOfAButtons4 * machine.AButton.YMove) / machine.BButton.YMove;
+
+        var cost4 = (ulong)machine.AButton.Token * (ulong)numberOfAButtons4 + (ulong)machine.BButton.Token * (ulong)numberOfBButtons4;
+
+
+        // -- temp doubleCheck the math
+        var sol1 = DoubleCheck(machine, (ulong)numberOfAButtons1, (ulong)numberOfBButtons1);
+        var sol2 = DoubleCheck(machine, (ulong)numberOfAButtons2, (ulong)numberOfBButtons2);
+        var sol3 = DoubleCheck(machine, (ulong)numberOfAButtons3, (ulong)numberOfBButtons3);
+        var sol4 = DoubleCheck(machine, (ulong)numberOfAButtons4, (ulong)numberOfBButtons4);
+        // --
+
+        // return minimumCost
+        return Math.Min(Math.Min(cost1,cost2),Math.Min(cost3,cost4));
+    }
+
+    private static bool DoubleCheck(ClawMachine machine, ulong aButtonPresses, ulong bButtonPresses)
+    {
+        var xCoordinate = aButtonPresses * (ulong)machine.AButton.XMove + bButtonPresses * (ulong)machine.BButton.XMove;
+        var yCoordinate = aButtonPresses * (ulong)machine.AButton.YMove + bButtonPresses * (ulong)machine.BButton.YMove;
+
+        var location = new Location((long)xCoordinate, (long)yCoordinate);
+        var locationIsPrizeLocation = location.IsEqual(machine.Prize.Location);
+
+        return locationIsPrizeLocation;
+    }
 }

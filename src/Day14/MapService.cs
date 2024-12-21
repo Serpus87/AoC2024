@@ -59,7 +59,7 @@ public class MapService
     {
         for (int i = 0; i < numberOfTimesToMove; i++) 
         {
-            map.Print();
+            //map.Print();
             foreach (Robot robot in robots) 
             {
                 var currentLocation = robot.Position;
@@ -68,6 +68,6 @@ public class MapService
                 map.MoveRobot(currentLocation, nextLocation);
             }
         }
-        map.Print();
+        //map.Print();
     }
 }

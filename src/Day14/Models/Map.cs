@@ -127,12 +127,12 @@ public class Map
 
         if (nextRow < 0)
         {
-            return nextRow + NumberOfRows - 1;
+            return nextRow + NumberOfRows;
         }
 
         if (nextRow >= NumberOfRows)
         {
-            return nextRow - (NumberOfRows - 1);
+            return nextRow - NumberOfRows;
         }
 
         return nextRow;
@@ -144,16 +144,14 @@ public class Map
 
         if (nextColumn < 0)
         {
-            return nextColumn + NumberOfColumns - 1;
+            return nextColumn + NumberOfColumns;
         }
 
         if (nextColumn >= NumberOfColumns)
         {
-            return nextColumn - (NumberOfColumns - 1);
+            return nextColumn - NumberOfColumns;
         }
 
         return nextColumn;
     }
-
-
 }

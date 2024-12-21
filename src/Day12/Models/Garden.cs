@@ -38,12 +38,12 @@ public class Garden
         return row >= 0 && row < NumberOfRows && column >= 0 && column < NumberOfColumns;
     }
 
-    internal bool HasWillWalk()
+    public bool HasWillWalk()
     {
         return PlotsAsList.Any(x=>x.WalkEnum == WalkEnum.WillWalk);
     }
 
-    internal bool AllPlotsHaveHasWalked()
+    public bool AllPlotsHaveHasWalked()
     {
         return PlotsAsList.All(x => x.WalkEnum == WalkEnum.HasWalked);
     }

@@ -22,12 +22,12 @@ public class Location
         return XCoordinate == other.XCoordinate && YCoordinate == other.YCoordinate;
     }
 
-    internal bool IsGreaterThan(Location prizeLocation)
+    public bool IsGreaterThan(Location prizeLocation)
     {
         return XCoordinate > prizeLocation.XCoordinate || YCoordinate > prizeLocation.YCoordinate;
     }
 
-    internal bool HasSmallerThanAndSmallerOrEqualTo(Location prizeLocation)
+    public bool HasSmallerThanAndSmallerOrEqualTo(Location prizeLocation)
     {
         return (XCoordinate < prizeLocation.XCoordinate && YCoordinate <= prizeLocation.YCoordinate) ||
             (XCoordinate <= prizeLocation.XCoordinate && YCoordinate < prizeLocation.YCoordinate);

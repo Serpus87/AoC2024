@@ -36,17 +36,17 @@ public class Region
         return Plots.FirstOrDefault(x => x.Position.Row == row && x.Position.Column == column);
     }
 
-    internal bool HasWillWalk()
+    public bool HasWillWalk()
     {
         return Plots.Any(x => x.WalkEnum == WalkEnum.WillWalk);
     }
 
-    internal bool AllPlotsHaveHasWalked()
+    public bool AllPlotsHaveHasWalked()
     {
         return Plots.All(x => x.WalkEnum == WalkEnum.HasWalked);
     }
 
-    internal void ResetWalking()
+    public void ResetWalking()
     {
         foreach (var plot in Plots)
         {
@@ -54,7 +54,7 @@ public class Region
         }
     }
 
-    internal List<Plot> GetSurroundingPlots(Plot plotThatWillBeWalkedFrom)
+    public List<Plot> GetSurroundingPlots(Plot plotThatWillBeWalkedFrom)
     {
         var surroundingPlots = new List<Plot>();
 

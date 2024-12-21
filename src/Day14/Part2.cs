@@ -29,7 +29,7 @@ public static class Part2
     /// <returns></returns>
     public static int Solve(Map map, List<Robot> robots)
     {
-        var result = 0;
+        var result = MapService.MoveRobotsUntillXMassTree(map, robots);
 
         return result;
     }

@@ -70,4 +70,30 @@ public class MapService
         }
         //map.Print();
     }
+
+    public static int MoveRobotsUntillXMassTree(Map map, List<Robot> robots)
+    {
+        var mapContainsXMassTree = false;
+        var robotsHaveXMassTreeArrangement = false;
+        var counter = 0;
+
+        while (!mapContainsXMassTree) 
+        {
+            counter++;
+            //map.Print();
+            foreach (Robot robot in robots)
+            {
+                var currentLocation = robot.Position;
+                var nextLocation = map.GetNextLocation(robot);
+                robot.Position = nextLocation;
+                map.MoveRobot(currentLocation, nextLocation);
+            }
+            map.Print();
+            mapContainsXMassTree = map.ContainsXMassTree();
+            robotsHaveXMassTreeArrangement = robots.HaveXMassTreeArrangement();
+        }
+
+        map.Print();
+        return counter;
+    }
 }

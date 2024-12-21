@@ -59,14 +59,15 @@ public class MapService
     {
         for (int i = 0; i < numberOfTimesToMove; i++) 
         {
-            //map.Print();
+            map.Print();
             foreach (Robot robot in robots) 
             {
                 var currentLocation = robot.Position;
                 var nextLocation = map.GetNextLocation(robot);
+                robot.Position = nextLocation;
                 map.MoveRobot(currentLocation, nextLocation);
             }
         }
-        //map.Print();
+        map.Print();
     }
 }

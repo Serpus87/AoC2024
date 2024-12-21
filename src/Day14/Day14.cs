@@ -12,12 +12,13 @@ public static class Day14
     public static void Solve()
     {
         // read file
-        var fileName = "PuzzleInput.txt";
+        //var fileName = "PuzzleInput.txt";
+        var fileName = "Example.txt";
         var input = File.ReadAllLines($"Day14\\{fileName}");
 
         var robots = MapService.GetRobotsFromFile(input);
-        var mapNRows = 103;
-        var mapNColumns = 101;
+        var mapNRows = 7;//103;
+        var mapNColumns = 11;//101;
         var map = MapService.SetupMap(mapNRows, mapNColumns, robots);
 
         var solution = Part1.Solve(map,robots);

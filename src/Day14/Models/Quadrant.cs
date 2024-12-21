@@ -15,8 +15,8 @@ public class Quadrant
         Fields = fields;
     }
 
-    public int GetSafetyFactor()
+    public int GetNumberOfRobots()
     {
-        return Fields.Where(x => x.NumberOfRobots != null).Sum(x=>(int)x.NumberOfRobots!);
+        return Fields.Sum(x=>x.NumberOfRobots);
     }
 }

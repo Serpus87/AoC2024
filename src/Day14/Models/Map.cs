@@ -88,11 +88,11 @@ public class Map
 
     public int GetSafetyFactor()
     {
-        var safetyFactor = 0;
+        var safetyFactor = 1;
 
         foreach (var quadrant in Quadrants)
         {
-            safetyFactor += quadrant.GetSafetyFactor();
+            safetyFactor *= quadrant.GetNumberOfRobots();
         }
 
         return safetyFactor;

@@ -15,12 +15,23 @@ public class MapService
 
         foreach (var line in input)
         {
-            var positionX = int.Parse(line.Substring(line.IndexOf('p') + 2, line.IndexOf(',') - (line.IndexOf('p') + 2)));
-            var positionY = int.Parse(line.Substring(line.IndexOf(','), line.IndexOf('v') - (line.IndexOf(',') - 2)));
-            var velocityX = int.Parse(line.Substring(line.IndexOf('v') + 2, line.IndexOf(',', line.IndexOf('v') - (line.IndexOf('v') + 2))));
-            var velocityY = int.Parse(line.Substring(line.IndexOf(',',line.IndexOf('v'))));
+            var robotText = line.Split(' ');
+            var positionXIndex = robotText[0].IndexOf('=') + 1;
+            var positionXLength = robotText[0].IndexOf(',') - positionXIndex;
+            var positionYIndex = robotText[0].IndexOf(',') + 1;
+            var positionYLength = robotText[0].Length - positionYIndex;
 
-            robots.Add( new Robot(new Location(positionX, positionY), new Location(velocityX,velocityY)));
+            var velocityXIndex = robotText[1].IndexOf('=') + 1;
+            var velocityXLength = robotText[1].IndexOf(',') - velocityXIndex;
+            var velocityYIndex = robotText[1].IndexOf(',') + 1;
+            var velocityYLength = robotText[1].Length - velocityYIndex;
+
+            var positionX = int.Parse(robotText[0].Substring(positionXIndex, positionXLength));
+            var positionY = int.Parse(robotText[0].Substring(positionYIndex, positionYLength));
+            var velocityX = int.Parse(robotText[1].Substring(velocityXIndex, velocityXLength));
+            var velocityY = int.Parse(robotText[1].Substring(velocityYIndex, velocityYLength));
+
+            robots.Add( new Robot(new Location(positionY, positionX), new Location(velocityY,velocityX)));
         }
 
         return robots;
@@ -48,7 +59,7 @@ public class MapService
     {
         for (int i = 0; i < numberOfTimesToMove; i++) 
         {
-            map.Print();
+            //map.Print();
             foreach (Robot robot in robots) 
             {
                 var currentLocation = robot.Position;
@@ -56,6 +67,6 @@ public class MapService
                 map.MoveRobot(currentLocation, nextLocation);
             }
         }
-        map.Print();
+        //map.Print();
     }
 }

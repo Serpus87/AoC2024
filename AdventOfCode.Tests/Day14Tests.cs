@@ -47,8 +47,12 @@ public class Day14Tests
         var robots = MapService.GetRobotsFromFile(input);
         var map = MapService.SetupMap(exampleMapNRows, exampleMapNColumns, robots);
 
+        map.Print();
+
         // Act
         var actualSolution = Part2.Solve(map, robots);
+
+        map.Print();
 
         // Assert
         Assert.AreEqual(expectedSolution, actualSolution);

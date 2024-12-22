@@ -77,9 +77,10 @@ public class MapService
         var robotsHaveXMassTreeArrangement = false;
         var counter = 0;
 
-        while (!mapContainsXMassTree) 
+        while (!robotsHaveXMassTreeArrangement) 
         {
             counter++;
+            Console.WriteLine(counter);
             //map.Print();
             foreach (Robot robot in robots)
             {
@@ -88,10 +89,11 @@ public class MapService
                 robot.Position = nextLocation;
                 map.MoveRobot(currentLocation, nextLocation);
             }
-            map.Print();
-            mapContainsXMassTree = map.ContainsXMassTree();
+            //map.Print();
+            //mapContainsXMassTree = map.ContainsXMassTree();
             robotsHaveXMassTreeArrangement = robots.HaveXMassTreeArrangement();
         }
+        
 
         map.Print();
         return counter;

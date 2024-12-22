@@ -14,11 +14,78 @@ public static class RobotExtensions
     {
         var robotsHaveXMassTreeArrangement = false;
 
-        var treeTrunks = robots.FindTreeTrunks();
-        var xMassTrees = treeTrunks.FindXMassTrees(robots);
+        //var treeTrunks = robots.FindTreeTrunks();
+        //var xMassTrees = treeTrunks.FindXMassTrees(robots);
+        var bigBranches = robots.FindLargeRowOfSubsequentRobots();
 
-        return robotsHaveXMassTreeArrangement;
+        return bigBranches.Count > 0;
     }
+
+    public static List<TreeBranch> FindLargeRowOfSubsequentRobots(this List<Robot> robots)
+    {
+        var bottomBranchLength = 15;
+        var bottomBranches = new List<TreeBranch>();
+        var robotRows = robots.Select(x => x.Position.Row).Distinct().ToList();
+
+        foreach (var robotRow in robotRows)
+        {
+            var robotsInRow = robots.Where(x => x.Position.Row == robotRow).ToList();
+
+            if (robotsInRow.Count < bottomBranchLength)
+            {
+                continue;
+            }
+
+            foreach (var robot in robotsInRow)
+            {
+                if (!robot.IsStartOfBranch(robots))
+                {
+                    continue;
+                }
+                if (robot.IsEndOfBranch(robots))
+                {
+                    continue;
+                }
+
+                var nextRobot = robot.GetNextPieceOfBranch(robotsInRow);
+                var treeBranch = new TreeBranch(new List<Robot> { robot });
+                //var treeBranchHasNoEnd = false;
+
+                while (!nextRobot.IsEndOfBranch(robotsInRow))
+                {
+                    treeBranch.Branch.Add(nextRobot!);
+                    nextRobot = nextRobot!.GetNextPieceOfBranch(robotsInRow);
+
+                    //if (nextRobot == null)
+                    //{
+                    //    treeBranchHasNoEnd = true;
+                    //}
+                }
+
+                var length = treeBranch.Branch.Count;
+                if (length < bottomBranchLength)
+                {
+                    continue;
+                }
+
+                bottomBranches.Add(treeBranch);
+
+                // -- for testing purpose break;
+                break;
+                // --
+            }
+
+            // -- for testing purpose, end early
+            if (bottomBranches.Count > 0)
+            {
+                break;
+            }
+            // --
+        }
+
+        return bottomBranches;
+    }
+
 
     public static List<TreeTrunk> FindTreeTrunks(this List<Robot> robots)
     {
@@ -76,7 +143,7 @@ public static class RobotExtensions
             var branches = new List<TreeBranch>();
             var hasNoBranch = false;
 
-            for (int i = 0; i < numberOfBranches; i++) 
+            for (int i = 0; i < numberOfBranches; i++)
             {
                 branchLength += (int)(Math.Floor((decimal)i / 2));
 
@@ -85,7 +152,7 @@ public static class RobotExtensions
 
                 var branch = treeTrunk.FindBranch(trunkPosition, branchLength, robotsInSameRow);
 
-                if (branch == null) 
+                if (branch == null)
                 {
                     hasNoBranch = true;
                     break;
@@ -114,8 +181,8 @@ public static class RobotExtensions
 
     internal static bool IsPeak(this Robot robot, List<Robot> robots)
     {
-        return !robots.Any(x => x.Position.Column == robot.Position.Column && x.Position.Row == (robot.Position.Row - 1) 
-        || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row 
+        return !robots.Any(x => x.Position.Column == robot.Position.Column && x.Position.Row == (robot.Position.Row - 1)
+        || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row
         || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row);
     }
 
@@ -126,8 +193,23 @@ public static class RobotExtensions
         || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row);
     }
 
+    internal static bool IsStartOfBranch(this Robot robot, List<Robot> robots)
+    {
+        return !robots.Any(x => x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row);
+    }
+
+    internal static bool IsEndOfBranch(this Robot robot, List<Robot> robots)
+    {
+        return !robots.Any(x => x.Position.Column == (robot.Position.Column + 1) && x.Position.Row == robot.Position.Row);
+    }
+
     internal static Robot? GetNextPieceOfTrunk(this Robot robot, List<Robot> robots)
     {
         return robots.FirstOrDefault(x => x.Position.Column == robot.Position.Column && x.Position.Row == (robot.Position.Row + 1));
+    }
+
+    internal static Robot GetNextPieceOfBranch(this Robot robot, List<Robot> robots)
+    {
+        return robots.First(x => x.Position.Column == (robot.Position.Column + 1) && x.Position.Row == robot.Position.Row);
     }
 }

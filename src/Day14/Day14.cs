@@ -24,7 +24,9 @@ public static class Day14
         var solution = Part1.Solve(map,robots);
         Console.WriteLine($"Day14 Part1 Solution: {solution}");
 
-        var longSolution = Part2.Solve(map,robots);
+        var part2Robots = MapService.GetRobotsFromFile(input);
+        var part2Map = MapService.SetupMap(mapNRows, mapNColumns, part2Robots);
+        var longSolution = Part2.Solve(part2Map, part2Robots);
         Console.WriteLine($"Day14 Part2 Solution: {longSolution}");
     }
 }

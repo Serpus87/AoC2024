@@ -26,7 +26,7 @@ public static class Day14
 
         var part2Robots = MapService.GetRobotsFromFile(input);
         var part2Map = MapService.SetupMap(mapNRows, mapNColumns, part2Robots);
-        var longSolution = Part2.Solve(part2Map, part2Robots);
-        Console.WriteLine($"Day14 Part2 Solution: {longSolution}");
+        var part2Solution = Part2.Solve(part2Map, part2Robots);
+        Console.WriteLine($"Day14 Part2 Solution: {part2Solution}");
     }
 }

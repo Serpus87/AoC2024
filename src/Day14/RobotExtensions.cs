@@ -173,42 +173,42 @@ public static class RobotExtensions
     }
 
 
-    internal static TreeBranch FindBranch(this TreeTrunk treeTrunk, int trunkPosition, int branchLength, List<Robot> robotsInSameRow)
+    public static TreeBranch FindBranch(this TreeTrunk treeTrunk, int trunkPosition, int branchLength, List<Robot> robotsInSameRow)
     {
         throw new NotImplementedException();
     }
 
 
-    internal static bool IsPeak(this Robot robot, List<Robot> robots)
+    public static bool IsPeak(this Robot robot, List<Robot> robots)
     {
         return !robots.Any(x => x.Position.Column == robot.Position.Column && x.Position.Row == (robot.Position.Row - 1)
         || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row
         || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row);
     }
 
-    internal static bool IsBottom(this Robot robot, List<Robot> robots)
+    public static bool IsBottom(this Robot robot, List<Robot> robots)
     {
         return !robots.Any(x => x.Position.Column == robot.Position.Column && x.Position.Row == (robot.Position.Row + 1)
         || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row
         || x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row);
     }
 
-    internal static bool IsStartOfBranch(this Robot robot, List<Robot> robots)
+    public static bool IsStartOfBranch(this Robot robot, List<Robot> robots)
     {
         return !robots.Any(x => x.Position.Column == (robot.Position.Column - 1) && x.Position.Row == robot.Position.Row);
     }
 
-    internal static bool IsEndOfBranch(this Robot robot, List<Robot> robots)
+    public static bool IsEndOfBranch(this Robot robot, List<Robot> robots)
     {
         return !robots.Any(x => x.Position.Column == (robot.Position.Column + 1) && x.Position.Row == robot.Position.Row);
     }
 
-    internal static Robot? GetNextPieceOfTrunk(this Robot robot, List<Robot> robots)
+    public static Robot? GetNextPieceOfTrunk(this Robot robot, List<Robot> robots)
     {
         return robots.FirstOrDefault(x => x.Position.Column == robot.Position.Column && x.Position.Row == (robot.Position.Row + 1));
     }
 
-    internal static Robot GetNextPieceOfBranch(this Robot robot, List<Robot> robots)
+    public static Robot GetNextPieceOfBranch(this Robot robot, List<Robot> robots)
     {
         return robots.First(x => x.Position.Column == (robot.Position.Column + 1) && x.Position.Row == robot.Position.Row);
     }

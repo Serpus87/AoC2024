@@ -155,7 +155,7 @@ public class Map
         return nextColumn;
     }
 
-    internal bool ContainsXMassTree()
+    public bool ContainsXMassTree()
     {
         return false;
     }

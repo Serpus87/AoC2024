@@ -15,4 +15,11 @@ public class Robot
     {
         Position = position;
     }
+
+    internal void MakeMove(Move move, Map map)
+    {
+        map.Fields[Position.Row, Position.Column].Fill = '.';
+        Position = new Position(Position.Row + move.Vertical, Position.Column + move.Horizontal);
+        map.Fields[Position.Row, Position.Column].Fill = '@';
+    }
 }

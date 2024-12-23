@@ -19,4 +19,20 @@ public class Map
         NumberOfColumns = numberOfColumns;
         Fields = new Field[numberOfRows, numberOfColumns];
     }
+
+    public void Print()
+    {
+        Console.Clear();
+
+        for (var row = 0; row < NumberOfRows; row++)
+        {
+            var rowToPrint = new List<string>();
+            for (var column = 0; column < NumberOfColumns; column++)
+            {
+                rowToPrint.Add(Fields[row, column].Fill.ToString());
+            }
+
+            Console.WriteLine(string.Join(' ', rowToPrint));
+        }
+    }
 }

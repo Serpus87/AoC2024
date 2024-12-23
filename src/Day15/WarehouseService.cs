@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AdventOfCode.Day15.Extensions;
 using AdventOfCode.Day15.Models;
 
 namespace AdventOfCode.Day15;
@@ -40,6 +41,7 @@ public static class WarehouseService
 
         return splitInput;
     }
+
     public static Warehouse GetWarehouse(string[] input)
     {
         var nRows = input.Length;
@@ -83,16 +85,16 @@ public static class WarehouseService
                 switch (line[i])
                 {
                     case '<':
-                        moves.Add(new Move(0, -1));
+                        moves.Add(MoveList.Left);
                         break;
                     case '>':
-                        moves.Add(new Move(0, 1));
+                        moves.Add(MoveList.Right);
                         break;
                     case '^':
-                        moves.Add(new Move(-1, 0));
+                        moves.Add(MoveList.Up);
                         break;
                     case 'v':
-                        moves.Add(new Move(1, 0));
+                        moves.Add(MoveList.Down);
                         break;
                     default:
                         break;
@@ -101,5 +103,39 @@ public static class WarehouseService
         }
 
         return moves;
+    }
+
+    public static void MakeAllRobotMoves(Warehouse warehouse)
+    {
+        var robot = warehouse.Robot;
+        var map = warehouse.Map;
+        var boxes = warehouse.Boxes;
+
+        foreach (var move in warehouse.Robot.Moves)
+        {
+            var possibleNewLocation = new Position(robot.Position.Row + move.Vertical, robot.Position.Column + move.Horizontal);
+
+            if (map.Fields[possibleNewLocation.Row, possibleNewLocation.Column].IsWall)
+            {
+                continue;
+            }
+
+            var newLocationBox = boxes.SingleOrDefault(x=>x.Position.Row == possibleNewLocation.Row && x.Position.Column == possibleNewLocation.Column);
+
+            if (newLocationBox != null && !newLocationBox.PossibleMoves.Includes(move)) 
+            { 
+                continue; 
+            }
+
+            robot.MakeMove(move,map);
+
+            if (newLocationBox != null && newLocationBox.PossibleMoves.Includes(move))
+            {
+                boxes.MoveFrom(newLocationBox, move, map);
+            }
+
+            boxes.UpdateMoveDirections(map);
+            map.Print();
+        }
     }
 }

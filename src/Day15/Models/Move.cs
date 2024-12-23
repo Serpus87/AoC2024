@@ -16,4 +16,9 @@ public class Move
         Vertical = vertical;
         Horizontal = horizontal;
     }
+
+    public Move GetOppositeMove()
+    {
+        return new Move(-1 * Vertical, -1 * Horizontal);
+    }
 }

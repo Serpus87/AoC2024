@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AdventOfCode.Day15.Extensions;
 
 namespace AdventOfCode.Day15.Models;
 
@@ -19,6 +20,6 @@ public static class MoveList
     {
         var moveList = new List<Move> { Left, Right, Up, Down };
 
-        return moveList.Where(x => !currentPossibleMoves.Contains(x)).ToList();
+        return moveList.Where(x => !currentPossibleMoves.Includes(x)).ToList();
     }
 }

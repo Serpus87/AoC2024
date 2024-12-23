@@ -110,9 +110,11 @@ public static class WarehouseService
         var robot = warehouse.Robot;
         var map = warehouse.Map;
         var boxes = warehouse.Boxes;
+        var moveCounter = 0;
 
         foreach (var move in warehouse.Robot.Moves)
         {
+            moveCounter++;
             var possibleNewLocation = new Position(robot.Position.Row + move.Vertical, robot.Position.Column + move.Horizontal);
 
             if (map.Fields[possibleNewLocation.Row, possibleNewLocation.Column].IsWall)
@@ -135,7 +137,8 @@ public static class WarehouseService
             }
 
             boxes.UpdateMoveDirections(map);
-            map.Print();
+            //map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+            //Console.WriteLine($"Move number {moveCounter} out of {warehouse.Robot.Moves.Count} total number of Moves");
         }
     }
 }

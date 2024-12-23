@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day15;
-using AdventOfCode.Day15.Models;
+using AdventOfCode.Day15.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 
@@ -13,70 +13,64 @@ namespace AdventOfCode.Tests;
 [TestClass]
 public class Day15Tests
 {
-    //[TestMethod]
-    //public void Part1Solve_Example_ReturnsExpectedSolution()
-    //{
-    //    // Arrange
-    //    var expectedSolution = 12;
-    //    var fileName = "Example.txt";
-    //    var input = File.ReadAllLines($"Day14\\{fileName}");
+    [TestMethod]
+    public void Part1Solve_Example2_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 2028;
+        var fileName = "Example2.txt";
+        var input = File.ReadAllLines($"Day15\\{fileName}");
+        var splitInput = WarehouseService.SplitInput(input);
 
-    //    var exampleMapNRows = 7;
-    //    var exampleMapNColumns = 11;
+        var warehouse = WarehouseService.GetWarehouse(splitInput.First());
+        var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
+        warehouse.Robot.Moves = robotMoveList;
 
-    //    var robots = MapService.GetRobotsFromFile(input);
-    //    var map = MapService.SetupMap(exampleMapNRows, exampleMapNColumns, robots);
+        // Act
+        var actualSolution = Part1.Solve(warehouse);
 
-    //    // Act
-    //    var actualSolution = Part1.Solve(map, robots);
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 
-    //    // Assert
-    //    Assert.AreEqual(expectedSolution, actualSolution);
-    //}
+    [TestMethod]
+    public void Part1Solve_Example1_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 10092;
+        var fileName = "Example1.txt";
+        var input = File.ReadAllLines($"Day15\\{fileName}");
+        var splitInput = WarehouseService.SplitInput(input);
 
-    //[DataTestMethod]
-    //[DataRow(2,2,1,1,0,0)]
-    //[DataRow(0,0,-1,-1,2,2)]
-    //[DataRow(0,2,-1,1,2,0)]
-    //[DataRow(2,0,1,-1,0,2)]
-    //public void GetNextLocation_NextLocationNeedsTeleport_ReturnsExpectedLocation(int startRow, int startColumn, int moveRow, int moveColumn, int expectedRow, int expectedColumn)
-    //{
-    //    // Arrange
-    //    var expectedSolution = new Location(expectedRow, expectedColumn);
+        var warehouse = WarehouseService.GetWarehouse(splitInput.First());
+        var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
+        warehouse.Robot.Moves = robotMoveList;
+        warehouse.Boxes.InitializeMoveDirections(warehouse.Map);
 
-    //    var map = new Day14.Models.Map(3, 3);
-    //    var robot = new Robot(new Location(startRow, startColumn), new Location(moveRow, moveColumn));
+        // Act
+        var actualSolution = Part1.Solve(warehouse);
 
-    //    // Act
-    //    var actualSolution = map.GetNextLocation(robot);
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 
-    //    // Assert
-    //    using (new AssertionScope())
-    //    {
-    //        actualSolution.Row.Should().Be(expectedSolution.Row);
-    //        actualSolution.Column.Should().Be(expectedSolution.Column);
-    //    }
-    //}
+    [TestMethod]
+    public void Part2Solve_Example_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 0;
+        var fileName = "Example1.txt";
+        var input = File.ReadAllLines($"Day15\\{fileName}");
+        var splitInput = WarehouseService.SplitInput(input);
 
+        var warehouse = WarehouseService.GetWarehouse(splitInput.First());
+        var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
+        warehouse.Robot.Moves = robotMoveList;
 
-    //[TestMethod]
-    //public void Part2Solve_Example_ReturnsExpectedSolution()
-    //{
-    //    // Arrange
-    //    var expectedSolution = 0;
-    //    var fileName = "Example.txt";
-    //    var input = File.ReadAllLines($"Day14\\{fileName}");
+        // Act
+        var actualSolution = Part2.Solve(warehouse);
 
-    //    var exampleMapNRows = 7;
-    //    var exampleMapNColumns = 11;
-
-    //    var robots = MapService.GetRobotsFromFile(input);
-    //    var map = MapService.SetupMap(exampleMapNRows, exampleMapNColumns, robots);
-
-    //    // Act
-    //    var actualSolution = Part2.Solve(map, robots);
-
-    //    // Assert
-    //    Assert.AreEqual(expectedSolution, actualSolution);
-    //}
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 }

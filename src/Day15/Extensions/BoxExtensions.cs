@@ -75,15 +75,149 @@ public static class BoxExtensions
         boxToMoveFrom.PossibleMovesEnum = PossibleMovesEnum.WillChange;
         var adjacentBox = boxToMoveFrom.GetAdjacentBox(move,boxes);
 
+        if (adjacentBox == null) 
+        {
+            boxToMoveFrom.Position = new Position(boxToMoveFrom.Position.Row + move.Vertical, boxToMoveFrom.Position.Column + move.Horizontal);
+            adjacentBoxes = boxToMoveFrom.GetAdjacentBoxes(boxes);
+
+            foreach (var box in adjacentBoxes)
+            {
+                box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
+            }
+        }
+
         while (adjacentBox != null) 
         {
             boxToMoveFrom.Position = new Position(boxToMoveFrom.Position.Row + move.Vertical, boxToMoveFrom.Position.Column + move.Horizontal);
+            adjacentBoxes = boxToMoveFrom.GetAdjacentBoxes(boxes);
+
+            foreach (var box in adjacentBoxes)
+            {
+                box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
+            }
+
             boxToMoveFrom = adjacentBox;
             boxToMoveFrom.PossibleMovesEnum = PossibleMovesEnum.WillChange;
             adjacentBox = boxToMoveFrom.GetAdjacentBox(move, boxes);
+
+            if (adjacentBox == null)
+            {
+                boxToMoveFrom.Position = new Position(boxToMoveFrom.Position.Row + move.Vertical, boxToMoveFrom.Position.Column + move.Horizontal);
+                adjacentBoxes = boxToMoveFrom.GetAdjacentBoxes(boxes);
+
+                foreach (var box in adjacentBoxes)
+                {
+                    box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
+                }
+            }
         }
 
         map.Fields[boxToMoveFrom.Position.Row, boxToMoveFrom.Position.Column].Fill = 'O';
+    }
+
+    public static List<Move> GetMovesToAdd(this Box box, Map map, List<Box> boxes)
+    {
+        var movesToAdd = new List<Move>();
+
+        var currentImpossibleMoves = MoveList.GetCurrentImpossibleMoves(box.PossibleMoves);
+
+        foreach (var move in currentImpossibleMoves)
+        {
+            var oppositeMove = move.GetOppositeMove();
+            var field = box.GetAdjacentField(map, move);
+            var oppositeField = box.GetAdjacentField(map, oppositeMove);
+
+            if (field.IsWall || oppositeField.IsWall)
+            {
+                continue;
+            }
+
+            var adjacentBox = box.GetAdjacentBox(move, boxes);
+            var oppositeAdjacentBox = box.GetAdjacentBox(oppositeMove, boxes);
+
+            if (adjacentBox == null && oppositeAdjacentBox == null)
+            {
+                movesToAdd.AddIfNew(move);
+                movesToAdd.AddIfNew(oppositeMove);
+                continue;
+            }
+
+            var lastBoxInMoveDirection = box.GetLastBoxInDirection(move, boxes);
+            var lastBoxInOppositeMoveDirection = box.GetLastBoxInDirection(oppositeMove, boxes);
+
+            var fieldAdjacentToLastBoxInMoveDirection = lastBoxInMoveDirection.GetAdjacentField(map, move);
+            var fieldAdjacentToLastBoxInOppositeMoveDirection = lastBoxInOppositeMoveDirection.GetAdjacentField(map, oppositeMove);
+
+            if (fieldAdjacentToLastBoxInMoveDirection.IsWall || fieldAdjacentToLastBoxInOppositeMoveDirection.IsWall)
+            {
+                continue;
+            }
+
+            movesToAdd.AddIfNew(move);
+            movesToAdd.AddIfNew(oppositeMove);
+        }
+
+        return movesToAdd;
+    }
+
+    public static List<Move> GetMovesToRemove(this Box box, Map map, List<Box> boxes)
+    {
+        var movesToRemove = new List<Move>();
+
+        foreach (var move in box.PossibleMoves)
+        {
+            var oppositeMove = move.GetOppositeMove();
+            var field = box.GetAdjacentField(map, move);
+            var oppositeField = box.GetAdjacentField(map, oppositeMove);
+
+            if (field.IsWall || oppositeField.IsWall)
+            {
+                movesToRemove.AddIfNew(move);
+                movesToRemove.AddIfNew(oppositeMove);
+                continue;
+            }
+
+            var adjacentBox = box.GetAdjacentBox(move, boxes);
+            var oppositeAdjacentBox = box.GetAdjacentBox(oppositeMove, boxes);
+
+            if (adjacentBox == null && oppositeAdjacentBox == null)
+            {
+                continue;
+            }
+
+            var lastBoxInMoveDirection = box.GetLastBoxInDirection(move, boxes);
+            var lastBoxInOppositeMoveDirection = box.GetLastBoxInDirection(oppositeMove, boxes);
+
+            var fieldAdjacentToLastBoxInMoveDirection = lastBoxInMoveDirection.GetAdjacentField(map, move);
+            var fieldAdjacentToLastBoxInOppositeMoveDirection = lastBoxInOppositeMoveDirection.GetAdjacentField(map, oppositeMove);
+
+            if (fieldAdjacentToLastBoxInMoveDirection.IsWall || fieldAdjacentToLastBoxInOppositeMoveDirection.IsWall)
+            {
+                movesToRemove.AddIfNew(move);
+                movesToRemove.AddIfNew(move.GetOppositeMove());
+            }
+        }
+
+        return movesToRemove;
+    }
+
+    public static Box GetLastBoxInDirection(this Box box, Move move, List<Box> boxes)
+    {
+        var isLastBox = false;
+        var boxToCheck = box;
+
+        while (true)
+        {
+            var nextBoxToCheck = boxToCheck.GetAdjacentBox(move, boxes);
+            if (nextBoxToCheck != null)
+            {
+                boxToCheck = nextBoxToCheck;
+                continue;
+            }
+            break;
+        }
+
+        return boxToCheck;
     }
 
     public static int GetGPSSum(this List<Box> boxes)

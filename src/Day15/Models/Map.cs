@@ -20,7 +20,7 @@ public class Map
         Fields = new Field[numberOfRows, numberOfColumns];
     }
 
-    public void Print()
+    public void Print(Move? move = null, int? moveCounter = null, int? totalNumberOfMoves = null)
     {
         Console.Clear();
 
@@ -33,6 +33,31 @@ public class Map
             }
 
             Console.WriteLine(string.Join(' ', rowToPrint));
+        }
+
+        var stringToPrint = string.Empty;
+
+        if (move != null)
+        {
+            if (move.Horizontal == -1) { stringToPrint += "Move: < ; "; }
+            if (move.Horizontal == 1) { stringToPrint += "Move: > ; "; }
+            if (move.Vertical == -1) { stringToPrint += "Move: ^ ; "; }
+            if (move.Vertical == 1) { stringToPrint += "Move: v ; "; }
+        }
+
+        if (moveCounter != null)
+        {
+            stringToPrint += $"Move number: {moveCounter} ; ";
+        }
+
+        if (totalNumberOfMoves != null)
+        {
+            stringToPrint += $"Total nummber of moves: {totalNumberOfMoves}.";
+        }
+
+        if (stringToPrint.Length > 0)
+        {
+            Console.WriteLine(stringToPrint);
         }
     }
 }

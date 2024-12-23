@@ -74,6 +74,38 @@ public static class WarehouseService
         return new Warehouse(map, robots.Single(), boxes);
     }
 
+    public static WideWarehouse GetWideWarehouse(string[] input)
+    {
+        var nRows = input.Length;
+        var nColumns = input[0].Length;
+        var map = new Map(nRows, nColumns);
+
+        var robots = new List<Robot>();
+        var wideBoxes = new List<WideBox>();
+
+        for (var row = 0; row < nRows; row++)
+        {
+            for (var column = 0; column < nColumns; column++)
+            {
+                var position = new Position(row, column);
+                var fill = input[row][column];
+
+                map.Fields[row, column] = new Field(position, fill, fill == '#');
+
+                if (fill == 'O')
+                {
+                    wideBoxes.Add(new WideBox(new Box(position), new Box(position)));
+                }
+                if (fill == '@')
+                {
+                    robots.Add(new Robot(position));
+                }
+            }
+        }
+
+        return new WideWarehouse(map, robots.Single(), wideBoxes);
+    }
+
     public static List<Move> GetRobotMoveList(string[] lines)
     {
         var moves = new List<Move>();

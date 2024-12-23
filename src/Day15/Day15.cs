@@ -20,13 +20,18 @@ public static class Day15
         var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
         warehouse.Robot.Moves = robotMoveList;
 
-        //warehouse.Map.Print();
         warehouse.Boxes.InitializeMoveDirections(warehouse.Map);
 
         var solution = Part1.Solve(warehouse);
         Console.WriteLine($"Day15 Part1 Solution: {solution}");
 
-        solution = Part2.Solve(warehouse);
+        var wideWarehouse = WarehouseService.GetWideWarehouse(splitInput.First());
+        //robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
+        wideWarehouse.Robot.Moves = robotMoveList;
+
+        wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
+
+        solution = Part2.Solve(wideWarehouse);
         Console.WriteLine($"Day15 Part2 Solution: {solution}");
     }
 }

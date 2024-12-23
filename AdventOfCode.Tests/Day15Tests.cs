@@ -58,8 +58,8 @@ public class Day15Tests
     public void Part2Solve_Example_ReturnsExpectedSolution()
     {
         // Arrange
-        var expectedSolution = 0;
-        var fileName = "Example1.txt";
+        var expectedSolution = 9021;
+        var fileName = "Part2Example1.txt";
         var input = File.ReadAllLines($"Day15\\{fileName}");
         var splitInput = WarehouseService.SplitInput(input);
 

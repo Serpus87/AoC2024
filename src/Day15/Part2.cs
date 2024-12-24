@@ -14,6 +14,7 @@ using AdventOfCode.Day15.Models;
 using AdventOfCode.Day4;
 using AdventOfCode.Day6.Models;
 using Microsoft.VisualBasic;
+using AdventOfCode.Day15.Extensions;
 namespace AdventOfCode.Day15;
 
 public static class Part2
@@ -199,7 +200,11 @@ public static class Part2
 
     public static int Solve(WideWarehouse warehouse)
     {
-        var result = 0;
+        // move robot
+        WarehouseService.MakeAllRobotMovesInWideWarehouse(warehouse);
+
+        // get GPS
+        var result = warehouse.WideBoxes.GetGPSSum(warehouse.Map);
 
         return result;
     }

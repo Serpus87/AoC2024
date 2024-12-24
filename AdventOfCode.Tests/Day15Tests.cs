@@ -55,11 +55,33 @@ public class Day15Tests
     }
 
     [TestMethod]
+    public void Part2Solve_Part2Example1_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 616;
+        var fileName = "Part2Example1.txt";
+        var input = File.ReadAllLines($"Day15\\{fileName}");
+        var splitInput = WarehouseService.SplitInput(input);
+
+        var wideWarehouse = WarehouseService.GetWideWarehouse(splitInput.First());
+        var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
+        wideWarehouse.Robot.Moves = robotMoveList;
+
+        wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
+
+        // Act
+        var actualSolution = Part2.Solve(wideWarehouse);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
+
+    [TestMethod]
     public void Part2Solve_Example_ReturnsExpectedSolution()
     {
         // Arrange
         var expectedSolution = 9021;
-        var fileName = "Part2Example1.txt";
+        var fileName = "Example1.txt";
         var input = File.ReadAllLines($"Day15\\{fileName}");
         var splitInput = WarehouseService.SplitInput(input);
 

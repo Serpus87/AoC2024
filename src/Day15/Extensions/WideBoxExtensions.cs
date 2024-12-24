@@ -28,14 +28,17 @@ public static class WideBoxExtensions
 
     public static void UpdateMoveDirections(this List<WideBox> wideBoxes, Map map)
     {
+        // todo fix this
+
         var hasWideBoxWillChange = wideBoxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
 
+        // update move directions of individual boxes
+        var boxes = wideBoxes.SelectMany(x => x.Boxes).ToList();
+        boxes.UpdateMoveDirections(map);
+
+        // update wideboxes with box information
         while (hasWideBoxWillChange)
         {
-            var boxes = wideBoxes.SelectMany(x => x.Boxes).ToList();
-            boxes.UpdateMoveDirections(map);
-            //var hasBoxWillChange = boxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
-
             var wideBoxToCheckChange = wideBoxes.First(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
 
             var movesToRemove = wideBoxToCheckChange.GetMovesToRemove(map, boxes);
@@ -75,22 +78,19 @@ public static class WideBoxExtensions
 
         var isDonePreparing = false;
 
-        while (!isDonePreparing) 
+        while (!isDonePreparing)
         {
-            var wideBox = wideBoxes.First(x=>x.MovingEnum == MovingEnum.PrepareToMove);
+            var wideBox = wideBoxes.First(x => x.MovingEnum == MovingEnum.PrepareToMove);
 
             var adjacentWideBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(move, wideBoxes);
 
-            foreach(var adjacentWideBox in adjacentWideBoxes)
+            foreach (var adjacentWideBox in adjacentWideBoxes.Where(x => x.MovingEnum != MovingEnum.ReadyToMove))
             {
-                if (adjacentWideBox.MovingEnum != MovingEnum.ReadyToMove)
-                {
-                    adjacentWideBox.MovingEnum = MovingEnum.PrepareToMove;
-                }
+                adjacentWideBox.MovingEnum = MovingEnum.PrepareToMove;
             }
 
             wideBox.MovingEnum = MovingEnum.ReadyToMove;
-            isDonePreparing = wideBoxes.Any(x => x.MovingEnum == MovingEnum.PrepareToMove);
+            isDonePreparing = !wideBoxes.Any(x => x.MovingEnum == MovingEnum.PrepareToMove);
         }
 
         // move
@@ -99,12 +99,13 @@ public static class WideBoxExtensions
         while (!isDoneMoving)
         {
             var wideBox = wideBoxes.First(x => x.MovingEnum == MovingEnum.ReadyToMove);
+            wideBox.UpdatePossibleMovesEnum(PossibleMovesEnum.WillChange);
 
             wideBox.LeftBox.Position = new Position(wideBox.LeftBox.Position.Row + move.Vertical, wideBox.LeftBox.Position.Column + move.Horizontal);
             wideBox.RightBox.Position = new Position(wideBox.RightBox.Position.Row + move.Vertical, wideBox.RightBox.Position.Column + move.Horizontal);
 
             wideBox.MovingEnum = MovingEnum.HasMoved;
-            isDonePreparing = wideBoxes.Any(x => x.MovingEnum == MovingEnum.ReadyToMove);
+            isDoneMoving = !wideBoxes.Any(x => x.MovingEnum == MovingEnum.ReadyToMove);
         }
 
     }
@@ -112,8 +113,8 @@ public static class WideBoxExtensions
     public static List<Move> GetMovesToAdd(this WideBox wideBox, Map map, List<Box> boxes)
     {
         var currentMoves = wideBox.PossibleMoves;
-        var overlappingBoxMoves = wideBox.RightBox.PossibleMoves.Where(wideBox.RightBox.PossibleMoves.Contains).ToList();
-        var movesToAdd = overlappingBoxMoves.Where(x=>!currentMoves.Contains(x)).ToList();
+        var overlappingBoxMoves = wideBox.RightBox.PossibleMoves.Where(wideBox.RightBox.PossibleMoves.Includes).ToList();
+        var movesToAdd = overlappingBoxMoves.Where(x => !currentMoves.Includes(x)).ToList();
 
         return movesToAdd;
     }
@@ -123,25 +124,25 @@ public static class WideBoxExtensions
         var currentMoves = wideBox.PossibleMoves;
         var movesToRemove = new List<Move>();
 
-        foreach(Move currentMove in currentMoves)
+        foreach (Move currentMove in currentMoves)
         {
-            if (wideBox.LeftBox.PossibleMoves.Contains(currentMove) && wideBox.RightBox.PossibleMoves.Contains(currentMove))
+            if (wideBox.LeftBox.PossibleMoves.Includes(currentMove) && wideBox.RightBox.PossibleMoves.Includes(currentMove))
             {
                 continue;
-            } 
+            }
             movesToRemove.Add(currentMove);
         }
 
         return movesToRemove;
     }
 
-    public static int GetGPSSum(this List<WideBox> wideBoxes)
+    public static int GetGPSSum(this List<WideBox> wideBoxes, Map map)
     {
         var gps = 0;
 
         foreach (var wideBox in wideBoxes)
         {
-            gps += wideBox.GetGps();
+            gps += wideBox.GetGps(map);
         }
 
         return gps;

@@ -108,9 +108,11 @@ public static class WarehouseService
                     map.Fields[row, column2] = new Field(position2, '.', inputFill == '#');
                     robots.Add(new Robot(position1));
                 }
-
-                map.Fields[row, column1] = new Field(position1, inputFill, inputFill == '#');
-                map.Fields[row, column2] = new Field(position2, inputFill, inputFill == '#');
+                if (inputFill != 'O' && inputFill != '@')
+                {
+                    map.Fields[row, column1] = new Field(position1, inputFill, inputFill == '#');
+                    map.Fields[row, column2] = new Field(position2, inputFill, inputFill == '#');
+                }
             }
         }
 
@@ -181,6 +183,56 @@ public static class WarehouseService
 
             boxes.UpdateMoveDirections(map);
             //map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+            //Console.WriteLine($"Move number {moveCounter} out of {warehouse.Robot.Moves.Count} total number of Moves");
+        }
+    }
+
+    public static void MakeAllRobotMovesInWideWarehouse(WideWarehouse warehouse)
+    {
+        var robot = warehouse.Robot;
+        var map = warehouse.Map;
+        var wideBoxes = warehouse.WideBoxes;
+        var moveCounter = 0;
+
+        foreach (var move in warehouse.Robot.Moves)
+        {
+            moveCounter++;
+            var possibleNewLocation = new Position(robot.Position.Row + move.Vertical, robot.Position.Column + move.Horizontal);
+
+            if (map.Fields[possibleNewLocation.Row, possibleNewLocation.Column].IsWall)
+            {
+                continue;
+            }
+
+            var newLocationBox = wideBoxes.SingleOrDefault(x => x.Boxes.Any(y=>y.Position.Row == possibleNewLocation.Row && y.Position.Column == possibleNewLocation.Column));
+
+            if (newLocationBox != null && !newLocationBox.PossibleMoves.Includes(move))
+            {
+                continue;
+            }
+
+            robot.MakeMove(move, map);
+
+            if (newLocationBox != null && newLocationBox.PossibleMoves.Includes(move))
+            {
+                //if (move.Vertical != 0)
+                //{
+                //    if (robot.Position.Column == newLocationBox.LeftBox.Position.Column)
+                //    {
+                //        map.Fields[newLocationBox.RightBox.Position.Row, newLocationBox.RightBox.Position.Column].Fill = '.';
+                //    }
+                //    else
+                //    {
+                //        map.Fields[newLocationBox.LeftBox.Position.Row, newLocationBox.LeftBox.Position.Column].Fill = '.';
+                //    }
+                        
+                //}
+                wideBoxes.MoveFrom(newLocationBox, move, map);
+            }
+
+            wideBoxes.UpdateMoveDirections(map);
+            map.Update(robot, wideBoxes);
+            map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
             //Console.WriteLine($"Move number {moveCounter} out of {warehouse.Robot.Moves.Count} total number of Moves");
         }
     }

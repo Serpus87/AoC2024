@@ -37,9 +37,15 @@ public class WideBox
         RightBox.PossibleMoves = possibleMoves;
     }
 
-    public int GetGps()
+    public int GetGps(Map map)
     {
-        return Math.Min(LeftBox.GetGps(), RightBox.GetGps());
+        var distanceFromLeftEdge = LeftBox.Position.Column;
+        var distanceFromRightEdge = map.NumberOfColumns - RightBox.Position.Column;
+        var distanceFromTopEdge = LeftBox.Position.Row;
+
+        var shortestDistanceFromEdge = Math.Min(distanceFromLeftEdge, distanceFromRightEdge);
+
+        return 100 * distanceFromTopEdge + shortestDistanceFromEdge;
     }
 
     public List<WideBox> GetAdjacentWideBoxesFromMoveDirection(Move move, List<WideBox> wideBoxes)
@@ -48,8 +54,13 @@ public class WideBox
 
         foreach (var box in Boxes) 
         {
-            var adjacentBoxes = box.GetAdjacentBoxes(wideBoxes.SelectMany(x => x.Boxes).ToList());
-            adjacentWideBoxes.AddRange(adjacentBoxes.Select(x => x.GetWideBox(wideBoxes)).ToList());
+            var adjacentBox = box.GetAdjacentBox(move, wideBoxes.SelectMany(x => x.Boxes).ToList());
+
+            if (adjacentBox != null)
+            {
+                adjacentWideBoxes.Add(adjacentBox.GetWideBox(wideBoxes));
+                adjacentWideBoxes.Remove(this);
+            }
         }
 
         return adjacentWideBoxes.Distinct().ToList();

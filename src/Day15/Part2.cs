@@ -206,7 +206,8 @@ public static class Part2
         // get GPS
         var result = warehouse.WideBoxes.GetGPSSum(warehouse.Map);
 
-        // first try wrong answer: 1505033
+        // first try wrong answer: 1505033 too low
+        // second try wrong answer: 1521738 too high
         return result;
     }
 }

@@ -118,38 +118,41 @@ public static class WideBoxExtensions
 
         foreach (var move in currentImpossibleMoves)
         {
-            var oppositeMove = move.GetOppositeMove();
+            //var oppositeMove = move.GetOppositeMove();
             var fields = wideBox.Boxes.Select(x => x.GetAdjacentField(map, move));
-            var oppositeFields = wideBox.Boxes.Select(x => x.GetAdjacentField(map, oppositeMove));
+            //var oppositeFields = wideBox.Boxes.Select(x => x.GetAdjacentField(map, oppositeMove));
 
-            if (fields.Any(x => x.IsWall) || oppositeFields.Any(x => x.IsWall))
+            //if (fields.Any(x => x.IsWall) || oppositeFields.Any(x => x.IsWall))
+            if (fields.Any(x => x.IsWall))
             {
                 continue;
             }
 
             var adjacentBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(move, wideBoxes);
-            var oppositeAdjacentBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(oppositeMove, wideBoxes);
+            //var oppositeAdjacentBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(oppositeMove, wideBoxes);
 
-            if (adjacentBoxes.Count == 0 && oppositeAdjacentBoxes.Count == 0)
+            //if (adjacentBoxes.Count == 0 && oppositeAdjacentBoxes.Count == 0)
+            if (adjacentBoxes.Count == 0)
             {
                 movesToAdd.AddIfNew(move);
-                movesToAdd.AddIfNew(oppositeMove);
+                //movesToAdd.AddIfNew(oppositeMove);
                 continue;
             }
 
             var allWideBoxesInMoveDirection = wideBox.GetAllWideBoxesInDirection(move, wideBoxes);
-            var allWideBoxesInOppositeMoveDirection = wideBox.GetAllWideBoxesInDirection(oppositeMove, wideBoxes);
+            //var allWideBoxesInOppositeMoveDirection = wideBox.GetAllWideBoxesInDirection(oppositeMove, wideBoxes);
 
             var allBoxesInMoveDirection = allWideBoxesInMoveDirection.SelectMany(x => x.Boxes).ToList();
-            var allBoxesInOppositeMoveDirection = allWideBoxesInOppositeMoveDirection.SelectMany(x => x.Boxes).ToList();
+            //var allBoxesInOppositeMoveDirection = allWideBoxesInOppositeMoveDirection.SelectMany(x => x.Boxes).ToList();
 
-            if (allBoxesInMoveDirection.Any(x => x.GetAdjacentField(map, move).IsWall) || allBoxesInOppositeMoveDirection.Any(x => x.GetAdjacentField(map, oppositeMove).IsWall))
+            //if (allBoxesInMoveDirection.Any(x => x.GetAdjacentField(map, move).IsWall) || allBoxesInOppositeMoveDirection.Any(x => x.GetAdjacentField(map, oppositeMove).IsWall))
+            if (allBoxesInMoveDirection.Any(x => x.GetAdjacentField(map, move).IsWall))
             {
                 continue;
             }
 
             movesToAdd.AddIfNew(move);
-            movesToAdd.AddIfNew(oppositeMove);
+            //movesToAdd.AddIfNew(oppositeMove);
         }
 
         return movesToAdd;

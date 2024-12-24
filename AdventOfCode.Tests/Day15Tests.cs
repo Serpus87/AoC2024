@@ -63,12 +63,14 @@ public class Day15Tests
         var input = File.ReadAllLines($"Day15\\{fileName}");
         var splitInput = WarehouseService.SplitInput(input);
 
-        var warehouse = WarehouseService.GetWarehouse(splitInput.First());
+        var wideWarehouse = WarehouseService.GetWideWarehouse(splitInput.First());
         var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
-        warehouse.Robot.Moves = robotMoveList;
+        wideWarehouse.Robot.Moves = robotMoveList;
+
+        wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
 
         // Act
-        var actualSolution = Part2.Solve(warehouse);
+        var actualSolution = Part2.Solve(wideWarehouse);
 
         // Assert
         Assert.AreEqual(expectedSolution, actualSolution);

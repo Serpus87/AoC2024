@@ -64,4 +64,9 @@ public class Box
     {
         return 100 * Position.Row + Position.Column;
     }
+
+    public WideBox GetWideBox(List<WideBox> wideBoxes)
+    {
+        return wideBoxes.First(x=>x.Boxes.Contains(this));
+    }
 }

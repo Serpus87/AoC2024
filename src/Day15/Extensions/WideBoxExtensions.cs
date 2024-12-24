@@ -10,223 +10,138 @@ namespace AdventOfCode.Day15.Extensions;
 
 public static class WideBoxExtensions
 {
-    public static void InitializeMoveDirections(this List<Box> boxes, Map map)
+    public static void InitializeMoveDirections(this List<WideBox> wideBoxes, Map map)
     {
         // set moveDirections for boxes next to walls
-        foreach (Box box in boxes) 
+        wideBoxes.SelectMany(x => x.Boxes).ToList().InitializeMoveDirections(map);
+
+        foreach (var wideBox in wideBoxes)
         {
-            var adjacentFields = box.GetAdjacentFields(map);
-
-            if (!adjacentFields.Any(x=>x.IsWall))
+            if (wideBox.Boxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange))
             {
-                continue;
+                wideBox.UpdatePossibleMovesEnum(PossibleMovesEnum.WillChange);
             }
-
-            box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
         }
 
-        UpdateMoveDirections(boxes, map);
+        UpdateMoveDirections(wideBoxes, map);
     }
 
-    public static void UpdateMoveDirections(this List<Box> boxes, Map map)
+    public static void UpdateMoveDirections(this List<WideBox> wideBoxes, Map map)
     {
-        var hasBoxWillChange = boxes.Any(x=>x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
+        var hasWideBoxWillChange = wideBoxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
 
-        while (hasBoxWillChange) 
+        while (hasWideBoxWillChange)
         {
-            var boxToCheckChange = boxes.First(x=>x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
+            var boxes = wideBoxes.SelectMany(x => x.Boxes).ToList();
+            boxes.UpdateMoveDirections(map);
+            //var hasBoxWillChange = boxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
 
-            var movesToRemove = boxToCheckChange.GetMovesToRemove(map, boxes);
-            var movesToAdd = boxToCheckChange.GetMovesToAdd(map, boxes);
+            var wideBoxToCheckChange = wideBoxes.First(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
+
+            var movesToRemove = wideBoxToCheckChange.GetMovesToRemove(map, boxes);
+            var movesToAdd = wideBoxToCheckChange.GetMovesToAdd(map, boxes);
 
             if (movesToRemove.Count > 0 || movesToAdd.Count > 0)
             {
-                boxToCheckChange.PossibleMoves = boxToCheckChange.PossibleMoves.Without(movesToRemove);
-                boxToCheckChange.PossibleMoves.AddRange(movesToAdd);
-                boxToCheckChange.PossibleMovesEnum = PossibleMovesEnum.HasChanged;
+                var newPossibleMoves = wideBoxToCheckChange.PossibleMoves.Without(movesToRemove);
+                newPossibleMoves.AddRange(movesToAdd);
+
+                wideBoxToCheckChange.UpdatePossibleMoves(newPossibleMoves);
+                wideBoxToCheckChange.UpdatePossibleMovesEnum(PossibleMovesEnum.HasChanged);
             }
-            else 
+            else
             {
-                boxToCheckChange.PossibleMovesEnum = PossibleMovesEnum.NotHasChanged;
+                wideBoxToCheckChange.UpdatePossibleMovesEnum(PossibleMovesEnum.NotHasChanged);
             }
 
-            if (boxToCheckChange.PossibleMovesEnum == PossibleMovesEnum.HasChanged) {
-                var adjacentBoxes = boxToCheckChange.GetAdjacentBoxes(boxes);
+            if (wideBoxToCheckChange.PossibleMovesEnum == PossibleMovesEnum.HasChanged)
+            {
+                var adjacentWideBoxes = wideBoxToCheckChange.GetAdjacentWideBoxes(wideBoxes);
 
-                foreach (var adjacentBox in adjacentBoxes)
+                foreach (var adjacentWideBox in adjacentWideBoxes)
                 {
-                    adjacentBox.PossibleMovesEnum = PossibleMovesEnum.WillChange;
+                    adjacentWideBox.UpdatePossibleMovesEnum(PossibleMovesEnum.WillChange);
                 }
             }
 
-            hasBoxWillChange = boxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
+            hasWideBoxWillChange = wideBoxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
         }
     }
 
-    public static void MoveFrom(this List<Box> boxes, Box boxToMoveFrom, Move move, Map map)
+    public static void MoveFrom(this List<WideBox> wideBoxes, WideBox wideBoxToMoveFrom, Move move, Map map)
     {
-        var adjacentBoxes = boxToMoveFrom.GetAdjacentBoxes(boxes);
+        // get/set all wideBoxes that should move
+        wideBoxToMoveFrom.MovingEnum = MovingEnum.PrepareToMove;
 
-        foreach (var box in adjacentBoxes) 
+        var isDonePreparing = false;
+
+        while (!isDonePreparing) 
         {
-            box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
-        }
+            var wideBox = wideBoxes.First(x=>x.MovingEnum == MovingEnum.PrepareToMove);
 
-        boxToMoveFrom.PossibleMovesEnum = PossibleMovesEnum.WillChange;
-        var adjacentBox = boxToMoveFrom.GetAdjacentBox(move,boxes);
+            var adjacentWideBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(move, wideBoxes);
 
-        if (adjacentBox == null) 
-        {
-            boxToMoveFrom.Position = new Position(boxToMoveFrom.Position.Row + move.Vertical, boxToMoveFrom.Position.Column + move.Horizontal);
-            adjacentBoxes = boxToMoveFrom.GetAdjacentBoxes(boxes);
-
-            foreach (var box in adjacentBoxes)
+            foreach(var adjacentWideBox in adjacentWideBoxes)
             {
-                box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
-            }
-        }
-
-        while (adjacentBox != null) 
-        {
-            boxToMoveFrom.Position = new Position(boxToMoveFrom.Position.Row + move.Vertical, boxToMoveFrom.Position.Column + move.Horizontal);
-            adjacentBoxes = boxToMoveFrom.GetAdjacentBoxes(boxes);
-
-            foreach (var box in adjacentBoxes)
-            {
-                box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
-            }
-
-            boxToMoveFrom = adjacentBox;
-            boxToMoveFrom.PossibleMovesEnum = PossibleMovesEnum.WillChange;
-            adjacentBox = boxToMoveFrom.GetAdjacentBox(move, boxes);
-
-            if (adjacentBox == null)
-            {
-                boxToMoveFrom.Position = new Position(boxToMoveFrom.Position.Row + move.Vertical, boxToMoveFrom.Position.Column + move.Horizontal);
-                adjacentBoxes = boxToMoveFrom.GetAdjacentBoxes(boxes);
-
-                foreach (var box in adjacentBoxes)
+                if (adjacentWideBox.MovingEnum != MovingEnum.ReadyToMove)
                 {
-                    box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
+                    adjacentWideBox.MovingEnum = MovingEnum.PrepareToMove;
                 }
             }
+
+            wideBox.MovingEnum = MovingEnum.ReadyToMove;
+            isDonePreparing = wideBoxes.Any(x => x.MovingEnum == MovingEnum.PrepareToMove);
         }
 
-        map.Fields[boxToMoveFrom.Position.Row, boxToMoveFrom.Position.Column].Fill = 'O';
+        // move
+        var isDoneMoving = false;
+
+        while (!isDoneMoving)
+        {
+            var wideBox = wideBoxes.First(x => x.MovingEnum == MovingEnum.ReadyToMove);
+
+            wideBox.LeftBox.Position = new Position(wideBox.LeftBox.Position.Row + move.Vertical, wideBox.LeftBox.Position.Column + move.Horizontal);
+            wideBox.RightBox.Position = new Position(wideBox.RightBox.Position.Row + move.Vertical, wideBox.RightBox.Position.Column + move.Horizontal);
+
+            wideBox.MovingEnum = MovingEnum.HasMoved;
+            isDonePreparing = wideBoxes.Any(x => x.MovingEnum == MovingEnum.ReadyToMove);
+        }
+
     }
 
-    public static List<Move> GetMovesToAdd(this Box box, Map map, List<Box> boxes)
+    public static List<Move> GetMovesToAdd(this WideBox wideBox, Map map, List<Box> boxes)
     {
-        var movesToAdd = new List<Move>();
-
-        var currentImpossibleMoves = MoveList.GetCurrentImpossibleMoves(box.PossibleMoves);
-
-        foreach (var move in currentImpossibleMoves)
-        {
-            var oppositeMove = move.GetOppositeMove();
-            var field = box.GetAdjacentField(map, move);
-            var oppositeField = box.GetAdjacentField(map, oppositeMove);
-
-            if (field.IsWall || oppositeField.IsWall)
-            {
-                continue;
-            }
-
-            var adjacentBox = box.GetAdjacentBox(move, boxes);
-            var oppositeAdjacentBox = box.GetAdjacentBox(oppositeMove, boxes);
-
-            if (adjacentBox == null && oppositeAdjacentBox == null)
-            {
-                movesToAdd.AddIfNew(move);
-                movesToAdd.AddIfNew(oppositeMove);
-                continue;
-            }
-
-            var lastBoxInMoveDirection = box.GetLastBoxInDirection(move, boxes);
-            var lastBoxInOppositeMoveDirection = box.GetLastBoxInDirection(oppositeMove, boxes);
-
-            var fieldAdjacentToLastBoxInMoveDirection = lastBoxInMoveDirection.GetAdjacentField(map, move);
-            var fieldAdjacentToLastBoxInOppositeMoveDirection = lastBoxInOppositeMoveDirection.GetAdjacentField(map, oppositeMove);
-
-            if (fieldAdjacentToLastBoxInMoveDirection.IsWall || fieldAdjacentToLastBoxInOppositeMoveDirection.IsWall)
-            {
-                continue;
-            }
-
-            movesToAdd.AddIfNew(move);
-            movesToAdd.AddIfNew(oppositeMove);
-        }
+        var currentMoves = wideBox.PossibleMoves;
+        var overlappingBoxMoves = wideBox.RightBox.PossibleMoves.Where(wideBox.RightBox.PossibleMoves.Contains).ToList();
+        var movesToAdd = overlappingBoxMoves.Where(x=>!currentMoves.Contains(x)).ToList();
 
         return movesToAdd;
     }
 
-    public static List<Move> GetMovesToRemove(this Box box, Map map, List<Box> boxes)
+    public static List<Move> GetMovesToRemove(this WideBox wideBox, Map map, List<Box> boxes)
     {
+        var currentMoves = wideBox.PossibleMoves;
         var movesToRemove = new List<Move>();
 
-        foreach (var move in box.PossibleMoves)
+        foreach(Move currentMove in currentMoves)
         {
-            var oppositeMove = move.GetOppositeMove();
-            var field = box.GetAdjacentField(map, move);
-            var oppositeField = box.GetAdjacentField(map, oppositeMove);
-
-            if (field.IsWall || oppositeField.IsWall)
-            {
-                movesToRemove.AddIfNew(move);
-                movesToRemove.AddIfNew(oppositeMove);
-                continue;
-            }
-
-            var adjacentBox = box.GetAdjacentBox(move, boxes);
-            var oppositeAdjacentBox = box.GetAdjacentBox(oppositeMove, boxes);
-
-            if (adjacentBox == null && oppositeAdjacentBox == null)
+            if (wideBox.LeftBox.PossibleMoves.Contains(currentMove) && wideBox.RightBox.PossibleMoves.Contains(currentMove))
             {
                 continue;
-            }
-
-            var lastBoxInMoveDirection = box.GetLastBoxInDirection(move, boxes);
-            var lastBoxInOppositeMoveDirection = box.GetLastBoxInDirection(oppositeMove, boxes);
-
-            var fieldAdjacentToLastBoxInMoveDirection = lastBoxInMoveDirection.GetAdjacentField(map, move);
-            var fieldAdjacentToLastBoxInOppositeMoveDirection = lastBoxInOppositeMoveDirection.GetAdjacentField(map, oppositeMove);
-
-            if (fieldAdjacentToLastBoxInMoveDirection.IsWall || fieldAdjacentToLastBoxInOppositeMoveDirection.IsWall)
-            {
-                movesToRemove.AddIfNew(move);
-                movesToRemove.AddIfNew(move.GetOppositeMove());
-            }
+            } 
+            movesToRemove.Add(currentMove);
         }
 
         return movesToRemove;
     }
 
-    public static Box GetLastBoxInDirection(this Box box, Move move, List<Box> boxes)
-    {
-        var isLastBox = false;
-        var boxToCheck = box;
-
-        while (true)
-        {
-            var nextBoxToCheck = boxToCheck.GetAdjacentBox(move, boxes);
-            if (nextBoxToCheck != null)
-            {
-                boxToCheck = nextBoxToCheck;
-                continue;
-            }
-            break;
-        }
-
-        return boxToCheck;
-    }
-
-    public static int GetGPSSum(this List<Box> boxes)
+    public static int GetGPSSum(this List<WideBox> wideBoxes)
     {
         var gps = 0;
 
-        foreach (var box in boxes) 
+        foreach (var wideBox in wideBoxes)
         {
-            gps += box.GetGps();
+            gps += wideBox.GetGps();
         }
 
         return gps;

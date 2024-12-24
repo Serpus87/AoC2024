@@ -25,7 +25,7 @@ public static class BoxExtensions
             box.PossibleMovesEnum = PossibleMovesEnum.WillChange;
         }
 
-        UpdateMoveDirections(boxes, map);
+        boxes.UpdateMoveDirections(map);
     }
 
     public static void UpdateMoveDirections(this List<Box> boxes, Map map)

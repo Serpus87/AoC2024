@@ -8,9 +8,9 @@ namespace AdventOfCode.Day15.Models;
 
 public class Warehouse : BaseWarehouse
 {
-    public List<Box> Boxes { get; set; }
+    public List<WideBox> Boxes { get; set; }
 
-    public Warehouse(Map map, Robot robot, List<Box> boxes) : base(map, robot)
+    public Warehouse(Map map, Robot robot, List<WideBox> boxes) : base(map, robot)
     {
         Boxes = boxes;
     }

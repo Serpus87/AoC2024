@@ -77,7 +77,8 @@ public static class WarehouseService
     public static WideWarehouse GetWideWarehouse(string[] input)
     {
         var nRows = input.Length;
-        var nColumns = input[0].Length;
+        var lineLength = input[0].Length;
+        var nColumns = lineLength * 2;
         var map = new Map(nRows, nColumns);
 
         var robots = new List<Robot>();
@@ -85,21 +86,31 @@ public static class WarehouseService
 
         for (var row = 0; row < nRows; row++)
         {
-            for (var column = 0; column < nColumns; column++)
+            for (var i = 0; i < lineLength; i++)
             {
-                var position = new Position(row, column);
-                var fill = input[row][column];
+                var column1 = i * 2;
+                var column2 = column1 + 1;
 
-                map.Fields[row, column] = new Field(position, fill, fill == '#');
+                var position1 = new Position(row, column1);
+                var position2 = new Position(row, column2);
 
-                if (fill == 'O')
+                var inputFill = input[row][i];
+
+                if (inputFill == 'O')
                 {
-                    wideBoxes.Add(new WideBox(new Box(position), new Box(position)));
+                    map.Fields[row, column1] = new Field(position1, '[', inputFill == '#');
+                    map.Fields[row, column2] = new Field(position2, ']', inputFill == '#');
+                    wideBoxes.Add(new WideBox(new Box(position1), new Box(position2)));
                 }
-                if (fill == '@')
+                if (inputFill == '@')
                 {
-                    robots.Add(new Robot(position));
+                    map.Fields[row, column1] = new Field(position1, inputFill, inputFill == '#');
+                    map.Fields[row, column2] = new Field(position2, '.', inputFill == '#');
+                    robots.Add(new Robot(position1));
                 }
+
+                map.Fields[row, column1] = new Field(position1, inputFill, inputFill == '#');
+                map.Fields[row, column2] = new Field(position2, inputFill, inputFill == '#');
             }
         }
 

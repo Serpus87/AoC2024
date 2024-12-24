@@ -13,7 +13,8 @@ public static class Day15
     {
         // read file
         //var fileName = "PuzzleInput.txt";
-        var fileName = "Part2Example1.txt";
+        //var fileName = "Part2Example1.txt";
+        var fileName = "Example1.txt";
         var input = File.ReadAllLines($"Day15\\{fileName}");
         var splitInput = WarehouseService.SplitInput(input);
 
@@ -41,6 +42,8 @@ public static class Day15
         //--
 
         solution = Part2.Solve(wideWarehouse);
+
+        wideWarehouse.Map.Print();
         Console.WriteLine($"Day15 Part2 Solution: {solution}");
     }
 }

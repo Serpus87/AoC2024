@@ -232,7 +232,7 @@ public static class WarehouseService
 
             wideBoxes.UpdateMoveDirections(map);
             map.Update(robot, wideBoxes);
-            map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+            //map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
             //Console.WriteLine($"Move number {moveCounter} out of {warehouse.Robot.Moves.Count} total number of Moves");
         }
     }

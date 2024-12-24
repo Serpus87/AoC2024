@@ -20,7 +20,7 @@ public class WideBox
     {
         LeftBox = leftBox;
         RightBox = rightBox;
-        Boxes = new List<Box> { leftBox, rightBox};
+        Boxes = new List<Box> { leftBox, rightBox };
     }
 
     public void UpdatePossibleMovesEnum(PossibleMovesEnum possibleMovesEnum)
@@ -45,14 +45,15 @@ public class WideBox
 
         var shortestDistanceFromEdge = Math.Min(distanceFromLeftEdge, distanceFromRightEdge);
 
-        return 100 * distanceFromTopEdge + shortestDistanceFromEdge;
+        //return 100 * distanceFromTopEdge + shortestDistanceFromEdge;
+        return 100 * distanceFromTopEdge + distanceFromLeftEdge;
     }
 
     public List<WideBox> GetAdjacentWideBoxesFromMoveDirection(Move move, List<WideBox> wideBoxes)
     {
         var adjacentWideBoxes = new List<WideBox>();
 
-        foreach (var box in Boxes) 
+        foreach (var box in Boxes)
         {
             var adjacentBox = box.GetAdjacentBox(move, wideBoxes.SelectMany(x => x.Boxes).ToList());
 

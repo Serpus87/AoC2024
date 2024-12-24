@@ -32,17 +32,17 @@ public static class WideBoxExtensions
 
         var hasWideBoxWillChange = wideBoxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
 
-        // update move directions of individual boxes
-        var boxes = wideBoxes.SelectMany(x => x.Boxes).ToList();
-        boxes.UpdateMoveDirections(map);
+        //// update move directions of individual boxes
+        //var boxes = wideBoxes.SelectMany(x => x.Boxes).ToList();
+        //boxes.UpdateMoveDirections(map);
 
         // update wideboxes with box information
         while (hasWideBoxWillChange)
         {
             var wideBoxToCheckChange = wideBoxes.First(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange);
 
-            var movesToRemove = wideBoxToCheckChange.GetMovesToRemove(map, boxes);
-            var movesToAdd = wideBoxToCheckChange.GetMovesToAdd(map, boxes);
+            var movesToRemove = wideBoxToCheckChange.GetMovesToRemove(map, wideBoxes);
+            var movesToAdd = wideBoxToCheckChange.GetMovesToAdd(map, wideBoxes);
 
             if (movesToRemove.Count > 0 || movesToAdd.Count > 0)
             {
@@ -110,30 +110,119 @@ public static class WideBoxExtensions
 
     }
 
-    public static List<Move> GetMovesToAdd(this WideBox wideBox, Map map, List<Box> boxes)
+    public static List<Move> GetMovesToAdd(this WideBox wideBox, Map map, List<WideBox> wideBoxes)
     {
-        var currentMoves = wideBox.PossibleMoves;
-        var overlappingBoxMoves = wideBox.RightBox.PossibleMoves.Where(wideBox.RightBox.PossibleMoves.Includes).ToList();
-        var movesToAdd = overlappingBoxMoves.Where(x => !currentMoves.Includes(x)).ToList();
+        var movesToAdd = new List<Move>();
+
+        var currentImpossibleMoves = MoveList.GetCurrentImpossibleMoves(wideBox.PossibleMoves);
+
+        foreach (var move in currentImpossibleMoves)
+        {
+            var oppositeMove = move.GetOppositeMove();
+            var fields = wideBox.Boxes.Select(x => x.GetAdjacentField(map, move));
+            var oppositeFields = wideBox.Boxes.Select(x => x.GetAdjacentField(map, oppositeMove));
+
+            if (fields.Any(x => x.IsWall) || oppositeFields.Any(x => x.IsWall))
+            {
+                continue;
+            }
+
+            var adjacentBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(move, wideBoxes);
+            var oppositeAdjacentBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(oppositeMove, wideBoxes);
+
+            if (adjacentBoxes.Count == 0 && oppositeAdjacentBoxes.Count == 0)
+            {
+                movesToAdd.AddIfNew(move);
+                movesToAdd.AddIfNew(oppositeMove);
+                continue;
+            }
+
+            var allWideBoxesInMoveDirection = wideBox.GetAllWideBoxesInDirection(move, wideBoxes);
+            var allWideBoxesInOppositeMoveDirection = wideBox.GetAllWideBoxesInDirection(oppositeMove, wideBoxes);
+
+            var allBoxesInMoveDirection = allWideBoxesInMoveDirection.SelectMany(x => x.Boxes).ToList();
+            var allBoxesInOppositeMoveDirection = allWideBoxesInOppositeMoveDirection.SelectMany(x => x.Boxes).ToList();
+
+            if (allBoxesInMoveDirection.Any(x => x.GetAdjacentField(map, move).IsWall) || allBoxesInOppositeMoveDirection.Any(x => x.GetAdjacentField(map, oppositeMove).IsWall))
+            {
+                continue;
+            }
+
+            movesToAdd.AddIfNew(move);
+            movesToAdd.AddIfNew(oppositeMove);
+        }
 
         return movesToAdd;
     }
 
-    public static List<Move> GetMovesToRemove(this WideBox wideBox, Map map, List<Box> boxes)
+    public static List<Move> GetMovesToRemove(this WideBox wideBox, Map map, List<WideBox> wideBoxes)
     {
-        var currentMoves = wideBox.PossibleMoves;
         var movesToRemove = new List<Move>();
 
-        foreach (Move currentMove in currentMoves)
+        foreach (var move in wideBox.PossibleMoves)
         {
-            if (wideBox.LeftBox.PossibleMoves.Includes(currentMove) && wideBox.RightBox.PossibleMoves.Includes(currentMove))
+            //var oppositeMove = move.GetOppositeMove();
+            var fields = wideBox.Boxes.Select(x => x.GetAdjacentField(map, move));
+            //var oppositeFields = wideBox.Boxes.Select(x => x.GetAdjacentField(map, oppositeMove));
+
+            //if (fields.Any(x => x.IsWall) || oppositeFields.Any(x => x.IsWall))
+            if (fields.Any(x => x.IsWall))
+            {
+                movesToRemove.AddIfNew(move);
+                //movesToRemove.AddIfNew(oppositeMove);
+                continue;
+            }
+
+            var adjacentBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(move, wideBoxes);
+            //var oppositeAdjacentBoxes = wideBox.GetAdjacentWideBoxesFromMoveDirection(oppositeMove, wideBoxes);
+
+            //if (adjacentBoxes.Count == 0 && oppositeAdjacentBoxes.Count == 0)
+            if (adjacentBoxes.Count == 0)
             {
                 continue;
             }
-            movesToRemove.Add(currentMove);
+
+            var allWideBoxesInMoveDirection = wideBox.GetAllWideBoxesInDirection(move, wideBoxes);
+            //var allWideBoxesInOppositeMoveDirection = wideBox.GetAllWideBoxesInDirection(oppositeMove, wideBoxes);
+
+            var allBoxesInMoveDirection = allWideBoxesInMoveDirection.SelectMany(x => x.Boxes).ToList();
+            //var allBoxesInOppositeMoveDirection = allWideBoxesInOppositeMoveDirection.SelectMany(x => x.Boxes).ToList();
+
+            //if (allBoxesInMoveDirection.Any(x => x.GetAdjacentField(map, move).IsWall) || allBoxesInOppositeMoveDirection.Any(x => x.GetAdjacentField(map, oppositeMove).IsWall))
+            if (allBoxesInMoveDirection.Any(x => x.GetAdjacentField(map, move).IsWall))
+            {
+                movesToRemove.AddIfNew(move);
+                //movesToRemove.AddIfNew(move.GetOppositeMove());
+            }
         }
 
         return movesToRemove;
+    }
+
+    public static List<WideBox> GetAllWideBoxesInDirection(this WideBox wideBox, Move move, List<WideBox> wideBoxes)
+    {
+        var wideBoxesInDirection = new List<WideBox>();
+        var wideBoxesToCheck = new List<WideBox> { wideBox };
+
+        while (true)
+        {
+            var adjacentBoxes = new List<WideBox>();
+
+            foreach (var wideBoxToCheck in wideBoxesToCheck)
+            {
+                adjacentBoxes.AddRange(wideBoxToCheck.GetAdjacentWideBoxesFromMoveDirection(move, wideBoxes));
+            }
+
+            if (adjacentBoxes.Count == 0)
+            {
+                break;
+            }
+
+            wideBoxesInDirection.AddRange(adjacentBoxes);
+            wideBoxesToCheck = adjacentBoxes;
+        }
+
+        return wideBoxesInDirection;
     }
 
     public static int GetGPSSum(this List<WideBox> wideBoxes, Map map)
@@ -142,7 +231,8 @@ public static class WideBoxExtensions
 
         foreach (var wideBox in wideBoxes)
         {
-            gps += wideBox.GetGps(map);
+            //gps += wideBox.GetGps(map);
+            gps += wideBox.LeftBox.GetGps();
         }
 
         return gps;

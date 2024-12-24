@@ -49,7 +49,7 @@ public static class WarehouseService
         var map = new Map(nRows, nColumns);
 
         var robots = new List<Robot>();
-        var boxes = new List<WideBox>();
+        var boxes = new List<Box>();
 
         for (var row = 0; row < nRows; row++)
         {
@@ -62,7 +62,7 @@ public static class WarehouseService
 
                 if (fill == 'O')
                 {
-                    boxes.Add(new WideBox(position));
+                    boxes.Add(new Box(position));
                 }
                 if (fill == '@')
                 {
@@ -94,7 +94,7 @@ public static class WarehouseService
 
                 if (fill == 'O')
                 {
-                    wideBoxes.Add(new WideBox(new WideBox(position), new WideBox(position)));
+                    wideBoxes.Add(new WideBox(new Box(position), new Box(position)));
                 }
                 if (fill == '@')
                 {

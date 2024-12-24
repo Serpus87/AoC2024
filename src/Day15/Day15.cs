@@ -12,9 +12,9 @@ public static class Day15
     public static void Solve()
     {
         // read file
-        //var fileName = "PuzzleInput.txt";
+        var fileName = "PuzzleInput.txt";
         //var fileName = "Part2Example1.txt";
-        var fileName = "Example1.txt";
+        //var fileName = "Example1.txt";
         var input = File.ReadAllLines($"Day15\\{fileName}");
         var splitInput = WarehouseService.SplitInput(input);
 
@@ -24,7 +24,7 @@ public static class Day15
 
         warehouse.Boxes.InitializeMoveDirections(warehouse.Map);
 
-        //-- temp
+        //-- tempdfg
         warehouse.Map.Print();
         //--
 

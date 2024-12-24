@@ -17,7 +17,7 @@ public static class WideBoxExtensions
 
         foreach (var wideBox in wideBoxes)
         {
-            if (wideBox.Boxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.WillChange))
+            if (wideBox.Boxes.Any(x => x.PossibleMovesEnum == PossibleMovesEnum.HasChanged))
             {
                 wideBox.UpdatePossibleMovesEnum(PossibleMovesEnum.WillChange);
             }
@@ -158,6 +158,13 @@ public static class WideBoxExtensions
     public static List<Move> GetMovesToRemove(this WideBox wideBox, Map map, List<WideBox> wideBoxes)
     {
         var movesToRemove = new List<Move>();
+
+        //-- temp debug
+        if (wideBox.LeftBox.Position.Row == 1 || wideBox.LeftBox.Position.Row == 48 || wideBox.LeftBox.Position.Column == 2 || wideBox.RightBox.Position.Column == 97)
+        {
+            var debug = true;
+        }
+        //-- end-temp debug
 
         foreach (var move in wideBox.PossibleMoves)
         {

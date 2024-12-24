@@ -196,6 +196,11 @@ public static class WarehouseService
 
         foreach (var move in warehouse.Robot.Moves)
         {
+            if (moveCounter > 4275)
+            {
+                //map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+            }
+
             moveCounter++;
             var possibleNewLocation = new Position(robot.Position.Row + move.Vertical, robot.Position.Column + move.Horizontal);
 

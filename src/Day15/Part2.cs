@@ -206,6 +206,7 @@ public static class Part2
         // get GPS
         var result = warehouse.WideBoxes.GetGPSSum(warehouse.Map);
 
+        // first try wrong answer: 1505033
         return result;
     }
 }

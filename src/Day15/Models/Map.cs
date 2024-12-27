@@ -61,7 +61,7 @@ public class Map
         }
     }
 
-    internal void Update(Robot robot, List<WideBox> wideBoxes)
+    public void Update(Robot robot, List<WideBox> wideBoxes)
     {
         // empty robot and box fields
         var charsToRemove = new List<char> { '@', '[', ']' };

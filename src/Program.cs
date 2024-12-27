@@ -13,11 +13,12 @@ using AdventOfCode.Day12;
 using AdventOfCode.Day13;
 using AdventOfCode.Day14;
 using AdventOfCode.Day15;
+using AdventOfCode.Day16;
 
 public class Program
 {
     private static void Main(string[] args)
     {
-        Day15.Solve();
+        Day16.Solve();
     }
 }

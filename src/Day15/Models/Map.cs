@@ -60,4 +60,30 @@ public class Map
             Console.WriteLine(stringToPrint);
         }
     }
+
+    internal void Update(Robot robot, List<WideBox> wideBoxes)
+    {
+        // empty robot and box fields
+        var charsToRemove = new List<char> { '@', '[', ']' };
+        for (int row = 0; row < NumberOfRows; row++)
+        {
+            for (int column = 0; column < NumberOfColumns; column++)
+            {
+                if (charsToRemove.Contains(Fields[row,column].Fill))
+                {
+                    Fields[row, column].Fill = '.';
+                }
+            }
+        }
+
+        // refill robot field
+        Fields[robot.Position.Row, robot.Position.Column].Fill = '@';
+
+        // refill box fields
+        foreach (var wideBox in wideBoxes)
+        {
+            Fields[wideBox.LeftBox.Position.Row, wideBox.LeftBox.Position.Column].Fill = '[';
+            Fields[wideBox.RightBox.Position.Row, wideBox.RightBox.Position.Column].Fill = ']';
+        }
+    }
 }

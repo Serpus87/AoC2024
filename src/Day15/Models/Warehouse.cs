@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Day15.Models;
 
-public class Warehouse
+public class Warehouse : BaseWarehouse
 {
-    public Map Map { get; set; }
-    public Robot Robot { get; set; }
     public List<Box> Boxes { get; set; }
 
-    public Warehouse(Map map, Robot robot, List<Box> boxes)
+    public Warehouse(Map map, Robot robot, List<Box> boxes) : base(map, robot)
     {
-        Map = map;
-        Robot = robot;
         Boxes = boxes;
     }
 }

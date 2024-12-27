@@ -67,7 +67,7 @@ public class Day15Tests
         var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
         wideWarehouse.Robot.Moves = robotMoveList;
 
-        wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
+        //wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
 
         // Act
         var actualSolution = Part2.Solve(wideWarehouse);
@@ -89,7 +89,7 @@ public class Day15Tests
         var robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
         wideWarehouse.Robot.Moves = robotMoveList;
 
-        wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
+        //wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
 
         // Act
         var actualSolution = Part2.Solve(wideWarehouse);

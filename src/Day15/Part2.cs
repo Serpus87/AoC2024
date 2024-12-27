@@ -201,13 +201,15 @@ public static class Part2
     public static int Solve(WideWarehouse warehouse)
     {
         // move robot
-        WarehouseService.MakeAllRobotMovesInWideWarehouse(warehouse);
+        WarehouseService.MakeAllRobotMovesInWideWarehouseKISS(warehouse);
 
         // get GPS
         var result = warehouse.WideBoxes.GetGPSSum(warehouse.Map);
 
         // first try wrong answer: 1505033 too low
         // second try wrong answer: 1521738 too high
+        // third try wrong answer: 1509823 too high
+        // fourth try: 1509724!
         return result;
     }
 }

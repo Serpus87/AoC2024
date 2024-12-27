@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -167,14 +168,14 @@ public static class WarehouseService
                 continue;
             }
 
-            var newLocationBox = boxes.SingleOrDefault(x=>x.Position.Row == possibleNewLocation.Row && x.Position.Column == possibleNewLocation.Column);
+            var newLocationBox = boxes.SingleOrDefault(x => x.Position.Row == possibleNewLocation.Row && x.Position.Column == possibleNewLocation.Column);
 
-            if (newLocationBox != null && !newLocationBox.PossibleMoves.Includes(move)) 
-            { 
-                continue; 
+            if (newLocationBox != null && !newLocationBox.PossibleMoves.Includes(move))
+            {
+                continue;
             }
 
-            robot.MakeMove(move,map);
+            robot.MakeMove(move, map);
 
             if (newLocationBox != null && newLocationBox.PossibleMoves.Includes(move))
             {
@@ -187,57 +188,68 @@ public static class WarehouseService
         }
     }
 
-    public static void MakeAllRobotMovesInWideWarehouse(WideWarehouse warehouse)
+    public static void MakeAllRobotMovesInWideWarehouseKISS(WideWarehouse warehouse)
     {
         var robot = warehouse.Robot;
         var map = warehouse.Map;
         var wideBoxes = warehouse.WideBoxes;
         var moveCounter = 0;
+        var debug = false;
 
         foreach (var move in warehouse.Robot.Moves)
         {
-            if (moveCounter > 4275)
-            {
-                //map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
-            }
-
             moveCounter++;
             var possibleNewLocation = new Position(robot.Position.Row + move.Vertical, robot.Position.Column + move.Horizontal);
 
+            //if (moveCounter > 150)
+            //{
+            //    debug = true;
+            //}
+
+            // if new location is wall, don't move
             if (map.Fields[possibleNewLocation.Row, possibleNewLocation.Column].IsWall)
             {
+                if (debug == true)
+                {
+                    map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+                }
                 continue;
             }
 
-            var newLocationBox = wideBoxes.SingleOrDefault(x => x.Boxes.Any(y=>y.Position.Row == possibleNewLocation.Row && y.Position.Column == possibleNewLocation.Column));
+            // check if there is a widebox in the new location
+            var newLocationBox = wideBoxes.SingleOrDefault(x => x.Boxes.Any(y => y.Position.Row == possibleNewLocation.Row && y.Position.Column == possibleNewLocation.Column));
 
-            if (newLocationBox != null && !newLocationBox.PossibleMoves.Includes(move))
+            // if there is a widebox, get all adjacent boxes
+            var allAdjacentBoxes = new List<WideBox>();
+
+            if (newLocationBox != null)
             {
+                allAdjacentBoxes = newLocationBox.GetAllWideBoxesInDirection(move, wideBoxes);
+                allAdjacentBoxes.Add(newLocationBox);
+            }
+
+            // if any of the adjacent boxes is blocked by a wall, don't move
+            if (allAdjacentBoxes.SelectMany(x => x.Boxes).ToList().Any(x => x.GetAdjacentField(map, move).IsWall))
+            {
+                if (debug == true)
+                {
+                    map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+                }
                 continue;
             }
 
             robot.MakeMove(move, map);
-
-            if (newLocationBox != null && newLocationBox.PossibleMoves.Includes(move))
+            //allAdjacentBoxes.MakeMove(move);
+            if (newLocationBox != null && !allAdjacentBoxes.SelectMany(x => x.Boxes).ToList().Any(x => x.GetAdjacentField(map, move).IsWall)) // todo simplify this...
             {
-                //if (move.Vertical != 0)
-                //{
-                //    if (robot.Position.Column == newLocationBox.LeftBox.Position.Column)
-                //    {
-                //        map.Fields[newLocationBox.RightBox.Position.Row, newLocationBox.RightBox.Position.Column].Fill = '.';
-                //    }
-                //    else
-                //    {
-                //        map.Fields[newLocationBox.LeftBox.Position.Row, newLocationBox.LeftBox.Position.Column].Fill = '.';
-                //    }
-                        
-                //}
                 wideBoxes.MoveFrom(newLocationBox, move, map);
             }
 
-            wideBoxes.UpdateMoveDirections(map);
             map.Update(robot, wideBoxes);
-            //map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+            if (debug == true)
+            {
+                map.Print(move, moveCounter, warehouse.Robot.Moves.Count);
+            }
             //Console.WriteLine($"Move number {moveCounter} out of {warehouse.Robot.Moves.Count} total number of Moves");
         }
     }

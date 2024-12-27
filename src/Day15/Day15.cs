@@ -35,15 +35,23 @@ public static class Day15
         //robotMoveList = WarehouseService.GetRobotMoveList(splitInput.Last());
         wideWarehouse.Robot.Moves = robotMoveList;
 
-        wideWarehouse.WideBoxes.InitializeMoveDirections(wideWarehouse.Map);
-
         //-- temp
         wideWarehouse.Map.Print();
         //--
 
         solution = Part2.Solve(wideWarehouse);
 
+        // -- check boxes
+        Console.WriteLine($"{warehouse.Boxes.Count()} number of boxes in part 1");
+        Console.WriteLine($"{wideWarehouse.WideBoxes.Count()} number of wideBoxes in part 2");
+        Console.WriteLine($"{wideWarehouse.Map.FieldsList.Count(x => x.Fill == '[')} numbers of '[' on map");
+        Console.WriteLine($"{wideWarehouse.Map.FieldsList.Count(x => x.Fill == ']')} numbers of ']' on map");
+        // --
+
         wideWarehouse.Map.Print();
+
+       
+
         Console.WriteLine($"Day15 Part2 Solution: {solution}");
     }
 }

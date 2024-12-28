@@ -4,17 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AdventOfCode.Day17.Models
-{
-    internal class Register
-    {
-        public string Name { get; init; }
-        public int Value { get; set; }
+namespace AdventOfCode.Day17.Models;
 
-        public Register(string name, int value)
-        {
-            Name = name;
-            Value = value;
-        }
+public class Register
+{
+    public string Name { get; init; }
+    public int Value { get; set; }
+
+    public Register(string name, int value)
+    {
+        Name = name;
+        Value = value;
     }
 }

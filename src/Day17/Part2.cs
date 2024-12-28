@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AdventOfCode.Day17.Models;
 
-namespace AdventOfCode.Day17
+namespace AdventOfCode.Day17;
+
+public static class Part2
 {
-    internal class Part2
+    public static string Solve(List<Register> registers, List<int> programInput)
     {
+        var result = string.Empty;
+
+        return result;
     }
 }

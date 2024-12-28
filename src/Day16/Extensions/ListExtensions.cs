@@ -27,7 +27,7 @@ public static class ListExtensions
 
         foreach (var position in positions)
         {
-            if (!distinctPositions.Any(x => x.Row == position.Row && x.Column == position.Column));
+            if (!distinctPositions.Any(x => x.Row == position.Row && x.Column == position.Column))
             {
                 distinctPositions.Add(position);
             };

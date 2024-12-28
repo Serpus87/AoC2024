@@ -43,4 +43,36 @@ public class Day16Tests
         // Assert
         Assert.AreEqual(expectedSolution, actualSolution);
     }
+
+    [TestMethod]
+    public void Part2Solve_Example1_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 45;
+        var fileName = "Example1.txt";
+        var input = File.ReadAllLines($"Day16\\{fileName}");
+        var maze = MazeService.GetMaze(input);
+
+        // Act
+        var actualSolution = Part2.Solve(maze);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
+
+    [TestMethod]
+    public void Part2Solve_Example2_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 64;
+        var fileName = "Example2.txt";
+        var input = File.ReadAllLines($"Day16\\{fileName}");
+        var maze = MazeService.GetMaze(input);
+
+        // Act
+        var actualSolution = Part2.Solve(maze);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 }

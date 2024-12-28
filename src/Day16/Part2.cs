@@ -71,7 +71,7 @@ public static class Part2
         var bestScore = reindeersThatFoundTheEnd.Min(x => x.Score);
         var bestReindeers = reindeersThatFoundTheEnd.Where(x => x.Score == bestScore).ToList();
 
-        var allPositions = bestReindeers.SelectMany(x=>x.PreviousPositions).ToList();
+        var allPositions = bestReindeers.SelectMany(x => x.PreviousPositions).ToList();
 
         var result = allPositions.CountDistinct();
 

@@ -69,9 +69,9 @@ public static class MazeService
             foreach (var reindeer in reindeersThatWillWalk)
             {
                 reindeer.PreviousPositions.Add(reindeer.Position);
-
+                var previousPosition = new Position(reindeer.Position.Row, reindeer.Position.Column);
                 var availableMoves = GetAvailableMoves(maze, reindeers, reindeer);
-                
+
                 if (availableMoves.Count == 0)
                 {
                     reindeer.IsDoneWalking = true;
@@ -85,9 +85,9 @@ public static class MazeService
                     reindeers.Add(newReindeer);
                     newReindeer.MakeMove(availableMoves[i]);
 
-                    if (maze.Fields[newReindeer.Position.Row, newReindeer.Position.Column].LowestScore == null || maze.Fields[newReindeer.Position.Row, newReindeer.Position.Column].LowestScore >= reindeer.Score)
+                    if (maze.Fields[previousPosition.Row, previousPosition.Column].LowestScore == null || (maze.Fields[previousPosition.Row, previousPosition.Column].LowestScore + 1000) >= reindeer.Score)
                     {
-                        maze.Fields[newReindeer.Position.Row, newReindeer.Position.Column].LowestScore = newReindeer.Score;
+                        maze.Fields[previousPosition.Row, previousPosition.Column].LowestScore = newReindeer.Score;
                     }
                     else
                     {
@@ -96,15 +96,16 @@ public static class MazeService
 
                     if (newReindeer.Position.Row == maze.End.Row && newReindeer.Position.Column == maze.End.Column)
                     {
+                        reindeer.PreviousPositions.Add(newReindeer.Position);
                         newReindeer.IsDoneWalking = true;
                     }
                 }
 
                 reindeer.MakeMove(availableMoves.First());
 
-                if (maze.Fields[reindeer.Position.Row, reindeer.Position.Column].LowestScore == null || maze.Fields[reindeer.Position.Row, reindeer.Position.Column].LowestScore >= reindeer.Score)
+                if (maze.Fields[previousPosition.Row, previousPosition.Column].LowestScore == null || (maze.Fields[previousPosition.Row, previousPosition.Column].LowestScore + 1000) >= reindeer.Score)
                 {
-                    maze.Fields[reindeer.Position.Row, reindeer.Position.Column].LowestScore = reindeer.Score;
+                    maze.Fields[previousPosition.Row, previousPosition.Column].LowestScore = reindeer.Score;
                 }
                 else
                 {
@@ -113,21 +114,19 @@ public static class MazeService
 
                 if (reindeer.Position.Row == maze.End.Row && reindeer.Position.Column == maze.End.Column)
                 {
+                    reindeer.PreviousPositions.Add(reindeer.Position);
                     reindeer.IsDoneWalking = true;
                 }
             }
 
-            // todo filter out reindeers with SameLocation by picking reindeer with lowest score
-
             areReindeersDoneWalking = reindeers.All(x => x.IsDoneWalking);
         }
 
-        var reindeersThatFoundEnd = reindeers.Where(x=>x.Position.Row == maze.End.Row && x.Position.Column == maze.End.Column).ToList();
+        var reindeersThatFoundEnd = reindeers.Where(x => x.Position.Row == maze.End.Row && x.Position.Column == maze.End.Column).ToList();
 
         return reindeersThatFoundEnd;
     }
 
-    // imp[rove this, fastest route is not cheapest route
     private static List<Move> GetAvailableMoves(Maze maze, List<Reindeer> reindeers, Reindeer reindeer)
     {
         var availablePositions = new List<Move>();
@@ -137,9 +136,10 @@ public static class MazeService
         {
             var newPosition = new Position(reindeer.Position.Row + direction.Position.Row, reindeer.Position.Column + direction.Position.Column);
             var isNewPositionAvailable = !maze.Fields[newPosition.Row, newPosition.Column].IsWall;
-            var hasNewPositionHigherScore = maze.Fields[newPosition.Row, newPosition.Column].LowestScore == null || maze.Fields[newPosition.Row, newPosition.Column].LowestScore >= reindeer.Score;
+            var hasCurrentPositionHigherScore = maze.Fields[reindeer.Position.Row, reindeer.Position.Column].LowestScore == null || (maze.Fields[reindeer.Position.Row, reindeer.Position.Column].LowestScore + 1000) >= reindeer.Score;
+            var hasReindeerNotBeenOnPositionBefore = !reindeer.PreviousPositions.Any(x => x.Row == newPosition.Row && x.Column == newPosition.Column);
 
-            if (isNewPositionAvailable && hasNewPositionHigherScore)
+            if (isNewPositionAvailable && hasCurrentPositionHigherScore && hasReindeerNotBeenOnPositionBefore)
             {
                 availablePositions.Add(direction);
             }

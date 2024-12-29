@@ -10,11 +10,13 @@ public static class Out
 {
     public static int Opcode { get; set; } = 5;
 
-    public static int Execute(int comboOperant, int registerAValue)
+    public static int Execute(int? comboOperand)
     {
-        var numerator = registerAValue;
-        var denominator = Math.Pow(comboOperant, 2);
+        if (comboOperand == null)
+        {
+            throw new ArgumentException("comboOperand cannot be null");
+        }
 
-        return (int)(numerator / denominator);
+        return (int)comboOperand % 8;
     }
 }

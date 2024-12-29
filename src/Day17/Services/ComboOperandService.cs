@@ -9,7 +9,7 @@ namespace AdventOfCode.Day17.Services;
 
 public static class ComboOperandService
 {
-    public static int GetComboOperant(int operand, List<Register> registers)
+    public static int? GetComboOperant(int operand, List<Register> registers)
     {
         return operand switch
         {
@@ -20,6 +20,7 @@ public static class ComboOperandService
             4 => registers.First(x => x.Name == "A").Value,
             5 => registers.First(x => x.Name == "B").Value,
             6 => registers.First(x => x.Name == "C").Value,
+            7 => null,
             _ => throw new NotImplementedException(),
         };
     }

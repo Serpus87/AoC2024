@@ -10,11 +10,10 @@ public static class Bxc
 {
     public static int Opcode { get; set; } = 4;
 
-    public static int Execute(int comboOperant, int registerAValue)
+    public static int Execute(int registerBValue, int registerCValue)
     {
-        var numerator = registerAValue;
-        var denominator = Math.Pow(comboOperant, 2);
+        var bitWiseXOR = BinaryService.CalculateBitWiseXOR(registerBValue, registerCValue);
 
-        return (int)(numerator / denominator);
+        return bitWiseXOR;
     }
 }

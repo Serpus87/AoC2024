@@ -10,8 +10,13 @@ public static class Bst
 {
     public static int Opcode { get; set; } = 2;
 
-    public static int Execute(int comboOperant)
+    public static int Execute(int? comboOperand)
     {
-        return comboOperant % 8;
+        if (comboOperand == null)
+        {
+            throw new ArgumentException("comboOperand cannot be null");
+        }
+
+        return (int)comboOperand % 8;
     }
 }

@@ -10,10 +10,15 @@ public static  class Cdv
 {
     public static int Opcode { get; set; } = 7;
 
-    public static int Execute(int comboOperant, int registerAValue)
+    public static int Execute(int? comboOperand, int registerAValue)
     {
+        if (comboOperand == null)
+        {
+            throw new ArgumentException("comboOperand cannot be null");
+        }
+
         var numerator = registerAValue;
-        var denominator = Math.Pow(comboOperant, 2);
+        var denominator = Math.Pow(2, (int)comboOperand);
 
         return (int)(numerator / denominator);
     }

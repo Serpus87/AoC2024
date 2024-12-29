@@ -14,7 +14,7 @@ public class ComputerService
     {
         var splitInput = new List<string[]>();
         var registerStrings = new List<string>();
-        var programString = string.Empty;
+        var programString = new List<string>(); ;
         var newLineIsFound = false;
 
         foreach (var line in input)
@@ -31,13 +31,13 @@ public class ComputerService
             }
             if (newLineIsFound)
             {
-                programString = line.Trim(',');
+                programString.Add(line);
                 continue;
             }
         }
 
         splitInput.Add(registerStrings.ToArray());
-        splitInput.Add(programString.ToCharArray().Select(x => x.ToString()).ToArray());
+        splitInput.Add(programString.ToArray());
 
         return splitInput;
     }
@@ -60,9 +60,12 @@ public class ComputerService
     {
         var programInput = new List<int>();
 
-        for (var i = 0; i < input[0].Length; i++)
+        var inputSubstring = input[0].Substring(input[0].IndexOf(' ') + 1);
+        var programNumbers = inputSubstring.Replace(",","");
+
+        for (var i = 0; i < programNumbers.Length; i++)
         {
-            programInput.Add(input[0][i]);
+            programInput.Add((int)Char.GetNumericValue(programNumbers[i]));
         }
 
         return programInput;
@@ -70,7 +73,7 @@ public class ComputerService
 
     public static string ProcessInput(List<int> programInput, List<Register> registers)
     {
-        var output = string.Empty;
+        var output = new List<string>();
 
         for (var i = 0; i < programInput.Count; i++)
         {
@@ -101,14 +104,16 @@ public class ComputerService
                     var newIndex = Jnz.Execute(operand, registerA.Value, i);
                     if (newIndex != i)
                     {
+                        i = newIndex - 1;
                         shouldJump = false;
                     }
                     break;
                 case 4:
-                    registerB.Value = Bxc.Execute(operand, registerB.Value, registerC.Value);
+                    registerB.Value = Bxc.Execute(registerB.Value, registerC.Value);
                     break;
                 case 5:
-                    output += Out.Execute(comboOperand);
+                    var outResult = Out.Execute(comboOperand);
+                    output.Add(outResult.ToString());
                     break;
                 case 6:
                     registerB.Value = Bdv.Execute(comboOperand, registerA.Value);
@@ -126,6 +131,7 @@ public class ComputerService
             }
         }
 
-        return output;
+        var result = string.Join(",", output);
+        return result;
     }
 }

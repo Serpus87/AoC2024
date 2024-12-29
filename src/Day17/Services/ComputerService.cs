@@ -134,4 +134,27 @@ public class ComputerService
         var result = string.Join(",", output);
         return result;
     }
+
+    internal static int FindInitialAValue(List<int> programInput, List<Register> registers)
+    {
+        var expectedOutput = string.Join(",", programInput);
+        var actualOutput = string.Empty;
+        var newAValue = -1;
+
+        while (actualOutput != expectedOutput)
+        {
+            newAValue++;
+
+            var newRegisters = new List<Register>
+            {
+                new Register("A",newAValue),
+                new Register("B",registers.First(x=>x.Name == "B").Value),
+                new Register("C",registers.First(x=>x.Name == "C").Value),
+            };
+
+            actualOutput = ProcessInput(programInput, newRegisters);
+        }
+
+        return newAValue;
+    }
 }

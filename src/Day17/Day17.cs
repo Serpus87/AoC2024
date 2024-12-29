@@ -22,7 +22,8 @@ public static class Day17
         var solution = Part1.Solve(registers, programInput);
         Console.WriteLine($"Day17 Part1 Solution: {solution}");
 
-        solution = Part2.Solve(registers, programInput);
-        Console.WriteLine($"Day17 Part2 Solution: {solution}");
+        var newRegisters = ComputerService.GetRegisters(splitInput.First());
+        var partTwoSolution = Part2.Solve(registers, programInput);
+        Console.WriteLine($"Day17 Part2 Solution: {partTwoSolution}");
     }
 }

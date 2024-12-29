@@ -179,4 +179,24 @@ public class Day17Tests
         // Assert
         Assert.AreEqual(expectedSolution, actualSolution);
     }
+
+    [TestMethod]
+    public void Part2Solve_Example_ReturnsExpectedSolution()
+    {
+        // Arrange
+        var expectedSolution = 117440;
+
+        var fileName = "Example.txt";
+        var input = File.ReadAllLines($"Day17\\{fileName}");
+        var splitInput = ComputerService.SplitInput(input);
+
+        var registers = ComputerService.GetRegisters(splitInput.First());
+        var programInput = ComputerService.GetProgramInput(splitInput.Last());
+
+        // Act
+        var actualSolution = Part2.Solve(registers, programInput);
+
+        // Assert
+        Assert.AreEqual(expectedSolution, actualSolution);
+    }
 }

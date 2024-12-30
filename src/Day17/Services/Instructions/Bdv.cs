@@ -10,7 +10,7 @@ public static  class Bdv
 {
     public static int Opcode { get; set; } = 6;
 
-    public static int Execute(int? comboOperand, int registerAValue)
+    public static uint Execute(uint? comboOperand, uint registerAValue)
     {
         if (comboOperand == null)
         {
@@ -18,8 +18,8 @@ public static  class Bdv
         }
 
         var numerator = registerAValue;
-        var denominator = Math.Pow(2, (int)comboOperand);
+        var denominator = Math.Pow(2, (uint)comboOperand);
 
-        return (int)(numerator / denominator);
+        return (uint)(int)(numerator / denominator);
     }
 }

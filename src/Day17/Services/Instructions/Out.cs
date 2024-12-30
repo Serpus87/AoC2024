@@ -10,13 +10,13 @@ public static class Out
 {
     public static int Opcode { get; set; } = 5;
 
-    public static int Execute(int? comboOperand)
+    public static int Execute(uint? comboOperand)
     {
         if (comboOperand == null)
         {
             throw new ArgumentException("comboOperand cannot be null");
         }
 
-        return (int)comboOperand % 8;
+        return (int)((uint)comboOperand % 8);
     }
 }

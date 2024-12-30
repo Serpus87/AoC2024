@@ -9,7 +9,7 @@ namespace AdventOfCode.Day17.Services;
 
 public static class ComboOperandService
 {
-    public static int? GetComboOperant(int operand, List<Register> registers)
+    public static uint? GetComboOperant(int operand, List<Register> registers)
     {
         return operand switch
         {

@@ -49,7 +49,7 @@ public class ComputerService
         foreach (var line in input)
         {
             var name = line.Substring(line.IndexOf(' ') + 1, 1);
-            var value = int.Parse(line.Substring(line.IndexOf(':') + 2));
+            var value = uint.Parse(line.Substring(line.IndexOf(':') + 2));
             registers.Add(new Register(name, value));
         }
 
@@ -71,9 +71,9 @@ public class ComputerService
         return programInput;
     }
 
-    public static string ProcessInput(List<int> programInput, List<Register> registers)
+    public static string ProcessInput(List<int> programInput, List<Register> registers, bool outputShouldMatchInput = false)
     {
-        var output = new List<string>();
+        var output = new List<int>();
 
         for (var i = 0; i < programInput.Count; i++)
         {
@@ -113,7 +113,7 @@ public class ComputerService
                     break;
                 case 5:
                     var outResult = Out.Execute(comboOperand);
-                    output.Add(outResult.ToString());
+                    output.Add(outResult);
                     break;
                 case 6:
                     registerB.Value = Bdv.Execute(comboOperand, registerA.Value);
@@ -123,6 +123,14 @@ public class ComputerService
                     break;
                 default:
                     break;
+            }
+
+            if (outputShouldMatchInput && opcode == 5)
+            {
+                if (output.Count > programInput.Count || output[output.Count - 1] != programInput[output.Count - 1])
+                {
+                    break;
+                }
             }
 
             if (shouldJump)
@@ -135,15 +143,26 @@ public class ComputerService
         return result;
     }
 
-    internal static int FindInitialAValue(List<int> programInput, List<Register> registers)
+    internal static uint FindInitialAValue(List<int> programInput, List<Register> registers)
     {
         var expectedOutput = string.Join(",", programInput);
         var actualOutput = string.Empty;
-        var newAValue = -1;
+        //var newAValue = (uint)int.MaxValue;
+        var newAValue = 0u;
 
         while (actualOutput != expectedOutput)
         {
             newAValue++;
+
+            if (newAValue < 0)
+            {
+                throw new ArgumentOutOfRangeException("newAValue overflow, try ulong instead");
+            }
+
+            if (newAValue == 117440u)
+            {
+                var temp = true;
+            }
 
             var newRegisters = new List<Register>
             {
@@ -152,7 +171,7 @@ public class ComputerService
                 new Register("C",registers.First(x=>x.Name == "C").Value),
             };
 
-            actualOutput = ProcessInput(programInput, newRegisters);
+            actualOutput = ProcessInput(programInput, newRegisters, true);
         }
 
         return newAValue;

@@ -18,7 +18,7 @@ public class Day17Tests
     public void ProcessInput_SmallExample1_ReturnsExpectedSolution()
     {
         // Arrange
-        var expectedRegisterBValue = 1;
+        var expectedRegisterBValue = 1u;
 
         var registers = new List<Register>
         {
@@ -76,7 +76,7 @@ public class Day17Tests
     {
         // Arrange
         var expectedResult = "4,2,5,6,7,7,7,7,3,1,0";
-        var expectedRegisterAValue = 0;
+        var expectedRegisterAValue = 0u;
 
         var registers = new List<Register>
         {
@@ -106,7 +106,7 @@ public class Day17Tests
     public void ProcessInput_SmallExample4_ReturnsExpectedSolution()
     {
         // Arrange
-        var expectedRegisterBValue = 26;
+        var expectedRegisterBValue = 26u;
 
         var registers = new List<Register>
         {
@@ -135,7 +135,7 @@ public class Day17Tests
     public void ProcessInput_SmallExample5_ReturnsExpectedSolution()
     {
         // Arrange
-        var expectedRegisterBValue = 44354;
+        var expectedRegisterBValue = 44354u;
 
         var registers = new List<Register>
         {
@@ -184,9 +184,9 @@ public class Day17Tests
     public void Part2Solve_Example_ReturnsExpectedSolution()
     {
         // Arrange
-        var expectedSolution = 117440;
+        var expectedSolution = 117440u;
 
-        var fileName = "Example.txt";
+        var fileName = "ExamplePart2.txt";
         var input = File.ReadAllLines($"Day17\\{fileName}");
         var splitInput = ComputerService.SplitInput(input);
 

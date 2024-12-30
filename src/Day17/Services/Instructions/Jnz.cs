@@ -10,7 +10,7 @@ public static class Jnz
 {
     public static int Opcode { get; set; } = 3;
 
-    public static int Execute(int operand, int registerAValue, int i)
+    public static int Execute(int operand, uint registerAValue, int i)
     {
         if (registerAValue == 0)
         {

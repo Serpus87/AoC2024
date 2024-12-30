@@ -147,14 +147,14 @@ public class ComputerService
     {
         var expectedOutput = string.Join(",", programInput);
         var actualOutput = string.Empty;
-        var newAValue = (uint)int.MaxValue; // start here, after trying all ints
-        //var newAValue = 0u;
+        //var newAValue = (uint)int.MaxValue; // start here, after trying all ints
+        var newAValue = 0u;
 
         while (actualOutput != expectedOutput)
         {
             newAValue++;
 
-            if (newAValue < int.MaxValue)
+            if (newAValue == 0)
             {
                 throw new ArgumentOutOfRangeException("newAValue overflow, try ulong instead");
             }

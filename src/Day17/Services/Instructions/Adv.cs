@@ -21,6 +21,6 @@ public static class Adv
         var numerator = registerAValue;
         var denominator = Math.Pow(2, (uint)comboOperand);
 
-        return (uint)(int)(numerator / denominator);
+        return (uint)(numerator / denominator);
     }
 }

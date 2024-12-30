@@ -14,6 +14,6 @@ public static class Bxl
     {
         var bitWiseXOR = BinaryService.CalculateBitWiseXOR(registerBValue, (uint)operand);
 
-        return (uint)bitWiseXOR;
+        return bitWiseXOR;
     }
 }

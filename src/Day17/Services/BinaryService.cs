@@ -13,7 +13,7 @@ public static class BinaryService
     {
         if (secondInt == 7)
         {
-            return (uint)(8 * (int)Math.Ceiling((decimal)firstInt / 8) - firstInt % 8 - 1);
+            return (8 * (uint)Math.Ceiling((decimal)firstInt / 8) - firstInt % 8 - 1);
         }
 
         var firstString = Convert.ToString(firstInt, 2);

@@ -10,10 +10,10 @@ public static class Bxl
 {
     public static int Opcode { get; set; } = 1;
 
-    public static uint Execute(int operand, uint registerBValue)
+    public static int Execute(int operand, int registerBValue)
     {
-        var bitWiseXOR = BinaryService.CalculateBitWiseXOR(registerBValue, (uint)operand);
+        var bitWiseXOR = BinaryService.CalculateBitWiseXOR(registerBValue, operand);
 
-        return (uint)bitWiseXOR;
+        return (int)bitWiseXOR;
     }
 }

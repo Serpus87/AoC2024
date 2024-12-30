@@ -9,9 +9,9 @@ namespace AdventOfCode.Day17.Models;
 public class Register
 {
     public string Name { get; init; }
-    public uint Value { get; set; }
+    public int Value { get; set; }
 
-    public Register(string name, uint value)
+    public Register(string name, int value)
     {
         Name = name;
         Value = value;

@@ -9,11 +9,11 @@ namespace AdventOfCode.Day17.Services;
 
 public static class BinaryService
 {
-    public static uint CalculateBitWiseXOR(uint firstInt, uint secondInt)
+    public static int CalculateBitWiseXOR(int firstInt, int secondInt)
     {
         if (secondInt == 7)
         {
-            return (uint)(8 * (int)Math.Ceiling((decimal)firstInt / 8) - firstInt % 8 - 1);
+            return 8 * (int)Math.Ceiling((decimal)firstInt / 8) - firstInt % 8 - 1;
         }
 
         var firstString = Convert.ToString(firstInt, 2);
@@ -34,7 +34,7 @@ public static class BinaryService
         }
 
         var bitWiseXORString = GetBitWiseXOR(firstString, secondString);
-        var result = Convert.ToUInt32(bitWiseXORString, 2);
+        var result = Convert.ToInt32(bitWiseXORString, 2);
 
         return result;
     }

@@ -23,7 +23,7 @@ public static class Day17
         Console.WriteLine($"Day17 Part1 Solution: {solution}");
 
         var newRegisters = ComputerService.GetRegisters(splitInput.First());
-        var partTwoSolution = Part2.Solve(registers, programInput);
+        var partTwoSolution = Part2.Solve(newRegisters, programInput);
         Console.WriteLine($"Day17 Part2 Solution: {partTwoSolution}");
     }
 }

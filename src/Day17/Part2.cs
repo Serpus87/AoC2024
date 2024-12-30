@@ -37,7 +37,7 @@ public static class Part2
     /// 
     /// You can also[Share] this puzzle.
     /// </summary>
-    public static uint Solve(List<Register> registers, List<int> programInput)
+    public static int Solve(List<Register> registers, List<int> programInput)
     {
         var result = ComputerService.FindInitialAValue(programInput,registers);
 

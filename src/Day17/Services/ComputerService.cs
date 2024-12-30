@@ -49,7 +49,7 @@ public class ComputerService
         foreach (var line in input)
         {
             var name = line.Substring(line.IndexOf(' ') + 1, 1);
-            var value = uint.Parse(line.Substring(line.IndexOf(':') + 2));
+            var value = int.Parse(line.Substring(line.IndexOf(':') + 2));
             registers.Add(new Register(name, value));
         }
 
@@ -143,12 +143,11 @@ public class ComputerService
         return result;
     }
 
-    internal static uint FindInitialAValue(List<int> programInput, List<Register> registers)
+    internal static int FindInitialAValue(List<int> programInput, List<Register> registers)
     {
         var expectedOutput = string.Join(",", programInput);
         var actualOutput = string.Empty;
-        //var newAValue = (uint)int.MaxValue;
-        var newAValue = 0u;
+        var newAValue = 0;
 
         while (actualOutput != expectedOutput)
         {

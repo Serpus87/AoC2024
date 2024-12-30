@@ -154,7 +154,7 @@ public class ComputerService
         {
             newAValue++;
 
-            if (newAValue < 0)
+            if (newAValue < int.MaxValue)
             {
                 throw new ArgumentOutOfRangeException("newAValue overflow, try ulong instead");
             }

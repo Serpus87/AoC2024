@@ -147,8 +147,8 @@ public class ComputerService
     {
         var expectedOutput = string.Join(",", programInput);
         var actualOutput = string.Empty;
-        //var newAValue = (uint)int.MaxValue;
-        var newAValue = 0u;
+        var newAValue = (uint)int.MaxValue; // start here, after trying all ints
+        //var newAValue = 0u;
 
         while (actualOutput != expectedOutput)
         {
@@ -159,10 +159,10 @@ public class ComputerService
                 throw new ArgumentOutOfRangeException("newAValue overflow, try ulong instead");
             }
 
-            if (newAValue == 117440u)
-            {
-                var temp = true;
-            }
+            //if (newAValue == 117440u)
+            //{
+            //    var temp = true;
+            //}
 
             var newRegisters = new List<Register>
             {

@@ -11,6 +11,8 @@ public static class BinaryService
 {
     public static int CalculateBitWiseXOR(int firstInt, int secondInt)
     {
+        return firstInt ^ secondInt;
+
         if (secondInt == 7)
         {
             return 8 * (int)Math.Ceiling((decimal)firstInt / 8) - firstInt % 8 - 1;

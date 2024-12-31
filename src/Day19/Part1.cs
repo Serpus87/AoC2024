@@ -11,7 +11,7 @@ namespace AdventOfCode.Day19
     {
         public static int Solve(List<Design> designs, List<Pattern> patterns)
         {
-            var allPossibleDesigns = TowelService.FindAllPossibleDesigns(designs, patterns);
+            var allPossibleDesigns = TowelService.FindDesignsThatCanBeMade(designs, patterns);
 
             var result = allPossibleDesigns.Count;
 

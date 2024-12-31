@@ -78,28 +78,30 @@ namespace AdventOfCode.Day19
             return designs;
         }
 
-        public static List<Design> FindAllPossibleDesigns(List<Design> designs, List<Pattern> patterns)
+        public static List<Design> FindDesignsThatCanBeMade(List<Design> designs, List<Pattern> patterns)
         {
-            var allPossibleDesigns = new List<Design>();
+            var designsThatCanBeMade = new List<Design>();
 
             foreach (Design design in designs)
             {
                 var designCopy = new Design(design.Colors);
-                var canDesignBeMade = CanDesignBeMade(design, designCopy, patterns, new List<DesignAttempt>());
+                var canDesignBeMade = CanDesignBeMade(design, designCopy, patterns, new List<DesignAttempt>(), new DesignPattern());
 
                 if (canDesignBeMade)
                 {
-                    allPossibleDesigns.Add(design);
+                    design.CanBeMade = true;
+                    designsThatCanBeMade.Add(design);
                 }
             }
 
-            return allPossibleDesigns;
+            return designsThatCanBeMade;
         }
 
-        private static bool CanDesignBeMade(Design originalDesign, Design remainingDesign, List<Pattern> patterns, List<DesignAttempt> designAttempts)
+        private static bool CanDesignBeMade(Design originalDesign, Design remainingDesign, List<Pattern> patterns, List<DesignAttempt> designAttempts, DesignPattern designPattern)
         {
             if (remainingDesign.Colors.Length == 0)
             {
+                originalDesign.DesignPatterns.Add(designPattern);
                 return true;
             }
 
@@ -117,7 +119,7 @@ namespace AdventOfCode.Day19
                 var designAttemptSubstring = originalDesign.Colors.Substring(0, originalDesign.Colors.Length - remainingDesign.Colors.Length);
                 designAttempts.Add(new DesignAttempt(designAttemptSubstring));
 
-                return CanDesignBeMade(originalDesign, originalDesign, patterns, designAttempts);
+                return CanDesignBeMade(originalDesign, originalDesign, patterns, designAttempts, new DesignPattern());
             }
 
             foreach (Pattern pattern in matchingPatterns)
@@ -125,8 +127,9 @@ namespace AdventOfCode.Day19
                 var patternLength = pattern.Colors.Length;
                 var designSubstring = remainingDesign.Colors.Substring(patternLength);
                 var newRemainingDesign = new Design(designSubstring);
+                designPattern.Patterns.Add(pattern);
 
-                return CanDesignBeMade(originalDesign, newRemainingDesign, patterns, designAttempts);
+                return CanDesignBeMade(originalDesign, newRemainingDesign, patterns, designAttempts, designPattern);
             }
 
             return false;
@@ -174,6 +177,52 @@ namespace AdventOfCode.Day19
             }
 
             return matchingPatterns;
+        }
+
+        public static void FindAlternativeDesignsForDesignsThatCanBeMade(List<Design> designsThatCanBeMade, List<Pattern> patterns)
+        {
+            foreach (var design in designsThatCanBeMade)
+            {
+                FindAlternativeDesigns(design, patterns);
+            }
+        }
+
+        private static void FindAlternativeDesigns(Design design, List<Pattern> patterns)
+        {
+            var smallestPatternLength = patterns.Min(x=>x.Colors.Length);
+            var largestPatternLength = patterns.Max(x=>x.Colors.Length);
+            var originalDesignPattern = design.DesignPatterns.First();
+            var newDesignPatterns = new List<DesignPattern> { originalDesignPattern };
+
+            while (true)
+            {
+                var designPatternsToCheck = newDesignPatterns.ToList();
+
+                foreach (var designPattern in designPatternsToCheck)
+                {
+                    newDesignPatterns = new List<DesignPattern>();
+
+                    for (var i = 0; i < originalDesignPattern.Patterns.Count; i++)
+                    {
+                        // check if pattern can be replaced
+                        var patternReplacements = GetPatternReplacements(designPattern, i, smallestPatternLength, largestPatternLength, patterns);
+
+                        // if pattern can be replaced, addIfNew to newDesignPatterns
+                        foreach (var patternReplacement in patternReplacements)
+                        {
+                            var newDesignPattern = ReplacePattern(patternReplacement, designPattern);
+                            newDesignPatterns.AddIfNew(newDesignPattern);
+                        }
+                    }
+
+                    design.DesignPatterns.AddRange(newDesignPatterns);
+                }
+
+                if (designPatternsToCheck.Count == 0)
+                {
+                    break;
+                }
+            }
         }
     }
 }

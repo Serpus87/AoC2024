@@ -9,6 +9,8 @@ namespace AdventOfCode.Day19.Models
     public class Design
     {
         public string Colors { get; set; }
+        public bool CanBeMade { get; set; } = false;
+        public List<DesignPattern> DesignPatterns { get; set; } = new List<DesignPattern>();
 
         public Design(string colors)
         {

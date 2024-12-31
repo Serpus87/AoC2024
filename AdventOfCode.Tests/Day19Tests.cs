@@ -29,5 +29,28 @@ namespace AdventOfCode.Tests
             // Assert
             Assert.AreEqual(expectedSolution, actualSolution);
         }
+
+        [TestMethod]
+        public void Part2_Example_ReturnsExpectedSolution()
+        {
+            // Arrange
+            var expectedSolution = 16;
+
+            var fileName = "Example.txt";
+            var input = File.ReadAllLines($"Day19\\{fileName}");
+            var splitInput = TowelService.SplitInput(input);
+
+            var patterns = TowelService.GetPatterns(splitInput.First()[0]);
+            var designs = TowelService.GetDesigns(splitInput.Last());
+
+            var part1Solution = Part1.Solve(designs, patterns);
+
+            // Act
+
+            var actualSolution = Part2.Solve(designs, patterns);
+
+            // Assert
+            Assert.AreEqual(expectedSolution, actualSolution);
+        }
     }
 }

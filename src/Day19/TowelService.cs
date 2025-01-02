@@ -85,7 +85,7 @@ namespace AdventOfCode.Day19
             foreach (Design design in designs)
             {
                 var designCopy = new Design(design.Colors);
-                var canDesignBeMade = CanDesignBeMade(design, designCopy, patterns, new List<DesignAttempt>(), new DesignPattern());
+                var canDesignBeMade = CanDesignBeMade(design, designCopy, patterns, new List<DesignAttempt>(), new DesignPattern(), new DesignPattern());
 
                 if (canDesignBeMade)
                 {
@@ -97,11 +97,11 @@ namespace AdventOfCode.Day19
             return designsThatCanBeMade;
         }
 
-        private static bool CanDesignBeMade(Design originalDesign, Design remainingDesign, List<Pattern> patterns, List<DesignAttempt> designAttempts, DesignPattern designPattern)
+        private static bool CanDesignBeMade(Design originalDesign, Design remainingDesign, List<Pattern> patterns, List<DesignAttempt> designAttempts, DesignPattern originalDesignPattern, DesignPattern finalDesignPattern)
         {
             if (remainingDesign.Colors.Length == 0)
             {
-                originalDesign.DesignPatterns.Add(designPattern);
+                originalDesign.DesignPatterns.Add(finalDesignPattern);
                 return true;
             }
 
@@ -119,7 +119,7 @@ namespace AdventOfCode.Day19
                 var designAttemptSubstring = originalDesign.Colors.Substring(0, originalDesign.Colors.Length - remainingDesign.Colors.Length);
                 designAttempts.Add(new DesignAttempt(designAttemptSubstring));
 
-                return CanDesignBeMade(originalDesign, originalDesign, patterns, designAttempts, new DesignPattern());
+                return CanDesignBeMade(originalDesign, originalDesign, patterns, designAttempts, originalDesignPattern, originalDesignPattern);
             }
 
             foreach (Pattern pattern in matchingPatterns)
@@ -127,9 +127,9 @@ namespace AdventOfCode.Day19
                 var patternLength = pattern.Colors.Length;
                 var designSubstring = remainingDesign.Colors.Substring(patternLength);
                 var newRemainingDesign = new Design(designSubstring);
-                designPattern.Patterns.Add(pattern);
+                finalDesignPattern.Patterns.Add(pattern);
 
-                return CanDesignBeMade(originalDesign, newRemainingDesign, patterns, designAttempts, designPattern);
+                return CanDesignBeMade(originalDesign, newRemainingDesign, patterns, designAttempts, originalDesignPattern, finalDesignPattern);
             }
 
             return false;
@@ -189,8 +189,6 @@ namespace AdventOfCode.Day19
 
         private static void FindAlternativeDesigns(Design design, List<Pattern> patterns)
         {
-            var smallestPatternLength = patterns.Min(x=>x.Colors.Length);
-            var largestPatternLength = patterns.Max(x=>x.Colors.Length);
             var originalDesignPattern = design.DesignPatterns.First();
             var newDesignPatterns = new List<DesignPattern> { originalDesignPattern };
 
@@ -201,18 +199,50 @@ namespace AdventOfCode.Day19
                 foreach (var designPattern in designPatternsToCheck)
                 {
                     newDesignPatterns = new List<DesignPattern>();
+                    var alternativeDesignPattern = new DesignPattern();
+                    var remainingDesign = new Design(design.Colors);
+                    var chronoDesignPattern = new DesignPattern();
 
-                    for (var i = 0; i < originalDesignPattern.Patterns.Count; i++)
+                    for (var i = 0; i < designPattern.Patterns.Count; i++)
                     {
-                        // check if pattern can be replaced
-                        var patternReplacements = GetPatternReplacements(designPattern, i, smallestPatternLength, largestPatternLength, patterns);
+                        var patternLength = designPattern.Patterns[i].Colors.Length;
+                        var designSubstring = remainingDesign.Colors.Substring(patternLength);
+
+                        // get patterns with same starting letter
+                        var alternativePatterns = GetPatternsWithSameStartingLetter(designPattern.Patterns[i],patterns);
+                        var alternativeMatchingPatterns = FindMatchingPatterns(remainingDesign, alternativePatterns);
 
                         // if pattern can be replaced, addIfNew to newDesignPatterns
-                        foreach (var patternReplacement in patternReplacements)
+                        foreach (var alternativePattern in alternativeMatchingPatterns)
                         {
-                            var newDesignPattern = ReplacePattern(patternReplacement, designPattern);
-                            newDesignPatterns.AddIfNew(newDesignPattern);
+                            alternativeDesignPattern.Patterns.Add(alternativePattern);
+
+                            var newDesignPattern = new DesignPattern();
+                            newDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
+
+                            patternLength = alternativePattern.Colors.Length;
+                            var newDesignSubstring = remainingDesign.Colors.Substring(patternLength);
+                            var newRemainingDesign = new Design(newDesignSubstring);
+                            var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
+
+                            var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), alternativeDesignPattern, alternativeDesignPattern);
+
+                            
+                            if (canAlternativeDesignBeMade)
+                            {
+                                newDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
+                                if (!design.DesignPatterns.Includes(newDesignPattern))
+                                {
+                                    newDesignPatterns.AddIfNew(newDesignPattern);
+                                }
+                            }
+
+                            alternativeDesignPattern.Patterns.Remove(alternativePattern);
                         }
+
+                        chronoDesignPattern.Patterns.Add(designPattern.Patterns[i]);
+                        remainingDesign = new Design(designSubstring);
+                        alternativeDesignPattern.Patterns.Add(designPattern.Patterns[i]);
                     }
 
                     design.DesignPatterns.AddRange(newDesignPatterns);
@@ -223,6 +253,21 @@ namespace AdventOfCode.Day19
                     break;
                 }
             }
+        }
+
+        private static List<Pattern> GetPatternsWithSameStartingLetter(Pattern patternToReplace, List<Pattern> patterns)
+        {
+            var patternsWithSameStartingLetter = new List<Pattern>();
+
+            foreach (var pattern in patterns) 
+            {
+                if (pattern.Colors[0] == patternToReplace.Colors[0] && pattern.Colors != patternToReplace.Colors)
+                {
+                    patternsWithSameStartingLetter.Add(pattern);
+                }
+            }
+
+            return patternsWithSameStartingLetter;
         }
     }
 }

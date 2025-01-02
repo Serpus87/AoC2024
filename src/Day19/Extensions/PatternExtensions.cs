@@ -20,5 +20,10 @@ namespace AdventOfCode.Day19.Extensions
 
             return copy;
         }
+
+        public static bool Equals(this List<Pattern> patterns, List<Pattern> patternsToCheck)
+        {
+            return patterns.SequenceEqual(patternsToCheck);
+        }
     }
 }

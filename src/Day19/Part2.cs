@@ -12,9 +12,9 @@ namespace AdventOfCode.Day19
     {
         public static int Solve(List<Design> designs, List<Pattern> patterns)
         {
-            var designsThatCanBeMade = designs.Where(x => x.CanBeMade);
+            var designsThatCanBeMade = designs.Where(x => x.CanBeMade).ToList();
 
-            TowelService.FindAlternativeDesigns(designsThatCanBeMade, patterns);
+            TowelService.FindAlternativeDesignsForDesignsThatCanBeMade(designsThatCanBeMade, patterns);
 
             var result = designsThatCanBeMade.Sum(x=>x.DesignPatterns.Count);
 

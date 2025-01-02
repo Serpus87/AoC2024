@@ -217,6 +217,16 @@ namespace AdventOfCode.Day19
                         {
                             alternativeDesignPattern.Patterns.Add(alternativePattern);
 
+                            if (alternativeDesignPattern.Patterns.Design() == design.Colors && !design.DesignPatterns.Includes(alternativeDesignPattern))
+                            {
+                                newDesignPatterns.AddIfNew(alternativeDesignPattern);
+                                continue;
+                            }
+
+                            var alternativeDesignPatternCopy1 = new DesignPattern();
+                            alternativeDesignPatternCopy1.Patterns.AddRange(alternativeDesignPattern.Patterns);
+                            var alternativeDesignPatternCopy2 = new DesignPattern();
+                            alternativeDesignPatternCopy2.Patterns.AddRange(alternativeDesignPattern.Patterns);
                             var newDesignPattern = new DesignPattern();
                             newDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
 
@@ -225,8 +235,7 @@ namespace AdventOfCode.Day19
                             var newRemainingDesign = new Design(newDesignSubstring);
                             var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
 
-                            var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), alternativeDesignPattern, alternativeDesignPattern);
-
+                            var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), alternativeDesignPatternCopy1, alternativeDesignPatternCopy2);
                             
                             if (canAlternativeDesignBeMade)
                             {

@@ -21,7 +21,7 @@ namespace AdventOfCode.Day19.Extensions
 
         public static bool Includes(this List<DesignPattern> designPatterns, DesignPattern designPatternToAdd)
         {
-            return designPatterns.Any(x => x.Patterns.Equals(designPatternToAdd.Patterns));
+            return designPatterns.Any(x => x.Patterns.IsEqual(designPatternToAdd.Patterns));
         }
     }
 }

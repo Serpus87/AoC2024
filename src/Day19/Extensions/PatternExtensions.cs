@@ -21,9 +21,21 @@ namespace AdventOfCode.Day19.Extensions
             return copy;
         }
 
-        public static bool Equals(this List<Pattern> patterns, List<Pattern> patternsToCheck)
+        public static bool IsEqual(this List<Pattern> patterns, List<Pattern> patternsToCheck)
         {
-            return patterns.SequenceEqual(patternsToCheck);
+            return patterns.Select(x=>x.Colors).SequenceEqual(patternsToCheck.Select(x=>x.Colors));
+        }
+
+        public static string Design(this List<Pattern> patterns)
+        {
+            var design = string.Empty;
+
+            foreach (var pattern in patterns) 
+            {
+                design += pattern.Colors;
+            }
+
+            return design;
         }
     }
 }

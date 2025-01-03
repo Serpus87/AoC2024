@@ -192,8 +192,25 @@ namespace AdventOfCode.Day19
             foreach (var design in designsThatCanBeMade)
             {
                 AddRemainingDesignPatternsThatCanBeFinished(design,design.DesignPatterns.First());
+                AddDesignPatternCombos(design,design.DesignPatterns.First());
                 var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
                 FindAlternativeDesigns(design, designRelevantPatterns);
+            }
+        }
+
+        private static void AddDesignPatternCombos(Design design, DesignPattern designPattern)
+        {
+            var designPatternCombos = new List<DesignPatternCombo>();
+            var comboStart = new List<Pattern>();
+            var comboEnd = new List<Pattern>();
+            comboEnd.AddRange(designPattern.Patterns);
+
+            for (int i = 0; i < design.DesignPatterns.Count; i++) 
+            {
+                comboStart.Add(designPattern.Patterns[i]);
+                comboEnd.RemoveAt(i);
+
+                designPatternCombos.Add(new DesignPatternCombo(comboStart, comboEnd));
             }
         }
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day19.Models;
 using AdventOfCode.Day19.Extensions;
+using System.Diagnostics;
 
 namespace AdventOfCode.Day19
 {
@@ -197,9 +198,11 @@ namespace AdventOfCode.Day19
                 var designPatternsToCheck = newDesignPatterns.ToList();
 
                 // todo temp remove
-                if (design.Colors == "gruwgbbubugwrgrrwrrgururgrbggbggbuubggrrgrwuubrbgbw" && design.DesignPatterns.Count >= 1120)
+                //if (design.Colors == "gruwgbbubugwrgrrwrrgururgrbggbggbuubggrrgrwuubrbgbw" && design.DesignPatterns.Count >= 1071)
+                var firstDebug = false;
+                if (design.Colors == "gruwgbbubugwrgrrwrrgururgrbggbggbuubggrrgrwuubrbgbw" && designPatternsToCheck.Count == 48)
                 {
-                    var debug = true;
+                    firstDebug = true;
                 }
                 // temp remove
 
@@ -212,11 +215,16 @@ namespace AdventOfCode.Day19
 
                     for (var i = 0; i < designPattern.Patterns.Count; i++)
                     {
+                        if (firstDebug == true && newDesignPatterns.Count == 8)
+                        {
+                            var secondDebug = true;
+                        }
+
                         var patternLength = designPattern.Patterns[i].Colors.Length;
                         var designSubstring = remainingDesign.Colors.Substring(patternLength);
 
                         // get patterns with same starting letter
-                        var alternativePatterns = GetPatternsWithSameStartingLetter(designPattern.Patterns[i],patterns);
+                        var alternativePatterns = GetPatternsWithSameStartingLetter(designPattern.Patterns[i], patterns);
                         var alternativeMatchingPatterns = FindMatchingPatterns(remainingDesign, alternativePatterns);
 
                         // if pattern can be replaced, addIfNew to newDesignPatterns
@@ -244,13 +252,13 @@ namespace AdventOfCode.Day19
                             var newDesignPattern = new DesignPattern();
                             newDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
 
-                            patternLength = alternativePattern.Colors.Length;
-                            var newDesignSubstring = remainingDesign.Colors.Substring(patternLength);
+                            var newPatternLength = alternativePattern.Colors.Length;
+                            var newDesignSubstring = remainingDesign.Colors.Substring(newPatternLength);
                             var newRemainingDesign = new Design(newDesignSubstring);
                             var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
 
                             var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), alternativeDesignPatternCopy1, alternativeDesignPatternCopy2);
-                            
+
                             if (canAlternativeDesignBeMade)
                             {
                                 //newDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
@@ -282,7 +290,7 @@ namespace AdventOfCode.Day19
         {
             var patternsWithSameStartingLetter = new List<Pattern>();
 
-            foreach (var pattern in patterns) 
+            foreach (var pattern in patterns)
             {
                 if (pattern.Colors[0] == patternToReplace.Colors[0] && pattern.Colors != patternToReplace.Colors)
                 {

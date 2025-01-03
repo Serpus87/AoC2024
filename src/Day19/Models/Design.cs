@@ -12,6 +12,8 @@ namespace AdventOfCode.Day19.Models
         public bool CanBeMade { get; set; } = false;
         public List<DesignPattern> DesignPatterns { get; set; } = new List<DesignPattern>();
         public List<DesignAttempt> DesignAttempts { get; set; } = new List<DesignAttempt>();
+        public List<DesignPattern> RemainingDesignPatternsThatCanBeFinished { get; set; } = new List<DesignPattern>();
+        public int DesignCounter { get; set; } = 0;
 
         public Design(string colors)
         {

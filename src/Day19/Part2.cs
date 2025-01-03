@@ -16,7 +16,7 @@ namespace AdventOfCode.Day19
 
             TowelService.FindAlternativeDesignsForDesignsThatCanBeMade(designsThatCanBeMade, patterns);
 
-            var result = designsThatCanBeMade.Sum(x=>x.DesignPatterns.Count);
+            var result = designsThatCanBeMade.Sum(x=>x.DesignCounter);
 
             // first try: 263258; incorrect -> too low
             return result;

@@ -91,6 +91,7 @@ namespace AdventOfCode.Day19
                 if (canDesignBeMade)
                 {
                     design.CanBeMade = true;
+                    design.DesignCounter++;
                     designsThatCanBeMade.Add(design);
                 }
             }
@@ -190,9 +191,23 @@ namespace AdventOfCode.Day19
         {
             foreach (var design in designsThatCanBeMade)
             {
+                AddRemainingDesignPatternsThatCanBeFinished(design,design.DesignPatterns.First());
                 var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
                 FindAlternativeDesigns(design, designRelevantPatterns);
             }
+        }
+
+        private static void AddRemainingDesignPatternsThatCanBeFinished(Design design, DesignPattern designPattern)
+        {
+            var designPatternThatCanBeFinished = new DesignPattern();
+            designPatternThatCanBeFinished.Patterns.AddRange(designPattern.Patterns);
+
+            for (int i = (designPattern.Patterns.Count - 1); i > 0; i--) 
+            {
+                designPatternThatCanBeFinished.Patterns.RemoveAt(i);
+                design.RemainingDesignPatternsThatCanBeFinished.Add(designPatternThatCanBeFinished);
+            }
+
         }
 
         private static List<Pattern> GetDesignRelevantPatterns(Design design, List<Pattern> patterns)
@@ -244,6 +259,12 @@ namespace AdventOfCode.Day19
                             alternativeDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
                             alternativeDesignPattern.Patterns.Add(alternativePattern);
 
+                            if (design.RemainingDesignPatternsThatCanBeFinished.Includes(alternativeDesignPattern))
+                            {
+                                design.DesignCounter++;
+                                continue;
+                            }
+
                             var newPatternLength = alternativePattern.Colors.Length;
                             var newDesignSubstring = remainingDesign.Colors.Substring(newPatternLength);
                             var newRemainingDesign = new Design(newDesignSubstring);
@@ -268,6 +289,7 @@ namespace AdventOfCode.Day19
                                 {
                                     newDesignPatterns.AddIfNew(alternativeDesignPattern);
                                     newDesignPatternsToAdd.AddIfNew(alternativeDesignPattern);
+                                    AddRemainingDesignPatternsThatCanBeFinished(design, alternativeDesignPattern); // todo maybe add if new
                                 }
                             }
                         }
@@ -277,6 +299,7 @@ namespace AdventOfCode.Day19
                     }
 
                     design.DesignPatterns.AddRange(newDesignPatternsToAdd);
+                    design.DesignCounter += newDesignPatternsToAdd.Count;
                 }
 
                 if (designPatternsToCheck.Count == 0)

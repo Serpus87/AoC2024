@@ -192,35 +192,57 @@ namespace AdventOfCode.Day19
             foreach (var design in designsThatCanBeMade)
             {
                 //AddRemainingDesignPatternsThatCanBeFinished(design,design.DesignPatterns.First());
-                AddDesignPatternCombos(design,design.DesignPatterns.First());
+                //AddDesignPatternCombos(design,design.DesignPatterns.First());
+                AddDesignPatternEndings(design,design.DesignPatterns.First());
                 var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
                 FindAlternativeDesigns(design, designRelevantPatterns);
             }
         }
 
-        private static void AddDesignPatternCombos(Design design, DesignPattern designPattern)
+        private static void AddDesignPatternEndings(Design design, DesignPattern designPattern)
         {
-            var designPatternCombos = new List<DesignPatternCombo>();
-            var comboStart = new List<Pattern>();
+            var designPatternEndings = new List<DesignPatternEnding>();
             var comboEnd = new List<Pattern>();
             comboEnd.AddRange(designPattern.Patterns);
 
             for (int i = 0; i < (designPattern.Patterns.Count - 1); i++)
             {
-                comboStart.Add(designPattern.Patterns[i]);
                 comboEnd.RemoveAt(0);
 
-                var newComboStart = new List<Pattern>();
-                newComboStart.AddRange(comboStart);
                 var newComboEnd = new List<Pattern>();
                 newComboEnd.AddRange(comboEnd);
-                
 
-                designPatternCombos.Add(new DesignPatternCombo(newComboStart, newComboEnd));
+
+                //designPatternEndings.Add(new DesignPatternEnding(newComboEnd));
+                design.DesignPatternEndings.AddIfNew(new DesignPatternEnding(newComboEnd));
             }
 
-            design.DesignPatternCombos.AddRange(designPatternCombos);
+            design.DesignPatternEndings.AddRange(designPatternEndings);
         }
+
+        //private static void AddDesignPatternCombos(Design design, DesignPattern designPattern)
+        //{
+        //    var designPatternCombos = new List<DesignPatternCombo>();
+        //    var comboStart = new List<Pattern>();
+        //    var comboEnd = new List<Pattern>();
+        //    comboEnd.AddRange(designPattern.Patterns);
+
+        //    for (int i = 0; i < (designPattern.Patterns.Count - 1); i++)
+        //    {
+        //        comboStart.Add(designPattern.Patterns[i]);
+        //        comboEnd.RemoveAt(0);
+
+        //        var newComboStart = new List<Pattern>();
+        //        newComboStart.AddRange(comboStart);
+        //        var newComboEnd = new List<Pattern>();
+        //        newComboEnd.AddRange(comboEnd);
+                
+
+        //        designPatternCombos.Add(new DesignPatternCombo(newComboStart, newComboEnd));
+        //    }
+
+        //    design.DesignPatternCombos.AddRange(designPatternCombos);
+        //}
 
         //private static void AddRemainingDesignPatternsThatCanBeFinished(Design design, DesignPattern designPattern)
         //{
@@ -285,15 +307,14 @@ namespace AdventOfCode.Day19
 
                             var newPatternLength = alternativePattern.Colors.Length;
                             var newDesignSubstring = remainingDesign.Colors.Substring(newPatternLength);
-                            var newRemainingDesign = new Design(newDesignSubstring);
-                            var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
 
-                            if (design.DesignPatternCombos.Any(x=>x.ComboEndDesign.Equals(newDesignSubstring))) // todo check comboEnd instead of RemainingDesignPatternsThatCanBeFinished
+                            if (design.DesignPatternEndings.Any(x=>x.PatternEndDesign.Equals(newDesignSubstring))) 
                             {
                                 var temp = new DesignPattern();
                                 temp.Patterns.AddRange(alternativeDesignPattern.Patterns);
 
-                                var temp2 = design.DesignPatternCombos.First(x => x.ComboEndDesign == newDesignSubstring).ComboEnd;
+                                //var temp2 = design.DesignPatternCombos.First(x => x.ComboEndDesign == newDesignSubstring).ComboEnd;
+                                var temp2 = design.DesignPatternEndings.First(x => x.PatternEndDesign == newDesignSubstring).PatternEnd;
 
                                 temp.Patterns.AddRange(temp2);
 
@@ -302,14 +323,16 @@ namespace AdventOfCode.Day19
                                     newDesignPatterns.AddIfNew(temp);
                                     newDesignPatternsToAdd.AddIfNew(temp);
                                     //AddRemainingDesignPatternsThatCanBeFinished(design, temp); // todo maybe add if new
-                                    AddDesignPatternCombos(design, temp); // todo maybe add if new
-                                    design.DesignCounter++;
+                                    //AddDesignPatternCombos(design, temp); // todo maybe add if new
+                                    //design.DesignCounter++;
                                 }
 
                                 continue;
                             }
 
-                            // TODO also give all previous designattempts
+                            var newRemainingDesign = new Design(newDesignSubstring);
+                            var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
+
                             var finishedDesign = alternativeDesignPattern.Patterns.Design();
                             var relevantDesignAttempts = GetRelevantDesignAttempts(design.DesignAttempts, finishedDesign);
 
@@ -329,7 +352,7 @@ namespace AdventOfCode.Day19
                                     newDesignPatterns.AddIfNew(alternativeDesignPattern);
                                     newDesignPatternsToAdd.AddIfNew(alternativeDesignPattern);
                                     //AddRemainingDesignPatternsThatCanBeFinished(design, alternativeDesignPattern); // todo maybe add if new
-                                    AddDesignPatternCombos(design, alternativeDesignPattern); // todo maybe add if new 
+                                    AddDesignPatternEndings(design, alternativeDesignPattern); // todo maybe add if new 
                                 }
                             }
                         }

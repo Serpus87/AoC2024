@@ -11,6 +11,8 @@ namespace AdventOfCode.Day19.Extensions
     {
         public static List<Pattern> Copy(this List<Pattern> patterns)
         {
+            return patterns.Select(x => new Pattern(x.Colors)).ToList();
+
             var copy = new List<Pattern>();
 
             foreach (var pattern in patterns)

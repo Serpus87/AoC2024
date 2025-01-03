@@ -120,7 +120,11 @@ namespace AdventOfCode.Day19
                 var designAttemptSubstring = originalDesign.Colors.Substring(0, originalDesign.Colors.Length - remainingDesign.Colors.Length);
                 designAttempts.Add(new DesignAttempt(designAttemptSubstring));
 
-                return CanDesignBeMade(originalDesign, originalDesign, patterns, designAttempts, originalDesignPattern, originalDesignPattern);
+                var originalDesignCopy = new Design(originalDesign.Colors);
+                var originalDesignPatternCopy = new DesignPattern();
+                originalDesignPatternCopy.Patterns.AddRange(originalDesignPattern.Patterns);
+
+                return CanDesignBeMade(originalDesign, originalDesignCopy, patterns, designAttempts, originalDesignPattern, originalDesignPatternCopy);
             }
 
             foreach (Pattern pattern in matchingPatterns)
@@ -228,7 +232,7 @@ namespace AdventOfCode.Day19
 
                                 continue;
                             }
-                          
+
                             var newPatternLength = alternativePattern.Colors.Length;
                             var newDesignSubstring = remainingDesign.Colors.Substring(newPatternLength);
                             var newRemainingDesign = new Design(newDesignSubstring);
@@ -239,8 +243,8 @@ namespace AdventOfCode.Day19
                             if (canAlternativeDesignBeMade)
                             {
                                 alternativeDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
-                                //if (!design.DesignPatterns.Includes(alternativeDesignPattern))
-                                if (alternativeDesignPattern.Patterns.Design() == design.Colors && !design.DesignPatterns.Includes(alternativeDesignPattern)) // added failsafe, because code is bad
+                                if (!design.DesignPatterns.Includes(alternativeDesignPattern))
+                                //if (alternativeDesignPattern.Patterns.Design() == design.Colors && !design.DesignPatterns.Includes(alternativeDesignPattern)) // added failsafe, because code is bad
                                 {
                                     newDesignPatterns.AddIfNew(alternativeDesignPattern);
                                 }

@@ -23,7 +23,12 @@ namespace AdventOfCode.Day19.Extensions
 
         public static bool IsEqual(this List<Pattern> patterns, List<Pattern> patternsToCheck)
         {
-            return patterns.Select(x=>x.Colors).SequenceEqual(patternsToCheck.Select(x=>x.Colors));
+            return patterns.Select(x => x.Colors).SequenceEqual(patternsToCheck.Select(x => x.Colors));
+        }
+
+        public static bool DesignIsEqual(this List<Pattern> patterns, List<Pattern> patternsToCheck)
+        {
+            return patterns.Design() == patternsToCheck.Design();
         }
 
         public static string Design(this List<Pattern> patterns)

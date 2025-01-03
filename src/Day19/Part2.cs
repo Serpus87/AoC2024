@@ -18,6 +18,7 @@ namespace AdventOfCode.Day19
 
             var result = designsThatCanBeMade.Sum(x=>x.DesignPatterns.Count);
 
+            // first try: 263258; incorrect -> too low
             return result;
         }
     }

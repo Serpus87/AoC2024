@@ -196,6 +196,13 @@ namespace AdventOfCode.Day19
             {
                 var designPatternsToCheck = newDesignPatterns.ToList();
 
+                // todo temp remove
+                if (design.Colors == "gruwgbbubugwrgrrwrrgururgrbggbggbuubggrrgrwuubrbgbw" && design.DesignPatterns.Count >= 1120)
+                {
+                    var debug = true;
+                }
+                // temp remove
+
                 foreach (var designPattern in designPatternsToCheck)
                 {
                     newDesignPatterns = new List<DesignPattern>();
@@ -217,9 +224,16 @@ namespace AdventOfCode.Day19
                         {
                             alternativeDesignPattern.Patterns.Add(alternativePattern);
 
-                            if (alternativeDesignPattern.Patterns.Design() == design.Colors && !design.DesignPatterns.Includes(alternativeDesignPattern))
+                            if (alternativeDesignPattern.Patterns.Design() == design.Colors)
                             {
-                                newDesignPatterns.AddIfNew(alternativeDesignPattern);
+                                if (!design.DesignPatterns.Includes(alternativeDesignPattern))
+                                {
+                                    var tempDesignPattern = new DesignPattern();
+                                    tempDesignPattern.Patterns.AddRange(alternativeDesignPattern.Patterns);
+                                    newDesignPatterns.AddIfNew(tempDesignPattern);
+                                }
+
+                                alternativeDesignPattern.Patterns.Remove(alternativePattern);
                                 continue;
                             }
 
@@ -239,10 +253,10 @@ namespace AdventOfCode.Day19
                             
                             if (canAlternativeDesignBeMade)
                             {
-                                newDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
-                                if (!design.DesignPatterns.Includes(newDesignPattern))
+                                //newDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
+                                if (!design.DesignPatterns.Includes(newRemainingDesign.DesignPatterns.First()))
                                 {
-                                    newDesignPatterns.AddIfNew(newDesignPattern);
+                                    newDesignPatterns.AddIfNew(newRemainingDesign.DesignPatterns.First());
                                 }
                             }
 

@@ -19,6 +19,19 @@ namespace AdventOfCode.Day19.Extensions
             return designPatterns;
         }
 
+        public static List<DesignPattern> AddIfNew(this List<DesignPattern> designPatterns, List<DesignPattern> designPatternsToAdd)
+        {
+            foreach (var designPatternToAdd in designPatternsToAdd)
+            {
+                if (!designPatterns.Includes(designPatternToAdd))
+                {
+                    designPatterns.Add(designPatternToAdd);
+                }
+            }
+
+            return designPatterns;
+        }
+
         public static bool Includes(this List<DesignPattern> designPatterns, DesignPattern designPatternToAdd)
         {
             return designPatterns.Any(x => x.Patterns.IsEqual(designPatternToAdd.Patterns));

@@ -103,6 +103,7 @@ namespace AdventOfCode.Day19
             if (remainingDesign.Colors.Length == 0)
             {
                 originalDesign.DesignPatterns.Add(finalDesignPattern);
+
                 return true;
             }
 
@@ -188,8 +189,24 @@ namespace AdventOfCode.Day19
         {
             foreach (var design in designsThatCanBeMade)
             {
-                FindAlternativeDesigns(design, patterns);
+                var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
+                FindAlternativeDesigns(design, designRelevantPatterns);
             }
+        }
+
+        private static List<Pattern> GetDesignRelevantPatterns(Design design, List<Pattern> patterns)
+        {
+            var relevantPatterns = new List<Pattern>();
+
+            foreach (var pattern in patterns)
+            {
+                if (design.Colors.Contains(pattern.Colors))
+                {
+                    relevantPatterns.Add(pattern);
+                }
+            }
+
+            return relevantPatterns;
         }
 
         private static void FindAlternativeDesigns(Design design, List<Pattern> patterns)
@@ -200,10 +217,12 @@ namespace AdventOfCode.Day19
             while (true)
             {
                 var designPatternsToCheck = newDesignPatterns.ToList();
+                newDesignPatterns = new List<DesignPattern>();
 
                 foreach (var designPattern in designPatternsToCheck)
                 {
-                    newDesignPatterns = new List<DesignPattern>();
+                    var newDesignPatternsToAdd = new List<DesignPattern>();
+
                     var remainingDesign = new Design(design.Colors);
                     var chronoDesignPattern = new DesignPattern();
 
@@ -223,21 +242,12 @@ namespace AdventOfCode.Day19
                             alternativeDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
                             alternativeDesignPattern.Patterns.Add(alternativePattern);
 
-                            if (alternativeDesignPattern.Patterns.Design() == design.Colors)
-                            {
-                                if (!design.DesignPatterns.Includes(alternativeDesignPattern))
-                                {
-                                    newDesignPatterns.AddIfNew(alternativeDesignPattern);
-                                }
-
-                                continue;
-                            }
-
                             var newPatternLength = alternativePattern.Colors.Length;
                             var newDesignSubstring = remainingDesign.Colors.Substring(newPatternLength);
                             var newRemainingDesign = new Design(newDesignSubstring);
                             var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
 
+                            // TODO also give all previous designattempts
                             var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), new DesignPattern(), new DesignPattern());
 
                             if (canAlternativeDesignBeMade)
@@ -247,6 +257,7 @@ namespace AdventOfCode.Day19
                                 //if (alternativeDesignPattern.Patterns.Design() == design.Colors && !design.DesignPatterns.Includes(alternativeDesignPattern)) // added failsafe, because code is bad
                                 {
                                     newDesignPatterns.AddIfNew(alternativeDesignPattern);
+                                    newDesignPatternsToAdd.AddIfNew(alternativeDesignPattern);
                                 }
                             }
                         }
@@ -255,7 +266,7 @@ namespace AdventOfCode.Day19
                         remainingDesign = new Design(designSubstring);
                     }
 
-                    design.DesignPatterns.AddRange(newDesignPatterns);
+                    design.DesignPatterns.AddRange(newDesignPatternsToAdd);
                 }
 
                 if (designPatternsToCheck.Count == 0)

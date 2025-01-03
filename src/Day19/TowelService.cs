@@ -197,83 +197,58 @@ namespace AdventOfCode.Day19
             {
                 var designPatternsToCheck = newDesignPatterns.ToList();
 
-                // todo temp remove
-                //if (design.Colors == "gruwgbbubugwrgrrwrrgururgrbggbggbuubggrrgrwuubrbgbw" && design.DesignPatterns.Count >= 1071)
-                var firstDebug = false;
-                if (design.Colors == "gruwgbbubugwrgrrwrrgururgrbggbggbuubggrrgrwuubrbgbw" && designPatternsToCheck.Count == 48)
-                {
-                    firstDebug = true;
-                }
-                // temp remove
-
                 foreach (var designPattern in designPatternsToCheck)
                 {
                     newDesignPatterns = new List<DesignPattern>();
-                    var alternativeDesignPattern = new DesignPattern();
                     var remainingDesign = new Design(design.Colors);
                     var chronoDesignPattern = new DesignPattern();
 
-                    for (var i = 0; i < designPattern.Patterns.Count; i++)
+                    foreach (var pattern in designPattern.Patterns)
                     {
-                        if (firstDebug == true && newDesignPatterns.Count == 8)
-                        {
-                            var secondDebug = true;
-                        }
-
-                        var patternLength = designPattern.Patterns[i].Colors.Length;
+                        var patternLength = pattern.Colors.Length;
                         var designSubstring = remainingDesign.Colors.Substring(patternLength);
 
                         // get patterns with same starting letter
-                        var alternativePatterns = GetPatternsWithSameStartingLetter(designPattern.Patterns[i], patterns);
+                        var alternativePatterns = GetPatternsWithSameStartingLetter(pattern, patterns);
                         var alternativeMatchingPatterns = FindMatchingPatterns(remainingDesign, alternativePatterns);
 
                         // if pattern can be replaced, addIfNew to newDesignPatterns
                         foreach (var alternativePattern in alternativeMatchingPatterns)
                         {
+                            var alternativeDesignPattern = new DesignPattern();
+                            alternativeDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
                             alternativeDesignPattern.Patterns.Add(alternativePattern);
 
                             if (alternativeDesignPattern.Patterns.Design() == design.Colors)
                             {
                                 if (!design.DesignPatterns.Includes(alternativeDesignPattern))
                                 {
-                                    var tempDesignPattern = new DesignPattern();
-                                    tempDesignPattern.Patterns.AddRange(alternativeDesignPattern.Patterns);
-                                    newDesignPatterns.AddIfNew(tempDesignPattern);
+                                    newDesignPatterns.AddIfNew(alternativeDesignPattern);
                                 }
 
-                                alternativeDesignPattern.Patterns.Remove(alternativePattern);
                                 continue;
                             }
-
-                            var alternativeDesignPatternCopy1 = new DesignPattern();
-                            alternativeDesignPatternCopy1.Patterns.AddRange(alternativeDesignPattern.Patterns);
-                            var alternativeDesignPatternCopy2 = new DesignPattern();
-                            alternativeDesignPatternCopy2.Patterns.AddRange(alternativeDesignPattern.Patterns);
-                            var newDesignPattern = new DesignPattern();
-                            newDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
-
+                          
                             var newPatternLength = alternativePattern.Colors.Length;
                             var newDesignSubstring = remainingDesign.Colors.Substring(newPatternLength);
                             var newRemainingDesign = new Design(newDesignSubstring);
                             var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
 
-                            var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), alternativeDesignPatternCopy1, alternativeDesignPatternCopy2);
+                            var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), new DesignPattern(), new DesignPattern());
 
                             if (canAlternativeDesignBeMade)
                             {
-                                //newDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
-                                if (!design.DesignPatterns.Includes(newRemainingDesign.DesignPatterns.First()))
+                                alternativeDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
+                                //if (!design.DesignPatterns.Includes(alternativeDesignPattern))
+                                if (alternativeDesignPattern.Patterns.Design() == design.Colors && !design.DesignPatterns.Includes(alternativeDesignPattern)) // added failsafe, because code is bad
                                 {
-                                    newDesignPatterns.AddIfNew(newRemainingDesign.DesignPatterns.First());
+                                    newDesignPatterns.AddIfNew(alternativeDesignPattern);
                                 }
                             }
-
-                            alternativeDesignPattern.Patterns.Remove(alternativePattern);
                         }
 
-                        chronoDesignPattern.Patterns.Add(designPattern.Patterns[i]);
+                        chronoDesignPattern.Patterns.Add(pattern);
                         remainingDesign = new Design(designSubstring);
-                        alternativeDesignPattern.Patterns.Add(designPattern.Patterns[i]);
                     }
 
                     design.DesignPatterns.AddRange(newDesignPatterns);

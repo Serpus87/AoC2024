@@ -11,7 +11,7 @@ namespace AdventOfCode.Day19.Extensions
     {
         public static List<DesignPattern> AddIfNew(this List<DesignPattern> designPatterns, DesignPattern designPatternToAdd)
         {
-            if (!designPatterns.Any(x=>x.Patterns.Equals(designPatternToAdd.Patterns)))
+            if (!designPatterns.Any(x=>x.Patterns.IsEqual(designPatternToAdd.Patterns)))
             {
                 designPatterns.Add(designPatternToAdd);
             }

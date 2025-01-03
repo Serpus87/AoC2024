@@ -205,8 +205,8 @@ namespace AdventOfCode.Day19
             var comboEnd = new List<Pattern>();
             comboEnd.AddRange(designPattern.Patterns);
 
-            //for (int i = 0; i < (designPattern.Patterns.Count - 1); i++) 
-            for (int i = 0; i < (design.DesignPatterns.First().Patterns.Count - 1); i++) 
+            for (int i = 0; i < (designPattern.Patterns.Count - 1); i++)
+            //for (int i = 0; i < (design.DesignPatterns.First().Patterns.Count - 1); i++) 
             {
                 comboStart.Add(designPattern.Patterns[i]);
                 comboEnd.RemoveAt(0);
@@ -220,7 +220,7 @@ namespace AdventOfCode.Day19
                 designPatternCombos.Add(new DesignPatternCombo(newComboStart, newComboEnd));
             }
 
-            design.DesignPatternCombos = designPatternCombos;
+            design.DesignPatternCombos.AddRange(designPatternCombos);
         }
 
         private static void AddRemainingDesignPatternsThatCanBeFinished(Design design, DesignPattern designPattern)
@@ -233,7 +233,6 @@ namespace AdventOfCode.Day19
                 designPatternThatCanBeFinished.Patterns.RemoveAt(i);
                 design.RemainingDesignPatternsThatCanBeFinished.Add(designPatternThatCanBeFinished);
             }
-
         }
 
         private static List<Pattern> GetDesignRelevantPatterns(Design design, List<Pattern> patterns)
@@ -290,7 +289,7 @@ namespace AdventOfCode.Day19
                             var newRemainingDesign = new Design(newDesignSubstring);
                             var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
 
-                            if (design.RemainingDesignPatternsThatCanBeFinished.Includes(alternativeDesignPattern))
+                            if (design.RemainingDesignPatternsThatCanBeFinished.Includes(alternativeDesignPattern)) // todo check comboEnd instead of RemainingDesignPatternsThatCanBeFinished
                             {
                                 var temp = new DesignPattern();
                                 temp.Patterns.AddRange(alternativeDesignPattern.Patterns);
@@ -304,7 +303,7 @@ namespace AdventOfCode.Day19
                                     newDesignPatterns.AddIfNew(temp);
                                     newDesignPatternsToAdd.AddIfNew(temp);
                                     AddRemainingDesignPatternsThatCanBeFinished(design, temp); // todo maybe add if new
-                                    //AddDesignPatternCombos(design, temp); // todo maybe add if new //////// -------- TODO fix this
+                                    AddDesignPatternCombos(design, temp); // todo maybe add if new //////// -------- TODO fix this
                                     design.DesignCounter++;
                                 }
 
@@ -331,7 +330,7 @@ namespace AdventOfCode.Day19
                                     newDesignPatterns.AddIfNew(alternativeDesignPattern);
                                     newDesignPatternsToAdd.AddIfNew(alternativeDesignPattern);
                                     AddRemainingDesignPatternsThatCanBeFinished(design, alternativeDesignPattern); // todo maybe add if new
-                                    //AddDesignPatternCombos(design, alternativeDesignPattern); // todo maybe add if new //////// -------- TODO fix this
+                                    AddDesignPatternCombos(design, alternativeDesignPattern); // todo maybe add if new //////// -------- TODO fix this
                                 }
                             }
                         }

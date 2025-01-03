@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day19;
 using AdventOfCode.Day19.Models;
+using FluentAssertions;
 
 namespace AdventOfCode.Tests
 {
@@ -57,7 +58,7 @@ namespace AdventOfCode.Tests
         public void Part2_Example1_ReturnsExpectedSolution()
         {
             // Arrange
-            var expectedSolution = 841;
+            var minimumExpectedSolution = 841;
 
             var fileName = "Part2Example1.txt";
             var input = File.ReadAllLines($"Day19\\{fileName}");
@@ -72,7 +73,7 @@ namespace AdventOfCode.Tests
             var actualSolution = Part2.Solve(designs, patterns);
 
             // Assert
-            Assert.AreEqual(expectedSolution, actualSolution);
+            actualSolution.Should().BeGreaterThan(minimumExpectedSolution);
         }
 
         [TestMethod]

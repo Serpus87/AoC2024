@@ -254,10 +254,10 @@ namespace AdventOfCode.Day19
                             {
                                 alternativeDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
                                 if (!design.DesignPatterns.Includes(alternativeDesignPattern))
-                                //if (alternativeDesignPattern.Patterns.Design() == design.Colors && !design.DesignPatterns.Includes(alternativeDesignPattern)) // added failsafe, because code is bad
                                 {
                                     newDesignPatterns.AddIfNew(alternativeDesignPattern);
                                     newDesignPatternsToAdd.AddIfNew(alternativeDesignPattern);
+                                    Console.WriteLine(string.Join(",", alternativeDesignPattern.Patterns.Select(x => x.Colors).ToArray()));
                                 }
                             }
                         }

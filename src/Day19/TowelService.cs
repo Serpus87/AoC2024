@@ -194,6 +194,7 @@ namespace AdventOfCode.Day19
                 //AddRemainingDesignPatternsThatCanBeFinished(design,design.DesignPatterns.First());
                 //AddDesignPatternCombos(design,design.DesignPatterns.First());
                 AddDesignPatternEndings(design,design.DesignPatterns.First());
+                //AddDesignPatternStarts(design,design.DesignPatterns.First());
                 var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
                 FindAlternativeDesigns(design, designRelevantPatterns);
             }
@@ -217,7 +218,12 @@ namespace AdventOfCode.Day19
                 design.DesignPatternEndings.AddIfNew(new DesignPatternEnding(newComboEnd));
             }
 
-            design.DesignPatternEndings.AddRange(designPatternEndings);
+            //design.DesignPatternEndings.AddRange(designPatternEndings);
+        }
+
+        private static void AddAlternativeDesignPatternStarts(Design design, List<Pattern> alternativePatternStart)
+        {
+            design.DesignPatternStarts.AddIfNew(new DesignPatternStart(alternativePatternStart));
         }
 
         //private static void AddDesignPatternCombos(Design design, DesignPattern designPattern)
@@ -236,7 +242,7 @@ namespace AdventOfCode.Day19
         //        newComboStart.AddRange(comboStart);
         //        var newComboEnd = new List<Pattern>();
         //        newComboEnd.AddRange(comboEnd);
-                
+
 
         //        designPatternCombos.Add(new DesignPatternCombo(newComboStart, newComboEnd));
         //    }
@@ -296,6 +302,7 @@ namespace AdventOfCode.Day19
                         // get patterns with same starting letter
                         var alternativePatterns = GetPatternsWithSameStartingLetter(pattern, patterns);
                         var alternativeMatchingPatterns = FindMatchingPatterns(remainingDesign, alternativePatterns);
+                        alternativeMatchingPatterns = RemovePreviouslyTriedAlternatives(alternativeMatchingPatterns, chronoDesignPattern, design.DesignPatternStarts);
                         alternativeMatchingPatterns = RemovePreviouslyAttemptedPatterns(alternativeMatchingPatterns, design, remainingDesign, design.DesignAttempts);
 
                         // if pattern can be replaced, addIfNew to newDesignPatterns
@@ -304,6 +311,8 @@ namespace AdventOfCode.Day19
                             var alternativeDesignPattern = new DesignPattern();
                             alternativeDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
                             alternativeDesignPattern.Patterns.Add(alternativePattern);
+
+                            AddAlternativeDesignPatternStarts(design, alternativeDesignPattern.Patterns.Copy());
 
                             var newPatternLength = alternativePattern.Colors.Length;
                             var newDesignSubstring = remainingDesign.Colors.Substring(newPatternLength);
@@ -353,6 +362,7 @@ namespace AdventOfCode.Day19
                                     newDesignPatternsToAdd.AddIfNew(alternativeDesignPattern);
                                     //AddRemainingDesignPatternsThatCanBeFinished(design, alternativeDesignPattern); // todo maybe add if new
                                     AddDesignPatternEndings(design, alternativeDesignPattern); // todo maybe add if new 
+                                    //AddDesignPatternStarts(design, alternativeDesignPattern); // todo maybe add if new 
                                 }
                             }
                         }
@@ -370,6 +380,25 @@ namespace AdventOfCode.Day19
                     break;
                 }
             }
+        }
+
+        private static List<Pattern> RemovePreviouslyTriedAlternatives(List<Pattern> alternativePatterns, DesignPattern chronoDesignPattern, List<DesignPatternStart> designPatternStarts)
+        {
+            var cleanedAlternatives = new List<Pattern>();
+
+            foreach (var alternativePattern in alternativePatterns)
+            {
+                var alternativeDesignPattern = new DesignPattern();
+                alternativeDesignPattern.Patterns.AddRange(chronoDesignPattern.Patterns);
+                alternativeDesignPattern.Patterns.Add(alternativePattern);
+
+                if (!designPatternStarts.Any(x=>x.PatternStart.IsEqual(alternativeDesignPattern.Patterns)))
+                {
+                    cleanedAlternatives.Add(alternativePattern);
+                }
+            }
+
+            return cleanedAlternatives;
         }
 
         private static List<DesignAttempt> GetRelevantDesignAttempts(List<DesignAttempt> designAttempts, string finishedDesign)

@@ -41,6 +41,14 @@ namespace AdventOfCode.Day19.Extensions
             }
         }
 
+        public static void AddIfNew(this List<DesignPatternStart> designPatternStarts, DesignPatternStart designPatternStartToAdd)
+        {
+            if (!designPatternStarts.Any(x => x.PatternStart.IsEqual(designPatternStartToAdd.PatternStart)))
+            {
+                designPatternStarts.Add(designPatternStartToAdd);
+            }
+        }
+
         public static bool Includes(this List<DesignPattern> designPatterns, DesignPattern designPatternToAdd)
         {
             return designPatterns.Any(x => x.Patterns.IsEqual(designPatternToAdd.Patterns));

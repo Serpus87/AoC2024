@@ -85,8 +85,7 @@ namespace AdventOfCode.Day19
 
             foreach (Design design in designs)
             {
-                var designCopy = new Design(design.Colors);
-                var canDesignBeMade = CanDesignBeMade(design, designCopy, patterns, new List<DesignAttempt>(), new DesignPattern(), new DesignPattern());
+                var canDesignBeMade = CanDesignBeMade(design, design.Colors, patterns, new List<DesignAttempt>(), new DesignPattern(), new DesignPattern());
 
                 if (canDesignBeMade)
                 {
@@ -99,9 +98,9 @@ namespace AdventOfCode.Day19
             return designsThatCanBeMade;
         }
 
-        private static bool CanDesignBeMade(Design originalDesign, Design remainingDesign, List<Pattern> patterns, List<DesignAttempt> designAttempts, DesignPattern originalDesignPattern, DesignPattern finalDesignPattern)
+        private static bool CanDesignBeMade(Design originalDesign, string remainingDesignColors, List<Pattern> patterns, List<DesignAttempt> designAttempts, DesignPattern originalDesignPattern, DesignPattern finalDesignPattern)
         {
-            if (remainingDesign.Colors.Length == 0)
+            if (remainingDesignColors.Length == 0)
             {
                 originalDesign.DesignPatterns.Add(finalDesignPattern);
                 //originalDesign.DesignAttempts.AddRange(designAttempts);
@@ -109,10 +108,10 @@ namespace AdventOfCode.Day19
                 return true;
             }
 
-            var matchingPatterns = FindMatchingPatterns(remainingDesign.Colors, patterns);
-            matchingPatterns = RemovePreviouslyAttemptedPatterns(matchingPatterns, originalDesign, remainingDesign, designAttempts);
+            var matchingPatterns = FindMatchingPatterns(remainingDesignColors, patterns);
+            matchingPatterns = RemovePreviouslyAttemptedPatterns(matchingPatterns, originalDesign, remainingDesignColors, designAttempts);
 
-            if (matchingPatterns.Count == 0 && remainingDesign.Colors == originalDesign.Colors)
+            if (matchingPatterns.Count == 0 && remainingDesignColors == originalDesign.Colors)
             {
                 return false;
             }
@@ -120,10 +119,10 @@ namespace AdventOfCode.Day19
             if (matchingPatterns.Count == 0)
             {
                 // add attempted pattern to attempted patterns
-                var designAttemptSubstring = originalDesign.Colors.Substring(0, originalDesign.Colors.Length - remainingDesign.Colors.Length);
+                var designAttemptSubstring = originalDesign.Colors.Substring(0, originalDesign.Colors.Length - remainingDesignColors.Length);
                 designAttempts.Add(new DesignAttempt(designAttemptSubstring));
 
-                var originalDesignCopy = new Design(originalDesign.Colors);
+                var originalDesignCopy = originalDesign.Colors;
                 var originalDesignPatternCopy = new DesignPattern();
                 originalDesignPatternCopy.Patterns.AddRange(originalDesignPattern.Patterns);
 
@@ -133,8 +132,7 @@ namespace AdventOfCode.Day19
             foreach (Pattern pattern in matchingPatterns)
             {
                 var patternLength = pattern.Colors.Length;
-                var designSubstring = remainingDesign.Colors.Substring(patternLength);
-                var newRemainingDesign = new Design(designSubstring);
+                var newRemainingDesign = remainingDesignColors.Substring(patternLength);
                 finalDesignPattern.Patterns.Add(pattern);
 
                 return CanDesignBeMade(originalDesign, newRemainingDesign, patterns, designAttempts, originalDesignPattern, finalDesignPattern);
@@ -143,15 +141,15 @@ namespace AdventOfCode.Day19
             return false;
         }
 
-        private static List<Pattern> RemovePreviouslyAttemptedPatterns(List<Pattern> matchingPatterns, Design originalDesign, Design remainingDesign, List<DesignAttempt> designAttempts)
+        private static List<Pattern> RemovePreviouslyAttemptedPatterns(List<Pattern> matchingPatterns, Design originalDesign, string remainingDesignColors, List<DesignAttempt> designAttempts)
         {
             var cleanedMatchingPatterns = matchingPatterns.Copy();
 
-            var finishedDesign = new Design(originalDesign.Colors.Substring(0, originalDesign.Colors.Length - remainingDesign.Colors.Length));
+            var finishedDesign = new Design(originalDesign.Colors.Substring(0, originalDesign.Colors.Length - remainingDesignColors.Length));
 
             foreach (var designAttempt in designAttempts)
             {
-                if (designAttempt.Colors.Length + remainingDesign.Colors.Length < originalDesign.Colors.Length)
+                if (designAttempt.Colors.Length + remainingDesignColors.Length < originalDesign.Colors.Length)
                 {
                     continue;
                 }
@@ -227,11 +225,6 @@ namespace AdventOfCode.Day19
             }
         }
 
-        private static void AddAlternativeDesignPatternStarts(Design design, List<Pattern> alternativePatternStart)
-        {
-            design.DesignPatternStarts.AddIfNew(new DesignPatternStart(alternativePatternStart));
-        }
-
         private static List<Pattern> GetDesignRelevantPatterns(Design design, List<Pattern> patterns)
         {
             var relevantPatterns = new List<Pattern>();
@@ -301,9 +294,8 @@ namespace AdventOfCode.Day19
                             }
 
                             var newRemainingDesign = new Design(newDesignSubstring);
-                            var newRemainingDesignCopy = new Design(newRemainingDesign.Colors);
 
-                            var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesignCopy, patterns, new List<DesignAttempt>(), new DesignPattern(), new DesignPattern());
+                            var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesign.Colors, patterns, new List<DesignAttempt>(), new DesignPattern(), new DesignPattern());
 
                             if (canAlternativeDesignBeMade)
                             {

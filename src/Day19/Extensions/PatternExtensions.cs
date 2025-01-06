@@ -30,14 +30,11 @@ namespace AdventOfCode.Day19.Extensions
 
         public static string Design(this List<Pattern> patterns)
         {
-            var design = string.Empty;
+            var stringBuilder = new StringBuilder();
 
-            foreach (var pattern in patterns) 
-            {
-                design += pattern.Colors;
-            }
+            stringBuilder.Append(patterns.Select(x => x.Colors));
 
-            return design;
+            return stringBuilder.ToString();
         }
     }
 }

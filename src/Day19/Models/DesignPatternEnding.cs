@@ -9,10 +9,10 @@ namespace AdventOfCode.Day19.Models
 {
     public class DesignPatternEnding
     {
-        public List<Pattern> PatternEnd { get; set; } = new List<Pattern>();
+        public List<string> PatternEnd { get; set; } = new List<string>();
         public string PatternEndDesign { get; set; }
 
-        public DesignPatternEnding(List<Pattern> patternEnd)
+        public DesignPatternEnding(List<string> patternEnd)
         {
             PatternEnd = patternEnd;
             PatternEndDesign = patternEnd.Design();

@@ -9,7 +9,7 @@ namespace AdventOfCode.Day19
 {
     public class Part1
     {
-        public static int Solve(List<Design> designs, List<Pattern> patterns)
+        public static int Solve(List<Design> designs, List<string> patterns)
         {
             var allPossibleDesigns = TowelService.FindDesignsThatCanBeMade(designs, patterns);
 

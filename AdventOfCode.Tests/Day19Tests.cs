@@ -82,7 +82,7 @@ namespace AdventOfCode.Tests
             // Arrange
             var expectedSolution = 4;
 
-            var patterns = new List<Pattern> { new Pattern("r"), new Pattern("rr"), new Pattern("rrr"), };
+            var patterns = new List<string> { "r", "rr", "rrr", };
             var designs = new List<Design> { new Design("rrr") };
 
             var part1Solution = Part1.Solve(designs, patterns);
@@ -100,7 +100,7 @@ namespace AdventOfCode.Tests
             // Arrange
             var expectedSolution = 7;
 
-            var patterns = new List<Pattern> { new Pattern("r"), new Pattern("rr"), new Pattern("rrr"), };
+            var patterns = new List<string> { "r", "rr", "rrr", };
             var designs = new List<Design> { new Design("rrrr") };
 
             var part1Solution = Part1.Solve(designs, patterns);
@@ -118,7 +118,7 @@ namespace AdventOfCode.Tests
             // Arrange
             var expectedSolution = 4;
 
-            var patterns = new List<Pattern> { new Pattern("r"), new Pattern("b"), new Pattern("rb"), new Pattern("br"), new Pattern("rbr"), };
+            var patterns = new List<string> { "r", "b", "rb", "br", "rbr", };
             var designs = new List<Design> { new Design("rbr") };
 
             var part1Solution = Part1.Solve(designs, patterns);

@@ -10,7 +10,7 @@ namespace AdventOfCode.Day19
 {
     public static class Part2
     {
-        public static int Solve(List<Design> designs, List<Pattern> patterns)
+        public static int Solve(List<Design> designs, List<string> patterns)
         {
             var designsThatCanBeMade = designs.Where(x => x.CanBeMade).ToList();
 

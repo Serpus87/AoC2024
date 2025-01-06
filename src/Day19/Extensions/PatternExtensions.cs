@@ -9,30 +9,25 @@ namespace AdventOfCode.Day19.Extensions
 {
     public static class PatternExtensions
     {
-        public static List<Pattern> Copy(this List<Pattern> patterns)
+        public static List<string> Copy(this List<string> patterns)
         {
-            return patterns.Select(x => new Pattern(x.Colors)).ToList();
-
-            var copy = new List<Pattern>();
-
-            foreach (var pattern in patterns)
-            {
-                copy.Add(new Pattern(pattern.Colors));
-            }
-
-            return copy;
+            return patterns.Select(x => new string(x)).ToList();
         }
 
-        public static bool IsEqual(this List<Pattern> patterns, List<Pattern> patternsToCheck)
+        public static bool IsEqual(this List<string> patterns, List<string> patternsToCheck)
         {
-            return patterns.Select(x => x.Colors).SequenceEqual(patternsToCheck.Select(x => x.Colors));
+            return patterns.SequenceEqual(patternsToCheck);
         }
 
-        public static string Design(this List<Pattern> patterns)
+        public static string Design(this List<string> patterns)
         {
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append(patterns.Select(x => x.Colors));
+            foreach (var pattern in patterns)
+            {
+                stringBuilder.Append(pattern);
+
+            }
 
             return stringBuilder.ToString();
         }

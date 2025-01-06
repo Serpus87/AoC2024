@@ -9,12 +9,12 @@ namespace AdventOfCode.Day19.Models;
 
 public class DesignPatternCombo
 {
-    public List<Pattern> ComboStart { get; set; } = new List<Pattern>();
+    public List<string> ComboStart { get; set; } = new List<string>();
     public string ComboStartDesign { get; set; }
-    public List<Pattern> ComboEnd { get; set; } = new List<Pattern>();
+    public List<string> ComboEnd { get; set; } = new List<string>();
     public string ComboEndDesign { get; set; }
 
-    public DesignPatternCombo(List<Pattern> comboStart, List<Pattern> comboEnd)
+    public DesignPatternCombo(List<string> comboStart, List<string> comboEnd)
     {
         ComboStart = comboStart;
         ComboStartDesign = comboStart.Design();

@@ -185,6 +185,17 @@ namespace AdventOfCode.Day19
             return matchingPatterns;
         }
 
+        private static bool Satisfies(IList<string> variation, IEnumerable<string> enumerable)
+        {
+            var sb = new StringBuilder();
+            foreach (var variationString in variation)
+            {
+                sb.Append(variationString);
+            }
+
+            return enumerable.Any(x=>x.Equals(sb.ToString()));
+        }
+
         public static void FindAlternativeDesignsForDesignsThatCanBeMade(List<Design> designsThatCanBeMade, List<string> patterns)
         {
             foreach (var design in designsThatCanBeMade)
@@ -210,7 +221,7 @@ namespace AdventOfCode.Day19
                 var newDesignPatternStart = new List<string>();
                 newDesignPatternStart.AddRange(designPatternStart);
 
-                design.DesignPatternStarts.Add(new DesignPatternStart(newDesignPatternStart));
+                design.DesignPatternStarts.AddIfNew(new DesignPatternStart(newDesignPatternStart));
             }
         }
 
@@ -297,6 +308,7 @@ namespace AdventOfCode.Day19
                                 {
                                     newDesignPatterns.Add(newDesignPattern);
                                     design.DesignPatterns.Add(newDesignPattern);
+                                    AddDesignPatternStarts(design, newDesignPattern);
                                 } 
                             }
 
@@ -315,6 +327,7 @@ namespace AdventOfCode.Day19
                                 newDesignPatterns.Add(alternativeToCheck.AlternativeDesignPattern);
                                 design.DesignPatterns.Add(alternativeToCheck.AlternativeDesignPattern);
                                 AddDesignPatternEndings(design, alternativeToCheck.AlternativeDesignPattern);
+                                AddDesignPatternStarts(design, alternativeToCheck.AlternativeDesignPattern);
                             }
                         }
                     }
@@ -342,7 +355,7 @@ namespace AdventOfCode.Day19
                 var alternativeDesignPatterns = alternativePatterns.Select(x => new DesignPattern(alternativeDesignPattern.Patterns.Copy(), x));
                 alternativeDesignPatterns = alternativeDesignPatterns.Where(x => x.Design.Length <= design.Colors.Length && design.Colors.Substring(0,x.Design.Length) == x.Design && !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns))).ToList();
 
-                design.DesignPatternStarts.AddRange(alternativeDesignPatterns.Select(x => new DesignPatternStart(x.Patterns.Copy())));
+                //design.DesignPatternStarts.AddRange(alternativeDesignPatterns.Select(x => new DesignPatternStart(x.Patterns.Copy())));
 
                 var alternatives = alternativeDesignPatterns.Select(x=> new AlternativeDesignPatternToCheck(x, newDesignSubString.Substring(x.Design.Length)));
                 alternativesToCheck.AddRange(alternatives);

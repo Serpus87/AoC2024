@@ -190,11 +190,27 @@ namespace AdventOfCode.Day19
             foreach (var design in designsThatCanBeMade)
             {
                 AddDesignPatternEndings(design, design.DesignPatterns.First());
-                //design.DesignPatternStarts.Add(new DesignPatternStart(design.DesignPatterns.First().Patterns.Copy()));
+                AddDesignPatternStarts(design, design.DesignPatterns.First());
                 var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
                 var patternsWithSameStartingLetter = GetPatternsWithSameStartingLetter(designRelevantPatterns);
                 //FindAlternativeDesigns(design, designRelevantPatterns, patternsWithSameStartingLetter);
                 FindAlternativeDesignsV2(design, designRelevantPatterns, patternsWithSameStartingLetter);
+            }
+        }
+
+        private static void AddDesignPatternStarts(Design design, DesignPattern designPattern)
+        {
+            var designPatternStarts = new List<DesignPatternEnding>();
+            var designPatternStart = new List<string>();
+
+            for (int i = 0; i < (designPattern.Patterns.Count - 1); i++)
+            {
+                designPatternStart.Add(designPattern.Patterns[i]);
+
+                var newDesignPatternStart = new List<string>();
+                newDesignPatternStart.AddRange(designPatternStart);
+
+                design.DesignPatternStarts.Add(new DesignPatternStart(newDesignPatternStart));
             }
         }
 
@@ -260,7 +276,7 @@ namespace AdventOfCode.Day19
                     // check alternatives
                     foreach (var alternativeToCheck in alternativesToCheck)
                     {
-                        design.DesignPatternStarts.Add(new DesignPatternStart(alternativeToCheck.AlternativeDesignPattern.Patterns.Copy()));
+                        //design.DesignPatternStarts.Add(new DesignPatternStart(alternativeToCheck.AlternativeDesignPattern.Patterns.Copy()));
 
                         if (design.DesignPatternEndings.Any(x => x.PatternEndDesign.Equals(alternativeToCheck.NewDesignSubstring)))
                         {
@@ -324,14 +340,12 @@ namespace AdventOfCode.Day19
                 var alternativePatterns = patternsWithSameStartingLetter[pattern];
 
                 var alternativeDesignPatterns = alternativePatterns.Select(x => new DesignPattern(alternativeDesignPattern.Patterns.Copy(), x));
-                alternativeDesignPatterns = alternativeDesignPatterns.Where(x => x.Design.Length <= design.Colors.Length && design.Colors.Substring(0,x.Design.Length) == x.Design && !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns)));
+                alternativeDesignPatterns = alternativeDesignPatterns.Where(x => x.Design.Length <= design.Colors.Length && design.Colors.Substring(0,x.Design.Length) == x.Design && !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns))).ToList();
 
-                //design.DesignPatternStarts.AddRange(alternativeDesignPatterns.Select(x => new DesignPatternStart(x.Patterns.Copy())));
+                design.DesignPatternStarts.AddRange(alternativeDesignPatterns.Select(x => new DesignPatternStart(x.Patterns.Copy())));
 
                 var alternatives = alternativeDesignPatterns.Select(x=> new AlternativeDesignPatternToCheck(x, newDesignSubString.Substring(x.Design.Length)));
                 alternativesToCheck.AddRange(alternatives);
-
-                
 
                 chronoDesignPatterns.Add(pattern);
                 newDesignSubString.Substring(pattern.Length);

@@ -14,8 +14,6 @@ namespace AdventOfCode.Day19
         {
             var designsThatCanBeMade = designs.Where(x => x.CanBeMade).ToList();
 
-            return TowelService.FindAlternativeDesignsForDesignsThatCanBeMadeKiss1(designsThatCanBeMade, patterns);
-
             TowelService.FindAlternativeDesignsForDesignsThatCanBeMade(designsThatCanBeMade, patterns);
 
             //var result = designsThatCanBeMade.Sum(x=>x.DesignCounter);

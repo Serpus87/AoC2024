@@ -103,7 +103,7 @@ namespace AdventOfCode.Day19
             if (remainingDesignColors.Length == 0)
             {
                 originalDesign.DesignPatterns.Add(finalDesignPattern);
-                //originalDesign.DesignAttempts.AddRange(designAttempts);
+                originalDesign.DesignAttempts.AddRange(designAttempts);
 
                 return true;
             }
@@ -113,6 +113,8 @@ namespace AdventOfCode.Day19
 
             if (matchingPatterns.Count == 0 && remainingDesignColors == originalDesign.Colors)
             {
+                //designAttempts.Add(new DesignAttempt(originalDesign.Colors));
+                originalDesign.DesignAttempts.AddRange(designAttempts); // todo addIfNew
                 return false;
             }
 
@@ -194,7 +196,8 @@ namespace AdventOfCode.Day19
                 var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
                 var patternsWithSameStartingLetter = GetPatternsWithSameStartingLetter(designRelevantPatterns);
                 //FindAlternativeDesigns(design, designRelevantPatterns, patternsWithSameStartingLetter);
-                FindAlternativeDesignsV2(design, designRelevantPatterns, patternsWithSameStartingLetter);
+                //FindAlternativeDesignsV2(design, designRelevantPatterns, patternsWithSameStartingLetter);
+                FindAlternativeDesignsV3(design, designRelevantPatterns, patternsWithSameStartingLetter);
             }
         }
 
@@ -227,7 +230,7 @@ namespace AdventOfCode.Day19
                     continue;
                 }
 
-                if (design.Substring(0,pattern.Length) == pattern)
+                if (design.Substring(0, pattern.Length) == pattern)
                 {
                     var remain = design.Substring(pattern.Length);
                     result += FindAlternativeDesignsKiss1(remain, designRelevantPatterns);
@@ -239,7 +242,6 @@ namespace AdventOfCode.Day19
 
         private static void AddDesignPatternStarts(Design design, DesignPattern designPattern)
         {
-            var designPatternStarts = new List<DesignPatternEnding>();
             var designPatternStart = new List<string>();
 
             for (int i = 0; i < (designPattern.Patterns.Count - 1); i++)
@@ -251,6 +253,29 @@ namespace AdventOfCode.Day19
 
                 design.DesignPatternStarts.AddIfNew(new DesignPatternStart(newDesignPatternStart));
             }
+        }
+
+        private static List<DesignPatternStart> GetNewDesignPatternStarts(Design design, DesignPattern designPattern)
+        {
+            var designPatternStarts = new List<DesignPatternStart>();
+            var designPatternStart = new List<string>();
+
+            for (int i = 0; i < (designPattern.Patterns.Count - 1); i++)
+            {
+                designPatternStart.Add(designPattern.Patterns[i]);
+
+                var newDesignPatternStart = new List<string>();
+                newDesignPatternStart.AddRange(designPatternStart);
+
+                var designPatternStartToAdd = new DesignPatternStart(newDesignPatternStart);
+
+                if (!design.DesignPatternStarts.Any(x => x.PatternStart.IsEqual(designPatternStartToAdd.PatternStart)))
+                {
+                    designPatternStarts.Add(designPatternStartToAdd);
+                }
+            }
+
+            return designPatternStarts;
         }
 
         private static Dictionary<string, List<string>> GetPatternsWithSameStartingLetter(List<string> designRelevantPatterns)
@@ -337,7 +362,7 @@ namespace AdventOfCode.Day19
                                     newDesignPatterns.Add(newDesignPattern);
                                     design.DesignPatterns.Add(newDesignPattern);
                                     AddDesignPatternStarts(design, newDesignPattern);
-                                } 
+                                }
                             }
 
                             continue;
@@ -368,24 +393,178 @@ namespace AdventOfCode.Day19
             }
         }
 
+        private static void FindAlternativeDesignsV3(Design design, List<string> patterns, Dictionary<string, List<string>> patternsWithSameStartingLetter)
+        {
+            var originalDesignPatternStarts = design.DesignPatternStarts;
+            var newDesignPatternsStarts = new List<DesignPatternStart>();
+            newDesignPatternsStarts.AddRange(originalDesignPatternStarts);
+
+            while (true)
+            {
+                var counter = 0;
+                var designPatternStartsToCheck = newDesignPatternsStarts.ToList();
+                newDesignPatternsStarts = new List<DesignPatternStart>();
+
+                foreach (var designPatternStart in designPatternStartsToCheck)
+                {
+                    counter++;
+                    if (counter % 10 == 0)
+                    {
+                        Console.WriteLine($"Checking designPatternStart number {counter} of total {designPatternStartsToCheck.Count}");
+                    }
+
+                    // get alternativesToCheck
+                    var alternativesToCheck = GetAlternativeStartsToCheck(designPatternStart, design, patternsWithSameStartingLetter);
+
+                    // check alternatives
+                    foreach (var alternativeToCheck in alternativesToCheck)
+                    {
+                        //design.DesignPatternStarts.Add(new DesignPatternStart(alternativeToCheck.AlternativeDesignPattern.Patterns.Copy()));
+
+                        if (design.DesignPatternEndings.Any(x => x.PatternEndDesign.Equals(alternativeToCheck.NewDesignSubstring)))
+                        {
+                            var alternativeDesignPatternEndings = design.DesignPatternEndings.Where(x => x.PatternEndDesign == alternativeToCheck.NewDesignSubstring).ToList();
+
+                            foreach (var alternativeDesignPatternEnding in alternativeDesignPatternEndings)
+                            {
+                                var newDesignPattern = new DesignPattern();
+                                newDesignPattern.Patterns.AddRange(alternativeToCheck.AlternativeDesignPattern.Patterns);
+                                newDesignPattern.Patterns.AddRange(alternativeDesignPatternEnding.PatternEnd);
+
+                                if (design.DesignPatterns.Includes(newDesignPattern))
+                                {
+                                    var tempInspectSomethingBad = true;
+                                }
+
+                                if (!design.DesignPatterns.Includes(newDesignPattern))
+                                {
+                                    //Console.WriteLine(newDesignPattern.Design);
+                                    var newDesignPatternStart = GetNewDesignPatternStarts(design, newDesignPattern);
+                                    newDesignPatternsStarts.AddRange(newDesignPatternStart);
+                                    design.DesignPatterns.Add(newDesignPattern);
+                                    AddDesignPatternStarts(design, newDesignPattern);
+                                }
+                            }
+
+                            continue;
+                        }
+
+                        var newRemainingDesign = new Design(alternativeToCheck.NewDesignSubstring);
+
+                        var relevantDesignAttempts = GetRelevantDesignAttempts(design.DesignAttempts, alternativeToCheck.NewDesignSubstring);
+
+                        var canAlternativeDesignBeMade = CanDesignBeMade(newRemainingDesign, newRemainingDesign.Colors, patterns, relevantDesignAttempts, new DesignPattern(), new DesignPattern());
+
+                        if (relevantDesignAttempts.Count != newRemainingDesign.DesignAttempts.Count)
+                        {
+                            var newDesignAttempts = GetNewDesignAttempts(newRemainingDesign.DesignAttempts, alternativeToCheck.NewDesignSubstring, design.DesignAttempts);
+                            design.DesignAttempts.AddRange(newDesignAttempts);
+                        }
+
+                        if (canAlternativeDesignBeMade)
+                        {
+                            alternativeToCheck.AlternativeDesignPattern.Patterns.AddRange(newRemainingDesign.DesignPatterns.First().Patterns);
+                            if (!design.DesignPatterns.Includes(alternativeToCheck.AlternativeDesignPattern))
+                            {
+                                //Console.WriteLine(alternativeToCheck.AlternativeDesignPattern.Design);
+                                var newDesignPatternStart = GetNewDesignPatternStarts(design, alternativeToCheck.AlternativeDesignPattern);
+                                newDesignPatternsStarts.AddRange(newDesignPatternStart);
+                                design.DesignPatterns.Add(alternativeToCheck.AlternativeDesignPattern);
+                                AddDesignPatternEndings(design, alternativeToCheck.AlternativeDesignPattern);
+                                AddDesignPatternStarts(design, alternativeToCheck.AlternativeDesignPattern);
+                            }
+                        }
+                    }
+                }
+
+                if (designPatternStartsToCheck.Count == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        private static List<DesignAttempt> GetRelevantDesignAttempts(List<DesignAttempt> designAttempts, string finishedDesign)
+        {
+            var relevantDesignAttempts = new List<DesignAttempt>();
+
+            foreach (var designAttempt in designAttempts.Where(x => x.Colors.Length >= finishedDesign.Length))
+            {
+                var designAttemptSubstring = designAttempt.Colors.Substring(0, finishedDesign.Length);
+                if (designAttemptSubstring == finishedDesign)
+                {
+                    var relevantDesignAttempt = new DesignAttempt(designAttempt.Colors.Substring(finishedDesign.Length));
+                    relevantDesignAttempts.Add(relevantDesignAttempt);
+                }
+            }
+
+            return relevantDesignAttempts;
+        }
+
+        private static List<DesignAttempt> GetNewDesignAttempts(List<DesignAttempt> designAttemptsFromAlternative, string finishedDesign, List<DesignAttempt> originalDesignAttempts)
+        {
+            var newDesignAttempts = new List<DesignAttempt>();
+
+            foreach (var designAttempt in designAttemptsFromAlternative)
+            {
+                var newDesignAttempt = finishedDesign + designAttempt.Colors;
+                if (!originalDesignAttempts.Select(x => x.Colors).Contains(newDesignAttempt))
+                {
+                    newDesignAttempts.Add(new DesignAttempt(newDesignAttempt));
+                }
+            }
+
+            return newDesignAttempts;
+        }
+
+        private static List<AlternativeDesignPatternToCheck> GetAlternativeStartsToCheck(DesignPatternStart designPatternStart, Design design, Dictionary<string, List<string>> patternsWithSameStartingLetter)
+        {
+            var alternativesToCheck = new List<AlternativeDesignPatternToCheck>();
+            var chronoDesignPatterns = new List<string>();
+            var newDesignSubString = design.Colors;
+
+            var alternativeDesignPattern = new DesignPattern(chronoDesignPatterns);
+
+            var alternativePatterns = patternsWithSameStartingLetter[designPatternStart.PatternStart.Last()];
+
+            var alternativeDesignPatterns = alternativePatterns.Select(x => new DesignPattern(alternativeDesignPattern.Patterns.Copy(), x));
+            alternativeDesignPatterns = alternativeDesignPatterns
+                .Where(x =>
+                x.Design.Length <= design.Colors.Length &&
+                design.Colors.Substring(0, x.Design.Length) == x.Design &&
+                !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns)) &&
+                !design.DesignAttempts.Any(y => y.Colors.Equals(x.Design)))
+                .ToList();
+
+            var alternatives = alternativeDesignPatterns.Select(x => new AlternativeDesignPatternToCheck(x, newDesignSubString.Substring(x.Design.Length)));
+
+            alternativesToCheck.AddRange(alternatives);
+
+            chronoDesignPatterns.Add(designPatternStart.PatternStart.Last());
+            newDesignSubString.Substring(designPatternStart.PatternStart.Last().Length);
+
+
+            return alternativesToCheck;
+        }
+
         private static List<AlternativeDesignPatternToCheck> GetAlternativesToCheck(DesignPattern designPattern, Design design, Dictionary<string, List<string>> patternsWithSameStartingLetter)
         {
             var alternativesToCheck = new List<AlternativeDesignPatternToCheck>();
             var chronoDesignPatterns = new List<string>();
             var newDesignSubString = design.Colors;
 
-            foreach (var pattern in designPattern.Patterns) 
+            foreach (var pattern in designPattern.Patterns)
             {
                 var alternativeDesignPattern = new DesignPattern(chronoDesignPatterns);
 
                 var alternativePatterns = patternsWithSameStartingLetter[pattern];
 
                 var alternativeDesignPatterns = alternativePatterns.Select(x => new DesignPattern(alternativeDesignPattern.Patterns.Copy(), x));
-                alternativeDesignPatterns = alternativeDesignPatterns.Where(x => x.Design.Length <= design.Colors.Length && design.Colors.Substring(0,x.Design.Length) == x.Design && !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns))).ToList();
+                alternativeDesignPatterns = alternativeDesignPatterns.Where(x => x.Design.Length <= design.Colors.Length && design.Colors.Substring(0, x.Design.Length) == x.Design && !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns))).ToList();
 
                 //design.DesignPatternStarts.AddRange(alternativeDesignPatterns.Select(x => new DesignPatternStart(x.Patterns.Copy())));
 
-                var alternatives = alternativeDesignPatterns.Select(x=> new AlternativeDesignPatternToCheck(x, newDesignSubString.Substring(x.Design.Length)));
+                var alternatives = alternativeDesignPatterns.Select(x => new AlternativeDesignPatternToCheck(x, newDesignSubString.Substring(x.Design.Length)));
                 alternativesToCheck.AddRange(alternatives);
 
                 chronoDesignPatterns.Add(pattern);

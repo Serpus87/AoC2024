@@ -185,17 +185,6 @@ namespace AdventOfCode.Day19
             return matchingPatterns;
         }
 
-        private static bool Satisfies(IList<string> variation, IEnumerable<string> enumerable)
-        {
-            var sb = new StringBuilder();
-            foreach (var variationString in variation)
-            {
-                sb.Append(variationString);
-            }
-
-            return enumerable.Any(x=>x.Equals(sb.ToString()));
-        }
-
         public static void FindAlternativeDesignsForDesignsThatCanBeMade(List<Design> designsThatCanBeMade, List<string> patterns)
         {
             foreach (var design in designsThatCanBeMade)
@@ -207,6 +196,45 @@ namespace AdventOfCode.Day19
                 //FindAlternativeDesigns(design, designRelevantPatterns, patternsWithSameStartingLetter);
                 FindAlternativeDesignsV2(design, designRelevantPatterns, patternsWithSameStartingLetter);
             }
+        }
+
+        public static int FindAlternativeDesignsForDesignsThatCanBeMadeKiss1(List<Design> designsThatCanBeMade, List<string> patterns)
+        {
+            var result = 0;
+            foreach (var design in designsThatCanBeMade)
+            {
+                var designRelevantPatterns = GetDesignRelevantPatterns(design, patterns);
+                var patternsWithSameStartingLetter = GetPatternsWithSameStartingLetter(designRelevantPatterns);
+                result += FindAlternativeDesignsKiss1(design.Colors, designRelevantPatterns);
+            }
+
+            return result;
+        }
+
+        private static int FindAlternativeDesignsKiss1(string design, List<string> designRelevantPatterns)
+        {
+            if (design.Length == 0)
+            {
+                return 1;
+            }
+
+            var result = 0;
+
+            foreach (var pattern in designRelevantPatterns)
+            {
+                if (pattern.Length > design.Length)
+                {
+                    continue;
+                }
+
+                if (design.Substring(0,pattern.Length) == pattern)
+                {
+                    var remain = design.Substring(pattern.Length);
+                    result += FindAlternativeDesignsKiss1(remain, designRelevantPatterns);
+                }
+            }
+
+            return result;
         }
 
         private static void AddDesignPatternStarts(Design design, DesignPattern designPattern)

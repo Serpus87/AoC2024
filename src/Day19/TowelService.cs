@@ -523,25 +523,28 @@ namespace AdventOfCode.Day19
             var chronoDesignPatterns = new List<string>();
             var newDesignSubString = design.Colors;
 
-            var alternativeDesignPattern = new DesignPattern(chronoDesignPatterns);
+            // WIP
+            var lastPattern = designPatternStart.PatternStart.Last();
+            newDesignSubString = designPatternStart.PatternStartDesign.Substring(0, designPatternStart.PatternStartDesign.Length - lastPattern.Length);
 
-            var alternativePatterns = patternsWithSameStartingLetter[designPatternStart.PatternStart.Last()];
+            // todo only check alternatives for alst pattern
+            foreach (var pattern in designPatternStart.PatternStart)
+            {
+                var alternativeDesignPattern = new DesignPattern(chronoDesignPatterns);
 
-            var alternativeDesignPatterns = alternativePatterns.Select(x => new DesignPattern(alternativeDesignPattern.Patterns.Copy(), x));
-            alternativeDesignPatterns = alternativeDesignPatterns
-                .Where(x =>
-                x.Design.Length <= design.Colors.Length &&
-                design.Colors.Substring(0, x.Design.Length) == x.Design &&
-                !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns)) &&
-                !design.DesignAttempts.Any(y => y.Colors.Equals(x.Design)))
-                .ToList();
+                var alternativePatterns = patternsWithSameStartingLetter[pattern];
 
-            var alternatives = alternativeDesignPatterns.Select(x => new AlternativeDesignPatternToCheck(x, newDesignSubString.Substring(x.Design.Length)));
+                var alternativeDesignPatterns = alternativePatterns.Select(x => new DesignPattern(alternativeDesignPattern.Patterns.Copy(), x));
+                alternativeDesignPatterns = alternativeDesignPatterns.Where(x => x.Design.Length <= design.Colors.Length && design.Colors.Substring(0, x.Design.Length) == x.Design && !design.DesignPatternStarts.Any(y => y.PatternStart.IsEqual(x.Patterns))).ToList();
 
-            alternativesToCheck.AddRange(alternatives);
+                //design.DesignPatternStarts.AddRange(alternativeDesignPatterns.Select(x => new DesignPatternStart(x.Patterns.Copy())));
 
-            chronoDesignPatterns.Add(designPatternStart.PatternStart.Last());
-            newDesignSubString.Substring(designPatternStart.PatternStart.Last().Length);
+                var alternatives = alternativeDesignPatterns.Select(x => new AlternativeDesignPatternToCheck(x, newDesignSubString.Substring(x.Design.Length)));
+                alternativesToCheck.AddRange(alternatives);
+
+                chronoDesignPatterns.Add(pattern);
+                newDesignSubString.Substring(pattern.Length);
+            }
 
 
             return alternativesToCheck;

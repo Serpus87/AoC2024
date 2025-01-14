@@ -10,7 +10,7 @@ namespace AdventOfCode.Day20.Models
     {
         public Position Position { get; init; }
         public char Fill { get; init; }
-        public int PicoSecondsFromStart { get; init; }
+        public int? PicoSecondsFromStart { get; set; }
         public bool IsPassable { get; init; }
 
         public Field(Position position, bool isPassable, char fill)

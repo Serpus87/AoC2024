@@ -16,5 +16,10 @@ namespace AdventOfCode.Day20.Models
             Row = row;
             Column = column;
         }
+
+        public Position()
+        {
+            
+        }
     }
 }

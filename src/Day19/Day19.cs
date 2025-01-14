@@ -21,6 +21,7 @@ namespace AdventOfCode.Day19
             var result = Part1.Solve(designs, patterns);
             Console.WriteLine($"Part1 solution = {result}");
 
+            // todo make this work
             result = Part2.Solve(designs, patterns);
             Console.WriteLine($"Part2 solution = {result}");
         }

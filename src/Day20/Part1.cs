@@ -18,6 +18,8 @@ namespace AdventOfCode.Day20
 
             var result = cheats.Count(x=>x.TimeSaved >= 100);
 
+
+            // first try 1378; answer is too high
             return result;
         }
     }

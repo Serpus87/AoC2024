@@ -143,7 +143,7 @@ public class ComputerService
         return result;
     }
 
-    internal static int FindInitialAValue(List<int> programInput, List<Register> registers)
+    public static int FindInitialAValue(List<int> programInput, List<Register> registers)
     {
         var expectedOutput = string.Join(",", programInput);
         var actualOutput = string.Empty;

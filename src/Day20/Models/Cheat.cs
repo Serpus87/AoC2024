@@ -8,12 +8,14 @@ namespace AdventOfCode.Day20.Models
 {
     public class Cheat
     {
+        public Position OriginalRunStartPosition { get; set; }
         public Position Start { get; set; }
         public Position End { get; set; }
         public int TimeSaved { get; set; }
 
-        public Cheat(Position start, Position end, int timeSaved)
+        public Cheat(Position originalRunStartPosition, Position start, Position end, int timeSaved)
         {
+            OriginalRunStartPosition = originalRunStartPosition;
             Start = start;
             End = end;
             TimeSaved = timeSaved;

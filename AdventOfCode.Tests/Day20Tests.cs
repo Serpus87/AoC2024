@@ -20,7 +20,7 @@ namespace AdventOfCode.Tests
             // Arrange
             var expectedSolution = 0;
 
-            var fileName = "PuzzleInput.txt";
+            var fileName = "Example.txt";
             var input = File.ReadAllLines($"Day20\\{fileName}");
 
             var map = MapService.GetMap(input);
@@ -29,6 +29,59 @@ namespace AdventOfCode.Tests
 
             // Assert
             Assert.AreEqual(expectedSolution, actualSolution);
+        }
+
+        [TestMethod]
+        public void GetCheats_Example_ReturnsExpectedCheats()
+        {
+            // Arrange
+            var expectedNumberOfCheats = 44;
+
+            var fileName = "Example.txt";
+            var input = File.ReadAllLines($"Day20\\{fileName}");
+
+            var map = MapService.GetMap(input);
+            MapService.RunWithoutCheating(map);
+
+            var cheats = MapService.GetCheats(map);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                cheats.Count.Should().Be(expectedNumberOfCheats);
+                cheats.Count(x=>x.TimeSaved == 2).Should().Be(14);
+                cheats.Count(x=>x.TimeSaved == 4).Should().Be(14);
+                cheats.Count(x=>x.TimeSaved == 6).Should().Be(2);
+                cheats.Count(x=>x.TimeSaved == 8).Should().Be(4);
+                cheats.Count(x=>x.TimeSaved == 10).Should().Be(2);
+                cheats.Count(x=>x.TimeSaved == 12).Should().Be(3);
+                cheats.Count(x=>x.TimeSaved == 20).Should().Be(1);
+                cheats.Count(x=>x.TimeSaved == 36).Should().Be(1);
+                cheats.Count(x=>x.TimeSaved == 38).Should().Be(1);
+                cheats.Count(x=>x.TimeSaved == 40).Should().Be(1);
+                cheats.Count(x=>x.TimeSaved == 64).Should().Be(1);
+            }
+        }
+
+        [TestMethod]
+        public void RunWithoutCheating_Example_ReturnsExpectedStartAndEndScore()
+        {
+            // Arrange
+            var expectedMapStart = 0;
+            var expectedMapEnd = 84;
+
+            var fileName = "Example.txt";
+            var input = File.ReadAllLines($"Day20\\{fileName}");
+
+            var map = MapService.GetMap(input);
+            MapService.RunWithoutCheating(map);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                map.Fields[map.Start.Row, map.Start.Column].PicoSecondsFromStart.Should().Be(expectedMapStart);
+                map.Fields[map.End.Row, map.End.Column].PicoSecondsFromStart.Should().Be(expectedMapEnd);
+            }
         }
     }
 }

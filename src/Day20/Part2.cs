@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AdventOfCode.Day20.Models;
+using AdventOfCode.Day20.Services;
 
 namespace AdventOfCode.Day20
 {
@@ -11,8 +12,13 @@ namespace AdventOfCode.Day20
     {
         public static int Solve(Map map)
         {
-            var result = 0;
+            MapService.RunWithoutCheating(map);
 
+            var cheats = MapService.GetCheats(map, 20);
+
+            var result = cheats.Count(x => x.TimeSaved >= 100);
+
+            // first try 1378; answer is too high
             return result;
         }
     }

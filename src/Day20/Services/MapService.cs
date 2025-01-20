@@ -75,6 +75,24 @@ namespace AdventOfCode.Day20.Services
             return cheats;
         }
 
+        public static List<Cheat> GetCheats(Map map, int maxPicoSecondsToCheat)
+        {
+            var cheats = new List<Cheat>();
+
+            var positionsFromRunWithoutCheat = map.FieldsList.Where(x => x.PicoSecondsFromStart != null).OrderBy(x => x.PicoSecondsFromStart).Select(x => x.Position).ToList();
+
+            foreach (var positionFromRunWithoutCheat in positionsFromRunWithoutCheat)
+            {
+                // get cheat positions
+                var cheatsFromPosition = GetCheatsFromPosition(map, positionFromRunWithoutCheat);
+
+                // add cheats
+                cheats.AddRange(cheatsFromPosition);
+            }
+
+            return cheats;
+        }
+
         public static List<Cheat> GetCheatsFromPosition(Map map, Position positionFromRunWithoutCheat)
         {
             var cheatsFromPosition = new List<Cheat>();

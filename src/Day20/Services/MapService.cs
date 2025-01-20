@@ -61,7 +61,7 @@ namespace AdventOfCode.Day20.Services
         {
             var cheats = new List<Cheat>();
 
-            var positionsFromRunWithoutCheat = map.FieldsList.Where(x => x.PicoSecondsFromStart != null).Select(x => x.Position).ToList();
+            var positionsFromRunWithoutCheat = map.FieldsList.Where(x => x.PicoSecondsFromStart != null).OrderBy(x => x.PicoSecondsFromStart).Select(x => x.Position).ToList();
 
             foreach (var positionFromRunWithoutCheat in positionsFromRunWithoutCheat)
             {
@@ -75,33 +75,38 @@ namespace AdventOfCode.Day20.Services
             return cheats;
         }
 
-        private static List<Cheat> GetCheatsFromPosition(Map map, Position positionFromRunWithoutCheat)
+        public static List<Cheat> GetCheatsFromPosition(Map map, Position positionFromRunWithoutCheat)
         {
             var cheatsFromPosition = new List<Cheat>();
+
             var picoSecondsFromStart = (int)map.Fields[positionFromRunWithoutCheat.Row, positionFromRunWithoutCheat.Column].PicoSecondsFromStart!;
 
             var cheatStartPositions = GetCheatStartPositions(map, positionFromRunWithoutCheat);
 
             foreach (var cheatStartPosition in cheatStartPositions)
             {
-                //var cheatEndPositions = GetCheatEndPositions(map, cheatStartPosition, picoSecondsFromStart);
+                var directions = new List<(int, int)> { (0, 1), (0, -1), (1, 0), (-1, 0) };
 
-                //foreach (var cheatEndPosition in cheatEndPositions)
-                //{
-                //    var picoSecondsFromStartAtCheatEndPosition = (int)map.Fields[cheatEndPosition.Row, cheatEndPosition.Column].PicoSecondsFromStart!;
-                //    var timeSaved = picoSecondsFromStartAtCheatEndPosition - picoSecondsFromStart + 2;
-
-                //    cheatsFromPosition.Add(new Cheat(positionFromRunWithoutCheat, cheatStartPosition, cheatEndPosition, timeSaved));
-                //}
-
-                var cheatEndPosition = GetCheatEndPosition(map, cheatStartPosition, picoSecondsFromStart);
-
-                if (cheatEndPosition != null) 
+                foreach (var direction in directions)
                 {
-                    var picoSecondsFromStartAtCheatEndPosition = (int)map.Fields[cheatEndPosition.Row, cheatEndPosition.Column].PicoSecondsFromStart!;
-                    var timeSaved = picoSecondsFromStartAtCheatEndPosition - picoSecondsFromStart + 2;
+                    var newRow = cheatStartPosition.Row + direction.Item1;
+                    var newColumn = cheatStartPosition.Column + direction.Item2;
 
-                    cheatsFromPosition.Add(new Cheat(positionFromRunWithoutCheat, cheatStartPosition, cheatEndPosition, timeSaved));
+                    if (newRow < 0 || newRow >= map.NumberOfRows || newColumn < 0 || newColumn >= map.NumberOfColumns)
+                    {
+                        continue;
+                    }
+
+                    var cheatEndPosition = new Position(newRow, newColumn);
+
+                    if (map.Fields[cheatEndPosition.Row, cheatEndPosition.Column].IsPassable)
+                    {
+                        var timeSaved = (int)map.Fields[cheatEndPosition.Row, cheatEndPosition.Column].PicoSecondsFromStart! - (picoSecondsFromStart + 2);
+                        if (timeSaved > 0)
+                        {
+                            cheatsFromPosition.Add(new Cheat(positionFromRunWithoutCheat,cheatStartPosition,cheatEndPosition,timeSaved));
+                        }
+                    }
                 }
             }
 
@@ -129,7 +134,7 @@ namespace AdventOfCode.Day20.Services
                 if (map.Fields[newPosition.Row, newPosition.Column].IsPassable)
                 {
                     var timeSaved = (int)map.Fields[newPosition.Row, newPosition.Column].PicoSecondsFromStart! - (picoSecondsFromStart + 2);
-                    if (timeSaved > mostTimeSaved) 
+                    if (timeSaved > mostTimeSaved)
                     {
                         mostTimeSaved = timeSaved;
                         cheatEndPosition = newPosition;

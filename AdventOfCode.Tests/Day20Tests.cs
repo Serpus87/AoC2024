@@ -25,10 +25,44 @@ namespace AdventOfCode.Tests
 
             var map = MapService.GetMap(input);
 
+            // Act
             var actualSolution = Part1.Solve(map);
 
             // Assert
             Assert.AreEqual(expectedSolution, actualSolution);
+        }
+
+        [TestMethod]
+        public void GetCheatFromPosition_Example_ReturnsExpectedCheat()
+        {
+            // Arrange
+            var expectedCheatStart = new Position(1, 8);
+            var expectedCheatEnd = new Position(1, 9);
+            var expectedTimeSaved = 12;
+
+            var fileName = "Example.txt";
+            var input = File.ReadAllLines($"Day20\\{fileName}");
+
+            var map = MapService.GetMap(input);
+            MapService.RunWithoutCheating(map);
+
+            var positionFromRunWithoutCheat = new Position(1, 7);
+
+            // Act
+            var cheat = MapService.GetCheatsFromPosition(map, positionFromRunWithoutCheat);
+
+            // Assert
+            using (new AssertionScope())
+            {
+                cheat.Count.Should().Be(1);
+                cheat.First().OriginalRunStartPosition.Row.Should().Be(positionFromRunWithoutCheat.Row);
+                cheat.First().OriginalRunStartPosition.Column.Should().Be(positionFromRunWithoutCheat.Column);
+                cheat.First().Start.Row.Should().Be(expectedCheatStart.Row);
+                cheat.First().Start.Column.Should().Be(expectedCheatStart.Column);
+                cheat.First().End.Row.Should().Be(expectedCheatEnd.Row);
+                cheat.First().End.Column.Should().Be(expectedCheatEnd.Column);
+                cheat.First().TimeSaved.Should().Be(expectedTimeSaved);
+            }
         }
 
         [TestMethod]
@@ -43,6 +77,7 @@ namespace AdventOfCode.Tests
             var map = MapService.GetMap(input);
             MapService.RunWithoutCheating(map);
 
+            // Act
             var cheats = MapService.GetCheats(map);
 
             // Assert
@@ -73,6 +108,7 @@ namespace AdventOfCode.Tests
             var fileName = "Example.txt";
             var input = File.ReadAllLines($"Day20\\{fileName}");
 
+            // Act
             var map = MapService.GetMap(input);
             MapService.RunWithoutCheating(map);
 

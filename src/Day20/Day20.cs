@@ -12,6 +12,8 @@ namespace AdventOfCode.Day20
         public static void Solve()
         {
             var fileName = "PuzzleInput.txt";
+            //var fileName = "Example.txt";
+
             var input = File.ReadAllLines($"Day20\\{fileName}");
 
             var map = MapService.GetMap(input);
@@ -19,6 +21,7 @@ namespace AdventOfCode.Day20
             var result = Part1.Solve(map);
             Console.WriteLine($"Part1 solution = {result}");
 
+            map = MapService.GetMap(input);
             result = Part2.Solve(map);
             Console.WriteLine($"Part1 solution = {result}");
         }

@@ -98,7 +98,7 @@ namespace AdventOfCode.Day20.Services
         {
             var picoSecondsFromStart = (int)map.Fields[positionFromRunWithoutCheat.Row, positionFromRunWithoutCheat.Column].PicoSecondsFromStart!;
 
-            var cheatStartPositions = GetCheatStartPositions(map, positionFromRunWithoutCheat);
+            var cheatStartPositions = GetAllCheatStartPositions(map, positionFromRunWithoutCheat);
 
             foreach (var cheatStartPosition in cheatStartPositions)
             {
@@ -107,7 +107,7 @@ namespace AdventOfCode.Day20.Services
 
             map.Fields[positionFromRunWithoutCheat.Row, positionFromRunWithoutCheat.Column].WalkEnum = Enums.WalkEnum.HasWalked;
 
-            for (int i = 1; i < maxPicoSecondsToCheat; i++)
+            for (int i = 0; i < maxPicoSecondsToCheat; i++)
             {
                 var positionsToWalkFrom = map.FieldsList.Where(x => x.WalkEnum == Enums.WalkEnum.WillWalk).ToList();
 
@@ -123,7 +123,8 @@ namespace AdventOfCode.Day20.Services
                 }
             }
 
-            var cheatEndPositions = map.FieldsList.Where(x => x.WalkEnum == Enums.WalkEnum.HasWalked && x.IsPassable).Select(x => x.Position).ToList().GetDistinct();
+            //var cheatEndPositions = map.FieldsList.Where(x => x.WalkEnum == Enums.WalkEnum.HasWalked && x.IsPassable).Select(x => x.Position).ToList().GetDistinct();
+            var cheatEndPositions = map.FieldsList.Where(x => x.WalkEnum == Enums.WalkEnum.HasWalked && x.IsPassable).Select(x => x.Position).ToList();
 
             var cheats = CreateCheats(positionFromRunWithoutCheat, map, cheatStartPositions, cheatEndPositions, picoSecondsFromStart);
 
@@ -331,6 +332,23 @@ namespace AdventOfCode.Day20.Services
                 {
                     cheatStartPositions.Add(newPosition);
                 }
+            }
+
+            return cheatStartPositions;
+        }
+
+        private static List<Position> GetAllCheatStartPositions(Map map, Position positionFromRunWithoutCheat)
+        {
+            var cheatStartPositions = new List<Position>();
+
+            var directions = new List<(int, int)> { (0, 1), (0, -1), (1, 0), (-1, 0) };
+            var newPosition = new Position();
+
+            foreach (var direction in directions)
+            {
+                newPosition = new Position(positionFromRunWithoutCheat.Row + direction.Item1, positionFromRunWithoutCheat.Column + direction.Item2);
+
+                cheatStartPositions.Add(newPosition);
             }
 
             return cheatStartPositions;

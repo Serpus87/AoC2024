@@ -80,7 +80,9 @@ namespace AdventOfCode.Day20
 
             var result = cheats.Count(x => x.TimeSaved >= 100);
 
-            // first try 1378; answer is too high
+            // first try 825318; answer is too low
+            // second try 942663; answer is too low
+            // third try 966130; answer is correct (cheating includes starting from and going through passable fields)
             return result;
         }
     }
